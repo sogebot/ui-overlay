@@ -1,0 +1,60 @@
+{
+  "name": "@sogebot/ui-overlay",
+  "version": "0.0.1",
+  "author": "sogehige@gmail.com",
+  "engines": {
+    "npm": ">7.19.0"
+  },
+  "description": "Nuxt.js version of ui-overlay",
+  "scripts": {
+    "postinstall": "patch-package",
+    "release": "standard-version && git push --follow-tags origin main",
+    "prepublishOnly": "npm run generate",
+    "dev": "nuxt",
+    "build": "nuxt build",
+    "start": "nuxt start",
+    "generate": "nuxt generate",
+    "lint:js": "eslint --ext \".js,.vue\" --ignore-path .gitignore .",
+    "lint:style": "stylelint \"**/*.{vue,css}\" --ignore-path .gitignore",
+    "lint": "npm run lint:js && npm run lint:style"
+  },
+  "lint-staged": {
+    "*.{ts,js,vue}": "eslint --quiet --fix",
+    "*.{css,vue}": "stylelint"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "npx simple-git-hooks && npx lint-staged",
+    "commit-msg": "node ./.bot/tools/pre-commit-message.js $1 $2 $3",
+    "preserveUnused": true
+  },
+  "dependencies": {
+    "@nuxtjs/axios": "^5.13.6",
+    "@sogebot/ui-helpers": "^2.3.2",
+    "core-js": "^3.15.2",
+    "nuxt": "^2.15.7"
+  },
+  "devDependencies": {
+    "@babel/eslint-parser": "^7.14.7",
+    "@commitlint/cli": "^12.1.4",
+    "@commitlint/config-conventional": "^12.1.4",
+    "@nuxt/types": "^2.15.7",
+    "@nuxt/typescript-build": "^2.1.0",
+    "@nuxtjs/composition-api": "^0.24.6",
+    "@nuxtjs/eslint-config-typescript": "^6.0.1",
+    "@nuxtjs/eslint-module": "^3.0.2",
+    "@nuxtjs/stylelint-module": "^4.0.0",
+    "eslint": "^7.30.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-nuxt": "^2.0.0",
+    "eslint-plugin-unused-imports": "^1.1.2",
+    "eslint-plugin-vue": "^7.13.0",
+    "lint-staged": "^11.0.0",
+    "patch-package": "^6.4.7",
+    "prettier": "^2.3.2",
+    "standard-version": "^9.3.0",
+    "stylelint": "^13.13.1",
+    "stylelint-config-prettier": "^8.0.2",
+    "stylelint-config-standard": "^22.0.0",
+    "typeorm": "^0.2.34"
+  }
+}
