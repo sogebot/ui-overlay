@@ -1,5 +1,6 @@
 <template>
   <div
+    v-if="$store.state.isUILoaded"
     id="main"
     v-html="text"
   />
@@ -15,6 +16,7 @@ import {
 const socket = getSocket('/registries/text', true);
 
 export default defineComponent({
+  middleware: ['isBotStarted'],
   setup () {
     const nonParsedText = ref('');
     const text = ref('');

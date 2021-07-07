@@ -1,7 +1,7 @@
 <template>
   <component
+    v-if="$store.state.isUILoaded && type"
     :is="type.value"
-    v-if="type"
     :opts="type.opts"
   />
 </template>
@@ -15,6 +15,7 @@ import {
 import type { OverlayMapperInterface, OverlayMapperOBSWebsocket } from '~/.bot/src/bot/database/entity/overlay';
 
 export default defineComponent({
+  middleware: ['isBotStarted'],
   components: {
     /* alerts:        () => import('./alerts.vue'),
     bets:          () => import('./bets.vue'),
