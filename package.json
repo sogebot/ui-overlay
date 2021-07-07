@@ -34,6 +34,8 @@
     "nuxt": "^2.15.7"
   },
   "devDependencies": {
+    "@mdi/js": "^5.9.55",
+    "@nuxtjs/vuetify": "^1.12.1",
     "@babel/eslint-parser": "^7.14.7",
     "@commitlint/cli": "^12.1.4",
     "@commitlint/config-conventional": "^12.1.4",
@@ -55,6 +57,7 @@
     "stylelint": "^13.13.1",
     "stylelint-config-prettier": "^8.0.2",
     "stylelint-config-standard": "^22.0.0",
-    "typeorm": "^0.2.34"
+    "typeorm": "^0.2.34",
+    "vuetify": "^2.5.6"
   }
 }

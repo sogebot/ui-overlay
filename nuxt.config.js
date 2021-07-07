@@ -45,9 +45,13 @@ export default {
     '@nuxt/typescript-build',
     // https://go.nuxtjs.dev/stylelint
     '@nuxtjs/stylelint-module',
+    // https://go.nuxtjs.dev/vuetify
+    ['@nuxtjs/vuetify', { treeShake: true }],
     // https://composition-api.nuxtjs.org/
     '@nuxtjs/composition-api/module',
   ],
+
+  vuetify: { icons: { iconfont: 'mdiSvg' } },
 
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [

@@ -11,7 +11,6 @@ import {
   defineAsyncComponent,
   defineComponent, onMounted, ref, useContext, useRoute,
 } from '@nuxtjs/composition-api';
-import { baseUrl } from '@sogebot/ui-helpers/baseUrl';
 
 import type { OverlayMapperInterface, OverlayMapperOBSWebsocket } from '~/.bot/src/bot/database/entity/overlay';
 
@@ -28,8 +27,8 @@ export default defineComponent({
     eventlist:     () => import('./eventlist.vue'),
     obswebsocket:  () => import('./obswebsocket.vue'),
     polls:         () => import('./polls.vue'),
-    randomizer:    () => import('./randomizer.vue'),
-    stats:         () => import('./stats.vue'), */
+    randomizer:    () => import('./randomizer.vue'),*/
+    stats:        defineAsyncComponent(() => import('~/components/stats.vue')),
     tts: defineAsyncComponent(() => import('~/components/tts.vue')),
   },
   setup () {
@@ -43,7 +42,6 @@ export default defineComponent({
         }
 
         type.value = await new Promise((resolve, reject) => {
-          console.log(location.origin + '/api/v1/overlay/' + route.value.params.id)
           $axios.get(location.origin + '/api/v1/overlay/' + route.value.params.id)
             .then(response => resolve(response.data))
             .catch(() => reject(new Error('Unknown overlay link ' + route.value.params.id + '!')));
