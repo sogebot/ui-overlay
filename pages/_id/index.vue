@@ -43,7 +43,8 @@ export default defineComponent({
         }
 
         type.value = await new Promise((resolve, reject) => {
-          $axios.get(baseUrl + 'api/v1/overlay/' + route.value.params.id)
+          console.log(location.origin + '/api/v1/overlay/' + route.value.params.id)
+          $axios.get(location.origin + '/api/v1/overlay/' + route.value.params.id)
             .then(response => resolve(response.data))
             .catch(() => reject(new Error('Unknown overlay link ' + route.value.params.id + '!')));
         });
