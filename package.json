@@ -31,20 +31,22 @@
     "@nuxtjs/axios": "^5.13.6",
     "@sogebot/ui-helpers": "^2.3.2",
     "core-js": "^3.15.2",
-    "nuxt": "^2.15.7"
+    "nuxt": "^2.15.7",
+    "obs-websocket-js": "^4.0.2",
+    "safe-eval": "^0.4.1"
   },
   "devDependencies": {
-    "@mdi/js": "^5.9.55",
-    "@nuxtjs/vuetify": "^1.12.1",
     "@babel/eslint-parser": "^7.14.7",
     "@commitlint/cli": "^12.1.4",
     "@commitlint/config-conventional": "^12.1.4",
+    "@mdi/js": "^5.9.55",
     "@nuxt/types": "^2.15.7",
     "@nuxt/typescript-build": "^2.1.0",
     "@nuxtjs/composition-api": "^0.24.6",
     "@nuxtjs/eslint-config-typescript": "^6.0.1",
     "@nuxtjs/eslint-module": "^3.0.2",
     "@nuxtjs/stylelint-module": "^4.0.0",
+    "@nuxtjs/vuetify": "^1.12.1",
     "eslint": "^7.30.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-nuxt": "^2.0.0",
@@ -57,6 +59,7 @@
     "stylelint": "^13.13.1",
     "stylelint-config-prettier": "^8.0.2",
     "stylelint-config-standard": "^22.0.0",
+    "tiny-typed-emitter": "^2.0.3",
     "typeorm": "^0.2.34",
     "vuetify": "^2.5.6"
   }

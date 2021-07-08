@@ -1,7 +1,7 @@
 <template>
   <component
-    v-if="$store.state.isUILoaded && type"
     :is="type.value"
+    v-if="$store.state.isUILoaded && type"
     :opts="type.opts"
   />
 </template>
@@ -26,11 +26,11 @@ export default defineComponent({
     emotes:        () => import('./emotes.vue'),
     emotescombo:   () => import('./emotescombo.vue'),
     eventlist:     () => import('./eventlist.vue'),
-    obswebsocket:  () => import('./obswebsocket.vue'),
     polls:         () => import('./polls.vue'),
-    randomizer:    () => import('./randomizer.vue'),*/
+    randomizer:    () => import('./randomizer.vue'), */
+    obswebsocket: defineAsyncComponent(() => import('~/components/obswebsocket.vue')),
     stats:        defineAsyncComponent(() => import('~/components/stats.vue')),
-    tts: defineAsyncComponent(() => import('~/components/tts.vue')),
+    tts:          defineAsyncComponent(() => import('~/components/tts.vue')),
   },
   setup () {
     const { $axios } = useContext();

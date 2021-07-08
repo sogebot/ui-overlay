@@ -5,7 +5,7 @@ export default {
 
   server: { port: 3002 },
 
-  env: { isNuxtDev: process.env.NODE_ENV === 'development' },
+  env: { isNuxtDev: process.env.NODE_ENV === 'development', BUILD: 'web' },
 
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {

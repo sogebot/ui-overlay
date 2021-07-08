@@ -24,7 +24,7 @@
 
 <script lang="ts">
 import {
-  defineComponent, onMounted, ref, useContext, useStore,
+  defineComponent, onMounted, ref, useStore,
 } from '@nuxtjs/composition-api';
 import { getSocket } from '@sogebot/ui-helpers/socket';
 import translate from '@sogebot/ui-helpers/translate';
