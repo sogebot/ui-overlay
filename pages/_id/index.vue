@@ -25,8 +25,8 @@ export default defineComponent({
     emotes:        () => import('./emotes.vue'),
     emotescombo:   () => import('./emotescombo.vue'),
     eventlist:     () => import('./eventlist.vue'),
-    polls:         () => import('./polls.vue'),
     randomizer:    () => import('./randomizer.vue'), */
+    polls:        defineAsyncComponent(() => import('~/components/polls.vue')),
     bets:         defineAsyncComponent(() => import('~/components/bets.vue')),
     obswebsocket: defineAsyncComponent(() => import('~/components/obswebsocket.vue')),
     stats:        defineAsyncComponent(() => import('~/components/stats.vue')),
