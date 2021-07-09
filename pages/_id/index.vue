@@ -18,7 +18,6 @@ export default defineComponent({
   middleware: ['isBotStarted'],
   components: {
     /* alerts:        () => import('./alerts.vue'),
-    bets:          () => import('./bets.vue'),
     carousel:      () => import('./carousel.vue'),
     clips:         () => import('./clips.vue'),
     clipscarousel: () => import('./clipscarousel.vue'),
@@ -28,6 +27,7 @@ export default defineComponent({
     eventlist:     () => import('./eventlist.vue'),
     polls:         () => import('./polls.vue'),
     randomizer:    () => import('./randomizer.vue'), */
+    bets:         defineAsyncComponent(() => import('~/components/bets.vue')),
     obswebsocket: defineAsyncComponent(() => import('~/components/obswebsocket.vue')),
     stats:        defineAsyncComponent(() => import('~/components/stats.vue')),
     tts:          defineAsyncComponent(() => import('~/components/tts.vue')),
