@@ -71,7 +71,9 @@ export default defineComponent({
       });
     };
 
-    return { events, display, translate };
+    return {
+      events, display, translate,
+    };
   },
 });
 </script>
