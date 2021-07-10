@@ -19,12 +19,12 @@ export default defineComponent({
   components: {
     /* alerts:        () => import('./alerts.vue'),
     clips:         () => import('./clips.vue'),
-    clipscarousel: () => import('./clipscarousel.vue'),
     credits:       () => import('./credits.vue'),
     emotes:        () => import('./emotes.vue'),
     emotescombo:   () => import('./emotescombo.vue'),
     eventlist:     () => import('./eventlist.vue'),
     randomizer:    () => import('./randomizer.vue'), */
+    clipscarousel:     defineAsyncComponent(() => import('~/components/clipscarousel.vue')),
     carousel:     defineAsyncComponent(() => import('~/components/carousel.vue')),
     polls:        defineAsyncComponent(() => import('~/components/polls.vue')),
     bets:         defineAsyncComponent(() => import('~/components/bets.vue')),
