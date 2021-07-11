@@ -26,6 +26,7 @@ export default defineComponent({
   props: { opts: Object },
   setup (props: Props) {
     onMounted(async () => {
+      console.log('====== OBS WEBSOCKET ======')
       if (props.opts.allowedIPs.length > 0) {
         const currentIP = await getCurrentIP();
         if (props.opts.allowedIPs.includes(currentIP)) {

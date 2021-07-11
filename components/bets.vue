@@ -63,6 +63,7 @@ export default defineComponent({
     });
 
     onMounted(() => {
+      console.log('====== BETS ======')
       refresh();
     });
 

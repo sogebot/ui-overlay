@@ -18,6 +18,7 @@ export default defineComponent({
     const { $axios } = useContext();
 
     onMounted(() => {
+      console.log('====== CAROUSEL ======')
       $axios.get(location.origin + '/api/v1/carousel').then((response) => {
         images.value = response.data.data;
         setInterval(() => {

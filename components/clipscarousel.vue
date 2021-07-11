@@ -60,6 +60,7 @@ export default defineComponent({
     };
 
     onMounted(() => {
+      console.log('====== CLIPS CAROUSEL ======')
       getSocket('/overlays/clipscarousel', true).emit('clips', { customPeriod: props.opts?.customPeriod ?? 31, numOfClips: props.opts?.numOfClips ?? 20 }, (err: string | null, data: { clips: any, settings: any }) => {
         if (err) {
           console.error(err);

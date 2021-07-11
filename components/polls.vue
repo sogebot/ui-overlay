@@ -107,6 +107,7 @@ export default defineComponent({
     });
 
     onMounted(() => {
+      console.log('====== POLLS ======');
       refresh();
       setInterval(() => (currentTime.value = Date.now()), 100);
       getSocket('/overlays/polls', true).emit('getVoteCommand', (cmd: string) => (voteCommand.value = cmd));
