@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.5](https://github.com/sogebot/ui-overlay/compare/v0.0.4...v0.0.5) (2021-07-12)
+
+
+### Bug Fixes
+
+* **randomizer:** use location.origin instead of href ([d878ee3](https://github.com/sogebot/ui-overlay/commit/d878ee3c428905c567f3e680179a1d4f84b68239))
+
 ### [0.0.4](https://github.com/sogebot/ui-overlay/compare/v0.0.3...v0.0.4) (2021-07-12)
 
 
