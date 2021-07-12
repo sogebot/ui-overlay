@@ -101,7 +101,7 @@ export default defineComponent({
     };
 
     onMounted(() => {
-      console.log('====== TTS ======')
+      console.log('====== TTS ======');
       checkResponsiveVoiceAPIKey();
       getSocket('/overlays/texttospeech', true).on('speak', (data: { text: string; highlight: boolean }) => {
         console.debug('Incoming speak', data);

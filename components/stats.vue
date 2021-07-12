@@ -47,7 +47,7 @@ export default defineComponent({
     const interval: any[] = [];
 
     onMounted(() => {
-      console.log('====== STATS ======')
+      console.log('====== STATS ======');
       refresh();
       interval.push(setInterval(() => refresh(), 1000));
     });

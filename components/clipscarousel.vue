@@ -60,7 +60,7 @@ export default defineComponent({
     };
 
     onMounted(() => {
-      console.log('====== CLIPS CAROUSEL ======')
+      console.log('====== CLIPS CAROUSEL ======');
       getSocket('/overlays/clipscarousel', true).emit('clips', { customPeriod: props.opts?.customPeriod ?? 31, numOfClips: props.opts?.numOfClips ?? 20 }, (err: string | null, data: { clips: any, settings: any }) => {
         if (err) {
           console.error(err);
@@ -71,7 +71,7 @@ export default defineComponent({
           .sort((a: any, b: any) => a.sort - b.sort)
           .map((a: any) => a.value);
 
-        console.log(data.clips, props.opts)
+        console.log(data.clips, props.opts);
 
         if (data.clips.length < 2) {
           return console.error('At least 2 clips are needed');

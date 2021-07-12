@@ -27,7 +27,7 @@ import JsonViewer from 'vue-json-viewer';
 
 export default defineComponent({
   components: { JsonViewer },
-  props: { opts: Object },
+  props:      { opts: Object },
   setup (props) {
     const isDebug = !!(new URL(location.href)).searchParams.get('debug');
     const threshold = ref(props.opts?.showEmoteInOverlayThreshold ?? 3);
@@ -42,7 +42,7 @@ export default defineComponent({
     }, 1000);
 
     onMounted(() => {
-      console.log('====== EMOTES COMBO ======')
+      console.log('====== EMOTES COMBO ======');
       getSocket('/core/emotes', true).on('combo', (opts: { count: number; url: string }) => {
         console.groupCollapsed('combo update received');
         console.log({ ...opts });

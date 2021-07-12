@@ -15,7 +15,7 @@ import {
 import { getSocket } from '@sogebot/ui-helpers/socket';
 import gsap from 'gsap';
 import {
-  every, random, sample, defaults,
+  defaults, every, random, sample,
 } from 'lodash';
 
 export default defineComponent({

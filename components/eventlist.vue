@@ -40,7 +40,7 @@ export default defineComponent({
     const store = useStore<any>();
 
     onMounted(() => {
-      console.log('====== EVENTLIST ======')
+      console.log('====== EVENTLIST ======');
       setTimeout(() => refresh(), 1000);
     });
 
