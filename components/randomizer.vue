@@ -201,7 +201,7 @@ export default defineComponent({ // enable useMeta
             if (shouldReinitWof && _data.type === 'wheelOfFortune') {
               function playSound () {
                 if (_data.shouldPlayTick) {
-                  const audio = new Audio(`${location.href}/_static/click_wheel.mp3`);
+                  const audio = new Audio(`${location.origin}/_static/click_wheel.mp3`);
                   audio.volume = _data.tickVolume / 100;
                   audio.play();
                 }
