@@ -102,6 +102,7 @@ export default defineComponent({
     const alerts = ref([] as any[]);
 
     onMounted(() => {
+      console.log('====== ALERTS ======');
       if (options.value.galleryCache) {
         console.log(`Gallery cache enabled (${options.value.galleryCacheLimitInMb}Mb)`);
         getSocket('/overlays/alerts', true).emit('cache', options.value.galleryCacheLimitInMb, async (err: string | null, data: any) => {
