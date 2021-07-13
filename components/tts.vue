@@ -7,6 +7,7 @@ import {
   defineComponent, onMounted, ref, useMeta,
 } from '@nuxtjs/composition-api';
 import { getSocket } from '@sogebot/ui-helpers/socket';
+import { defaults } from 'lodash';
 
 declare global {
   interface Window {
@@ -20,13 +21,14 @@ export default defineComponent({
   head:  {}, // enable useMeta
   props: { opts: Object },
   setup (props) {
-    const options = ref(props.opts ?? {
-      voice:                          'UK English Female',
-      volume:                         50,
-      rate:                           1,
-      pitch:                          1,
-      triggerTTSByHighlightedMessage: false,
-    });
+    const options = ref(
+      defaults(props.opts, {
+        voice:                          'UK English Female',
+        volume:                         50,
+        rate:                           1,
+        pitch:                          1,
+        triggerTTSByHighlightedMessage: false,
+      }));
     const enabled = ref(false);
     const responsiveAPIKey = ref(null as string | null);
 

@@ -1,9 +1,13 @@
 <template>
-  <component
-    :is="type.value"
-    v-if="$store.state.isUILoaded && type"
-    :opts="type.opts"
-  />
+  <v-app>
+    <v-main>
+      <component
+        :is="type.value"
+        v-if="$store.state.isUILoaded && type"
+        :opts="type.opts"
+      />
+    </v-main>
+  </v-app>
 </template>
 
 <script lang="ts">
