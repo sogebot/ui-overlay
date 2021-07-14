@@ -28,15 +28,18 @@
     "preserveUnused": true
   },
   "dependencies": {
-    "winwheel": "git+https://git@github.com/sogehige/javascript-winwheel.git",
     "@nuxtjs/axios": "^5.13.6",
-    "@sogebot/ui-helpers": "^2.3.3",
+    "@sogebot/ui-helpers": "^2.4.0",
+    "animate.css": "^4.1.1",
     "core-js": "^3.15.2",
     "gsap": "^3.7.0",
     "nuxt": "^2.15.7",
     "obs-websocket-js": "^4.0.2",
     "safe-eval": "^0.4.1",
-    "vue-json-viewer": "^2.2.19"
+    "url-regex": "^5.0.0",
+    "v-runtime-template": "^1.10.0",
+    "vue-json-viewer": "^2.2.19",
+    "winwheel": "git+https://git@github.com/sogehige/javascript-winwheel.git"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.14.7",

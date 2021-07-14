@@ -28,7 +28,8 @@
             }"
           >
             <template #default="{ }">
-              <v-row no-gutters
+              <v-row
+                no-gutters
                 :style="{
                   'position': 'absolute',
                   'width': '100%',
@@ -93,7 +94,8 @@
               }"
             >
               <template #default="{ }">
-                <v-row no-gutters
+                <v-row
+                  no-gutters
                   :style="{
                     'position': 'absolute',
                     'width': '100%',
@@ -102,7 +104,7 @@
                     'text-shadow': [textStrokeGenerator(goal.customizationFont.borderPx, goal.customizationFont.borderColor), shadowGenerator(goal.customizationFont.shadow)].filter(Boolean).join(', ')
                   }"
                 >
-                  <v-col cols="12" class="text-center" v-if="$store.state.configuration">
+                  <v-col v-if="$store.state.configuration" cols="12" class="text-center">
                     <template v-if="goal.type === 'tips'">
                       {{ Intl.NumberFormat($store.state.configuration.lang, { style: 'currency', currency: $store.state.configuration.currency }).format(goal.currentAmount) }}
                       ({{ Intl.NumberFormat($store.state.configuration.lang, { style: 'percent' }).format(goal.currentAmount / goal.goalAmount) }})
@@ -115,7 +117,8 @@
               </template>
             </v-progress-linear>
 
-            <v-row no-gutters
+            <v-row
+              no-gutters
               :style="{
                 'position': 'absolute',
                 'width': '100%',
@@ -132,8 +135,9 @@
                   0
                 </template>
               </v-col>
-              <v-col cols="auto"
+              <v-col
                 v-if="!goal.endAfterIgnore"
+                cols="auto"
                 class="text-truncate text-center text-uppercase pl-2 pr-2"
               >
                 {{ dayjs().to(goal.endAfter) }}
@@ -161,12 +165,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, useContext } from '@nuxtjs/composition-api';
+import {
+  defineComponent, nextTick,
+  onMounted, ref, useContext,
+} from '@nuxtjs/composition-api';
 import { dayjs } from '@sogebot/ui-helpers/dayjsHelper';
 import { shadowGenerator, textStrokeGenerator } from '@sogebot/ui-helpers/text';
-import {
-  nextTick, onMounted, ref,
-} from '@vue/composition-api';
 import gsap from 'gsap';
 import { find } from 'lodash';
 import safeEval from 'safe-eval';
