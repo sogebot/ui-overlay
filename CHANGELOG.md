@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.6](https://github.com/sogebot/ui-overlay/compare/v0.0.5...v0.0.6) (2021-07-15)
+
+
+### Features
+
+* add alerts registry overlay ([975aa0c](https://github.com/sogebot/ui-overlay/commit/975aa0c612eb445a46e9ca4a306303341162dd18))
+* add clips overlay ([c2a5649](https://github.com/sogebot/ui-overlay/commit/c2a56491e9779a955fd0f280ef34686c908df969))
+* add credits overlay ([7583102](https://github.com/sogebot/ui-overlay/commit/7583102afb30de08c879f8de5440da367a0e598f))
+* add goals overlay ([2aeb642](https://github.com/sogebot/ui-overlay/commit/2aeb642603235e383c3054588269b0cf89b40aa5))
+
+
+### Bug Fixes
+
+* **deps:** bump actions/cache from 2.1.4 to 2.1.6 ([#2](https://github.com/sogebot/ui-overlay/issues/2)) ([5f45fc0](https://github.com/sogebot/ui-overlay/commit/5f45fc0efc8ed8bef2b0d554edcdaec725e1f5dd))
+* **deps:** bump actions/setup-node from 2.1.5 to 2.2.0 ([#1](https://github.com/sogebot/ui-overlay/issues/1)) ([383b24d](https://github.com/sogebot/ui-overlay/commit/383b24dbcd213b2a1bbea8ccd8ea2290a2a3bbbc))
+
 ### [0.0.5](https://github.com/sogebot/ui-overlay/compare/v0.0.4...v0.0.5) (2021-07-12)
 
 
