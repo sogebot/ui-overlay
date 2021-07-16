@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.8](https://github.com/sogebot/ui-overlay/compare/v0.0.7...v0.0.8) (2021-07-16)
+
+
+### Bug Fixes
+
+* **colors:** overlay background must be transparent ([00f2a76](https://github.com/sogebot/ui-overlay/commit/00f2a76adaca1165466b7fb812d432bff51a84a3))
+* **deps:** bump gsap from 3.7.0 to 3.7.1 ([#4](https://github.com/sogebot/ui-overlay/issues/4)) ([1daecf1](https://github.com/sogebot/ui-overlay/commit/1daecf100ae5eb70cea482106fcb008ef1e9b2d8))
+
 ### [0.0.7](https://github.com/sogebot/ui-overlay/compare/v0.0.6...v0.0.7) (2021-07-16)
 
 
