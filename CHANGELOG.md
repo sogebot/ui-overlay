@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.7](https://github.com/sogebot/ui-overlay/compare/v0.0.6...v0.0.7) (2021-07-16)
+
+
+### Bug Fixes
+
+* **eventlist:** set proper default theme values ([96d124a](https://github.com/sogebot/ui-overlay/commit/96d124a2f6c584f28bad929a8e73b84ba65c725e))
+
 ### [0.0.6](https://github.com/sogebot/ui-overlay/compare/v0.0.5...v0.0.6) (2021-07-15)
 
 
