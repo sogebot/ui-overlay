@@ -1,3 +1,8 @@
+import fs from 'fs';
+
+const packageJson = fs.readFileSync('./package.json');
+const version = JSON.parse(packageJson).version || 0;
+
 export default {
   // Target: https://go.nuxtjs.dev/config-target
   target: 'static',
@@ -5,7 +10,9 @@ export default {
 
   server: { port: 3002 },
 
-  env: { isNuxtDev: process.env.NODE_ENV === 'development', BUILD: 'web' },
+  env: {
+    isNuxtDev: process.env.NODE_ENV === 'development', BUILD: 'web', version,
+  },
 
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
@@ -36,6 +43,7 @@ export default {
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
+    { src: '@/plugins/log-version.js', ssr: false },
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
