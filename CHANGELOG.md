@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.10](https://github.com/sogebot/ui-overlay/compare/v0.0.9...v0.0.10) (2021-07-16)
+
+
+### Bug Fixes
+
+* **css:** html tag overflow should be forced ([f157302](https://github.com/sogebot/ui-overlay/commit/f1573020006a0cb2bcabfe9a9ce6773b7d0b020b))
+* **text:** wait for proper ui load ([795fefa](https://github.com/sogebot/ui-overlay/commit/795fefa4340a6b40990d8d0df1e104c2f0aa0a57))
+
 ### [0.0.9](https://github.com/sogebot/ui-overlay/compare/v0.0.8...v0.0.9) (2021-07-16)
 
 
