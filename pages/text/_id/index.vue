@@ -7,7 +7,7 @@
 </template>
 
 <script lang="ts">
-import { useRoute } from '@nuxtjs/composition-api';
+import { useRoute, useStore } from '@nuxtjs/composition-api';
 import { getSocket } from '@sogebot/ui-helpers/socket';
 import {
   defineComponent, nextTick, onMounted, ref, watch,
@@ -24,6 +24,7 @@ export default defineComponent({
     const css = ref(null as any);
     const external = ref(false);
     const route = useRoute();
+    const store = useStore<any>();
 
     const onChange = () => {
       if (js.value) {
@@ -105,7 +106,17 @@ export default defineComponent({
       head.appendChild(style);
     });
 
-    watch(js, (val: string) => {
+    watch(js, async (val: string) => {
+      await new Promise((resolve) => {
+        (function check () {
+          if (store.state.isUILoaded) {
+            resolve(true);
+          } else {
+            setTimeout(() => check(), 10);
+          }
+        })();
+      });
+      console.log();
       console.group('onLoad()');
       console.log(val);
       console.groupEnd();
