@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.12](https://github.com/sogebot/ui-overlay/compare/v0.0.11...v0.0.12) (2021-07-16)
+
+
+### Features
+
+* log current version in console ([0ef9652](https://github.com/sogebot/ui-overlay/commit/0ef965232ab9054ab22ac019d8e7e643f903c115))
+
 ### [0.0.11](https://github.com/sogebot/ui-overlay/compare/v0.0.10...v0.0.11) (2021-07-16)
 
 
