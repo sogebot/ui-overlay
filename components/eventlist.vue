@@ -82,12 +82,11 @@ export default defineComponent({
 <style>
   @import url('https://fonts.googleapis.com/css?family=BenchNine');
 
-  html, body {
-    padding: 2px;
-    padding-top: 10px;
-    margin: auto;
-    font-family: 'BenchNine', sans-serif;
-    color: white;
+  .v-main {
+    padding: 2px !important;
+    padding-top: 10px !important;
+    font-family: 'BenchNine', sans-serif !important;
+    color: white !important;
   }
 
   ul {
