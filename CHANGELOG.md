@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.11](https://github.com/sogebot/ui-overlay/compare/v0.0.10...v0.0.11) (2021-07-16)
+
+
+### Bug Fixes
+
+* **alerts:** pass missing props in prod mode to advanced mode ([8810776](https://github.com/sogebot/ui-overlay/commit/881077640feb2cef8621a171840ac73b03c8a888))
+
 ### [0.0.10](https://github.com/sogebot/ui-overlay/compare/v0.0.9...v0.0.10) (2021-07-16)
 
 
