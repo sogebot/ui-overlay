@@ -194,6 +194,7 @@
           <v-runtime-template
             v-else
             :template="preparedAdvancedHTML"
+            :template-props="{runningAlert, shouldAnimate, textStrokeGenerator, shadowGenerator, prepareMessageTemplate, withEmotes}"
           />
         </div>
       </div>
