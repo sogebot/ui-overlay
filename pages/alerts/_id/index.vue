@@ -406,7 +406,7 @@ export default defineComponent({
           }
 
           const audio = document.getElementById('audio') as null | HTMLMediaElement;
-          if (runningAlert.value.waitingForTTS && (typeOfMedia.get(runningAlert.value.alert.soundId) === null || (audio && audio.ended))) {
+          if (runningAlert.value.message && runningAlert.value.waitingForTTS && (typeOfMedia.get(runningAlert.value.alert.soundId) === null || (audio && audio.ended))) {
             let message = runningAlert.value.message;
             if (runningAlert.value.alert.tts.skipUrls) {
               for (const match of message.match(urlRegex({ strict: false })) ?? []) {
@@ -424,8 +424,8 @@ export default defineComponent({
             } else {
               console.log('TTS is muted.');
             }
-            runningAlert.value.waitingForTTS = false;
           }
+          runningAlert.value.waitingForTTS = false;
 
           if (runningAlert.value.showAt <= Date.now() && !runningAlert.value.soundPlayed) {
             console.debug('playing audio');
