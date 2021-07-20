@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.14](https://github.com/sogebot/ui-overlay/compare/v0.0.13...v0.0.14) (2021-07-20)
+
+
+### Bug Fixes
+
+* **eventlist:** show reward title in list ([4b5c145](https://github.com/sogebot/ui-overlay/commit/4b5c145df80ea76999d86e37c76bb0f770f49c2e))
+
 ### [0.0.13](https://github.com/sogebot/ui-overlay/compare/v0.0.12...v0.0.13) (2021-07-20)
 
 
