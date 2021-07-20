@@ -64,6 +64,8 @@ export default defineComponent({
             return { ...o, summary: values.bits + ' ' + translate('overlays-eventlist-cheer') };
           } else if (o.event === 'tip') {
             return { ...o, summary: Intl.NumberFormat(store.state.configuration.lang, { style: 'currency', currency: values.currency }).format(values.amount) };
+          } else if (o.event === 'rewardredeem') {
+            return { ...o, summary: values.titleOfReward };
           } else {
             return { ...o, summary: translate('overlays-eventlist-' + o.event) };
           }
