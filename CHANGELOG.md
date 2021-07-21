@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.15](https://github.com/sogebot/ui-overlay/compare/v0.0.14...v0.0.15) (2021-07-21)
+
+
+### Features
+
+* **eventlist:** add support for settings ([ae94e01](https://github.com/sogebot/ui-overlay/commit/ae94e019132c763c3804b466deeae1f502a5b08b))
+
 ### [0.0.14](https://github.com/sogebot/ui-overlay/compare/v0.0.13...v0.0.14) (2021-07-20)
 
 
