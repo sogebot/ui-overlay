@@ -6,7 +6,7 @@
       class="event"
       :class="[event.type]"
     >
-      <template v-for="type of display">
+      <template v-for="type of options.display">
         <strong
           v-if="type === 'username'"
           :key="type"
@@ -28,16 +28,22 @@ import {
 } from '@nuxtjs/composition-api';
 import { getSocket } from '@sogebot/ui-helpers/socket';
 import translate from '@sogebot/ui-helpers/translate';
-import { orderBy } from 'lodash';
+import { defaults, orderBy } from 'lodash';
 
 import { EventListInterface } from '~/.bot/src/bot/database/entity/eventList';
 
 export default defineComponent({
-  setup () {
+  props: { opts: Object },
+  setup (props) {
     const events = ref([] as any[]);
-    const display = ref(['username', 'event']);
-    const url = new URL(location.href);
     const store = useStore<any>();
+    const options = ref(
+      defaults(props.opts, {
+        display: ['username', 'event'],
+        ignore:  [],
+        count:   5,
+        order:   'desc' as 'asc' | 'desc',
+      }));
 
     onMounted(() => {
       console.log('====== EVENTLIST ======');
@@ -46,17 +52,14 @@ export default defineComponent({
 
     const refresh = () => {
       getSocket('/overlays/eventlist', true).emit('getEvents', {
-        ignore: url.searchParams.get('ignore') || '',
-        limit:  Number(url.searchParams.get('count') || 5),
+        ignore: options.value.ignore,
+        limit:  options.value.count,
       }, (err: string | null, data: EventListInterface[]) => {
         if (err) {
           return console.error(err);
         }
-        const order = (url.searchParams.get('order') as 'desc' | 'asc') || 'desc';
-        display.value = url.searchParams.get('display')?.split(',') || 'username,event'.split(',');
 
-        console.debug({ order, display: display.value });
-        events.value = orderBy(data, 'timestamp', order).map((o) => {
+        events.value = orderBy(data, 'timestamp', options.value.order).map((o) => {
           const values = JSON.parse(o.values_json);
           if (o.event === 'resub') {
             return { ...o, summary: values.subCumulativeMonths + 'x ' + translate('overlays-eventlist-resub') };
@@ -75,7 +78,7 @@ export default defineComponent({
     };
 
     return {
-      events, display, translate,
+      events, translate, options,
     };
   },
 });
