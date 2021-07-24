@@ -873,20 +873,21 @@ export default defineComponent({
                           typeOfMedia.set(event.imageId, myBlob.type.startsWith('video') ? 'video' : 'image');
 
                           const getMeta = (mediaId: string, type: 'Video' | 'Image') => {
+                            console.log({type})
                             if (type === 'Video') {
                               const vid = document.createElement('video');
                               vid.addEventListener('loadedmetadata', (ev) => {
                                 const el = ev.target as HTMLVideoElement;
                                 sizeOfMedia.set(mediaId, [el.videoWidth, el.videoHeight]);
                               });
-                              vid.src = `/registry/alerts/${mediaId}`;
+                              vid.src = `/api/v1/registry/alerts/media/${mediaId}`;
                             } else {
                               const img = new Image();
                               img.addEventListener('load', (ev) => {
                                 const el = ev.target as HTMLImageElement;
                                 sizeOfMedia.set(mediaId, [el.naturalWidth, el.naturalHeight]);
                               });
-                              img.src = `/registry/alerts/${mediaId}`;
+                              img.src = `/api/v1/registry/alerts/media/${mediaId}`;
                             }
                           };
                           getMeta(event.imageId, myBlob.type.startsWith('video') ? 'Video' : 'Image');
