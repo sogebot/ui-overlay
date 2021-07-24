@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.17](https://github.com/sogebot/ui-overlay/compare/v0.0.16...v0.0.17) (2021-07-24)
+
+
+### Bug Fixes
+
+* **alerts:** properly load image/video dimensions ([3f27da6](https://github.com/sogebot/ui-overlay/commit/3f27da6518f6a764a0cb3f9cf924ab6f38b03e21))
+
 ### [0.0.16](https://github.com/sogebot/ui-overlay/compare/v0.0.15...v0.0.16) (2021-07-23)
 
 ### [0.0.15](https://github.com/sogebot/ui-overlay/compare/v0.0.14...v0.0.15) (2021-07-21)
