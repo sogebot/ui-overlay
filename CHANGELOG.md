@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.18](https://github.com/sogebot/ui-overlay/compare/v0.0.17...v0.0.18) (2021-07-25)
+
+
+### Bug Fixes
+
+* **alerts:** add showImage to props ([74ce0d6](https://github.com/sogebot/ui-overlay/commit/74ce0d6a7e0f02ef5a1a741f0002e1172a55e6ac))
+
 ### [0.0.17](https://github.com/sogebot/ui-overlay/compare/v0.0.16...v0.0.17) (2021-07-24)
 
 
