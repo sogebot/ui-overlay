@@ -34,6 +34,7 @@
                   'position': 'absolute',
                   'width': '100%',
                   'color': goal.customizationFont.color,
+                  'font-family': goal.customizationFont.family,
                   'font-weight': goal.customizationFont.weight,
                   'font-size': goal.customizationFont.size + 'px',
                   'text-shadow': [textStrokeGenerator(goal.customizationFont.borderPx, goal.customizationFont.borderColor), shadowGenerator(goal.customizationFont.shadow)].filter(Boolean).join(', ')
@@ -67,6 +68,7 @@
             style="width: 100%"
             :style="{
               'padding-top': index !== 0 && group.goals.length > 0 && group.display.type === 'multi' ? group.display.spaceBetweenGoalsInPx + 'px' : '0px',
+              'font-family': goal.customizationFont.family,
             }"
           >
             <div
@@ -185,6 +187,7 @@ export default defineComponent({
     const show = ref(-1);
     const group = ref(null as GoalGroupInterface | null);
     const loadedFonts = ref([] as string[]);
+    const loadedCSS = ref([] as string[]);
     const lastSwapTime = ref(Date.now());
     const triggerUpdate = ref([] as string[]);
     const cssLoaded = ref([] as string[]);
@@ -277,6 +280,7 @@ export default defineComponent({
 
             if (group.value) {
               for (const goal of group.value.goals) {
+                console.log(goal)
                 if (!bgColors.includes(goal.customizationBar.backgroundColor)) {
                   bgColors.push(goal.customizationBar.backgroundColor);
                   // create css background colors
@@ -325,8 +329,8 @@ export default defineComponent({
                   const head = document.getElementsByTagName('head')[0];
                   const style = document.createElement('style');
                   style.type = 'text/css';
-                  if (!loadedFonts.value.includes(goal.customizationCss)) {
-                    loadedFonts.value.push(goal.customizationCss);
+                  if (!loadedCSS.value.includes(goal.customizationCss)) {
+                    loadedCSS.value.push(goal.customizationCss);
                     const css = goal.customizationCss
                       .replace(/#wrap/g, '#wrap-' + goal.id); // replace .wrap with only this goal wrap
                     style.appendChild(document.createTextNode(css));
@@ -342,6 +346,7 @@ export default defineComponent({
 
               for (const goal of group.value.goals) {
                 if (!loadedFonts.value.includes(goal.customizationFont.family)) {
+                  console.debug('Loading font', goal.customizationFont.family);
                   loadedFonts.value.push(goal.customizationFont.family);
                   const font = goal.customizationFont.family.replace(/ /g, '+');
                   const css = '@import url(\'https://fonts.googleapis.com/css?family=' + font + '\');';
