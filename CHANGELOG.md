@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.19](https://github.com/sogebot/ui-overlay/compare/v0.0.18...v0.0.19) (2021-07-26)
+
+
+### Bug Fixes
+
+* **goals:** apply correct font on full mode ([fbddbef](https://github.com/sogebot/ui-overlay/commit/fbddbef01467c4b18e70fa4a4cce93ec02c84851))
+
 ### [0.0.18](https://github.com/sogebot/ui-overlay/compare/v0.0.17...v0.0.18) (2021-07-25)
 
 
