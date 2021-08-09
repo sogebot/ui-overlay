@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.20](https://github.com/sogebot/ui-overlay/compare/v0.0.19...v0.0.20) (2021-08-09)
+
+
+### Bug Fixes
+
+* **deps:** bump @sogebot/ui-helpers from 2.4.0 to 2.4.1 ([#12](https://github.com/sogebot/ui-overlay/issues/12)) ([6e4808c](https://github.com/sogebot/ui-overlay/commit/6e4808c1b89adced776e19c8887f71cf518ca392))
+* **deps:** bump actions/setup-node from 2.2.0 to 2.3.0 ([#7](https://github.com/sogebot/ui-overlay/issues/7)) ([4f6a5d1](https://github.com/sogebot/ui-overlay/commit/4f6a5d13a2dd513977e215653b844cc272883322))
+* update dependencies ([a14a9e2](https://github.com/sogebot/ui-overlay/commit/a14a9e23ebb2f097cf595652625252b1f0f3ccc5))
+
 ### [0.0.19](https://github.com/sogebot/ui-overlay/compare/v0.0.18...v0.0.19) (2021-07-26)
 
 
