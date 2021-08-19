@@ -9,6 +9,7 @@
   "scripts": {
     "postinstall": "patch-package || true",
     "release": "standard-version && git push --follow-tags origin main",
+    "release:major": "standard-version -r major && git push --follow-tags origin main",
     "prepublishOnly": "npm run generate",
     "dev": "nuxt",
     "build": "nuxt build",
