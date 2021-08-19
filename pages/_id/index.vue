@@ -12,12 +12,16 @@
 
 <script lang="ts">
 import {
+  defineAsyncComponent,
   defineComponent, onMounted, ref, useContext, useRoute,
 } from '@nuxtjs/composition-api';
 
 import type { OverlayMapperInterface, OverlayMapperOBSWebsocket } from '~/.bot/src/bot/database/entity/overlay';
 
 export default defineComponent({
+  components: {
+    textRegistry: () => import('~/pages/text/_id/index.vue'),
+  },
   middleware: ['isBotStarted'],
   setup () {
     const { $axios } = useContext();
