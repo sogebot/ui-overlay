@@ -1,6 +1,6 @@
 <template>
-  <v-app>
-    <v-main>
+  <v-app style="padding: 0; margin: 0;">
+    <v-main style="padding: 0; margin: 0;">
       <component
         :is="type.value"
         v-if="$store.state.isUILoaded && type"

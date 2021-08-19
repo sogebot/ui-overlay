@@ -1,25 +1,27 @@
 <template>
-  <ul>
-    <li
-      v-for="event of events"
-      :key="event._id"
-      class="event"
-      :class="[event.type]"
-    >
-      <template v-for="type of options.display">
-        <strong
-          v-if="type === 'username'"
-          :key="type"
-          class="username"
-        >{{ event.username }}</strong>
-        <span
-          v-else
-          :key="type"
-          class="event"
-        >{{ event.summary }}</span>
-      </template>
-    </li>
-  </ul>
+  <div class="eventlist-main">
+    <ul>
+      <li
+        v-for="event of events"
+        :key="event._id"
+        class="event"
+        :class="[event.type]"
+      >
+        <template v-for="type of options.display">
+          <strong
+            v-if="type === 'username'"
+            :key="type"
+            class="username"
+          >{{ event.username }}</strong>
+          <span
+            v-else
+            :key="type"
+            class="event"
+          >{{ event.summary }}</span>
+        </template>
+      </li>
+    </ul>
+  </div>
 </template>
 
 <script lang="ts">
@@ -86,8 +88,7 @@ export default defineComponent({
 
 <style>
   @import url('https://fonts.googleapis.com/css?family=BenchNine');
-
-  .v-main {
+  .eventlist-main {
     padding: 2px !important;
     padding-top: 10px !important;
     font-family: 'BenchNine', sans-serif !important;
