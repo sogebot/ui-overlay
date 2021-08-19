@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.0.0](https://github.com/sogebot/ui-overlay/compare/v0.0.20...v1.0.0) (2021-08-19)
+
+
+### Features
+
+* **overlays:** add overlay grouping support ([2f8a859](https://github.com/sogebot/ui-overlay/commit/2f8a859465890fd42fb4d5690eb947fe47887085))
+
+
+### Bug Fixes
+
+* **deps:** bump actions/setup-node from 2.3.0 to 2.4.0 ([#30](https://github.com/sogebot/ui-overlay/issues/30)) ([79885fb](https://github.com/sogebot/ui-overlay/commit/79885fbdf417606e354ab3cdf38569c6f219adfd))
+
 ### [0.0.20](https://github.com/sogebot/ui-overlay/compare/v0.0.19...v0.0.20) (2021-08-09)
 
 
