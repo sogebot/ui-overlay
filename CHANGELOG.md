@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.1](https://github.com/sogebot/ui-overlay/compare/v1.1.0...v1.1.1) (2021-08-20)
+
+
+### Bug Fixes
+
+* **emotescombo:** set correct socket endpoint ([611407b](https://github.com/sogebot/ui-overlay/commit/611407bb2d227300f8d56e91f274a62397b92b15))
+
 ## [1.1.0](https://github.com/sogebot/ui-overlay/compare/v1.0.0...v1.1.0) (2021-08-19)
 
 
