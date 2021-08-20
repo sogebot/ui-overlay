@@ -43,7 +43,7 @@ export default defineComponent({
 
     onMounted(() => {
       console.log('====== EMOTES COMBO ======');
-      getSocket('/core/emotes', true).on('combo', (opts: { count: number; url: string }) => {
+      getSocket('/systems/emotescombo', true).on('combo', (opts: { count: number; url: string }) => {
         console.groupCollapsed('combo update received');
         console.log({ ...opts });
         console.groupEnd();
