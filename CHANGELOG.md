@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0](https://github.com/sogebot/ui-overlay/compare/v1.1.1...v2.0.0) (2021-08-26)
+
+
+### Features
+
+* **overlays:** add hypetrain ([#42](https://github.com/sogebot/ui-overlay/issues/42)) ([8c275d8](https://github.com/sogebot/ui-overlay/commit/8c275d8809cc7b479678b85133e9a05d10bf525a))
+
+
+### Bug Fixes
+
+* **hypetrain:** remove unnecessary async ([4da1e3d](https://github.com/sogebot/ui-overlay/commit/4da1e3d43b4dba3b2e114cb2a4c79b336c8c786d))
+
 ### [1.1.1](https://github.com/sogebot/ui-overlay/compare/v1.1.0...v1.1.1) (2021-08-20)
 
 
