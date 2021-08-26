@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.0.1](https://github.com/sogebot/ui-overlay/compare/v2.0.0...v2.0.1) (2021-08-26)
+
+
+### Bug Fixes
+
+* **hypetrain:** fix link for train images ([def8d25](https://github.com/sogebot/ui-overlay/commit/def8d25698f2dadb3d8ebf4158fd6c64e47bc7bf))
+* **randomizer:** use npm winwheel version ([ef28c1a](https://github.com/sogebot/ui-overlay/commit/ef28c1a5fc4972ced9384586b8ab1f9cfc239722))
+
 ## [2.0.0](https://github.com/sogebot/ui-overlay/compare/v1.1.1...v2.0.0) (2021-08-26)
 
 
