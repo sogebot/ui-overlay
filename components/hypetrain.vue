@@ -7,7 +7,7 @@
         transform: `translateX(-${left.value}px)`
       }"
     >
-      <v-img src="_static/hypeTrain.png" height="105" width="210" class="d-inline-block shake" />
+      <v-img src="/_static/hypeTrain.png" height="105" width="210" class="d-inline-block shake" />
       <div
         v-for="(couple, idx) of chunk(subs, 2)"
         :key="idx"
@@ -17,7 +17,7 @@
           'animation-delay': `${idx* 0.2}s`
         }"
       >
-        <v-img src="_static/hypeWagon.png" height="105" width="210" class="d-inline-block" />
+        <v-img src="/_static/hypeWagon.png" height="105" width="210" class="d-inline-block" />
         <div
           v-for="(sub, subIdx) of couple"
           :key="sub.username"
