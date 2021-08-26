@@ -1,0 +1,41 @@
+diff --git a/node_modules/@shubhrank/winwheeljs/index.js b/node_modules/@shubhrank/winwheeljs/index.js
+index 8284e9e..888afb5 100644
+--- a/node_modules/@shubhrank/winwheeljs/index.js
++++ b/node_modules/@shubhrank/winwheeljs/index.js
+@@ -1 +1 @@
+-module.exports = require('./lib/Winwheel');
++module.exports = require('./lib/Winwheel').default;
+diff --git a/node_modules/@shubhrank/winwheeljs/lib/Winwheel.js b/node_modules/@shubhrank/winwheeljs/lib/Winwheel.js
+index 520c07d..2fbd063 100644
+--- a/node_modules/@shubhrank/winwheeljs/lib/Winwheel.js
++++ b/node_modules/@shubhrank/winwheeljs/lib/Winwheel.js
+@@ -29,9 +29,12 @@
+ // The constructor for the WinWheel object, a JSON-like array of options can be passed in.
+ // By default the wheel is drawn if canvas object exists on the page, but can pass false as second parameter if don't want this to happen.
+ // ====================================================================================================================
++
++const gsap = require('gsap').gsap
++
+ function Winwheel(options, drawWheel)
+ {
+-    defaultOptions = {
++    let defaultOptions = {
+         'canvasId'          : 'canvas',     // Id of the canvas which the wheel is to draw on to.
+         'centerX'           : null,         // X position of the center of the wheel. The default of these are null which means will be placed in center of the canvas.
+         'centerY'           : null,         // Y position of the wheel center. If left null at time of construct the center of the canvas is used.
+@@ -1744,7 +1747,7 @@ Winwheel.prototype.startAnimation = function()
+ 
+         // Do the tween animation passing the properties from the animation object as an array of key => value pairs.
+         // Keep reference to the tween object in the wheel as that allows pausing, resuming, and stopping while the animation is still running.
+-        this.tween = TweenMax.to(this, this.animation.duration, properties);
++        this.tween = gsap.to(this, this.animation.duration, properties);
+     }
+ }
+ 
+@@ -2338,3 +2341,5 @@ function winwheelResize()
+     // Now re-draw the wheel to ensure the changes in size are rendered.
+     winwheelToDrawDuringAnimation.draw();
+ }
++
++export default Winwheel;
+\ No newline at end of file

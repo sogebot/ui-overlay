@@ -74,7 +74,7 @@ import {
   cloneDeep, isEqual, orderBy,
 } from 'lodash';
 import JsonViewer from 'vue-json-viewer';
-import Winwheel from 'winwheel';
+import Winwheel from '@shubhrank/winwheeljs';
 
 import type { RandomizerInterface, RandomizerItemInterface } from '~/.bot/src/bot/database/entity/randomizer';
 
