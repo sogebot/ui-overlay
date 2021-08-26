@@ -98,7 +98,7 @@ export default defineComponent({
         subs.value = [];
       });
 
-      getSocket('/core/eventsub', true).on('hypetrain-update', async (data: { level: number, goal: number, total: number, subs: Record<string, string>}) => {
+      getSocket('/core/eventsub', true).on('hypetrain-update', (data: { level: number, goal: number, total: number, subs: Record<string, string>}) => {
         // process subs first
         for (const username of Object.keys(data.subs)) {
           if (!subs.value.find(o => o.username === username)) {
