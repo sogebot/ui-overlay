@@ -473,6 +473,7 @@ export default defineComponent({
                     script,
                     {
                       username:  emitData.name,
+                      name:      emitData.name,
                       amount:    emitData.amount,
                       message:   emitData.message,
                       tier:      tierAsNumber,
