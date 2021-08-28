@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.0.2](https://github.com/sogebot/ui-overlay/compare/v2.0.1...v2.0.2) (2021-08-28)
+
+
+### Bug Fixes
+
+* **alerts:** populate missing name data for filtering ([ddf5815](https://github.com/sogebot/ui-overlay/commit/ddf581593b27a41b9e8b3336a1539f5c86ed7303))
+
 ### [2.0.1](https://github.com/sogebot/ui-overlay/compare/v2.0.0...v2.0.1) (2021-08-26)
 
 
