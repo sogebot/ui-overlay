@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.0.4](https://github.com/sogebot/ui-overlay/compare/v2.0.3...v2.0.4) (2021-08-30)
+
+
+### Bug Fixes
+
+* **alerts:** remove additional log ([9067ff9](https://github.com/sogebot/ui-overlay/commit/9067ff9fe1a762f2a227903802d59305ff475e26))
+* **stats:** size should be set by content ([56683d4](https://github.com/sogebot/ui-overlay/commit/56683d474186562b63f10c4374f7204f78b1c3c7))
+
 ### [2.0.3](https://github.com/sogebot/ui-overlay/compare/v2.0.2...v2.0.3) (2021-08-30)
 
 
