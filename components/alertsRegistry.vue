@@ -427,8 +427,8 @@ export default defineComponent({
             } else {
               console.log('TTS is muted.');
             }
+            runningAlert.value.waitingForTTS = false;
           }
-          runningAlert.value.waitingForTTS = false;
 
           if (runningAlert.value.showAt <= Date.now() && !runningAlert.value.soundPlayed) {
             console.debug('playing audio');
@@ -667,6 +667,7 @@ export default defineComponent({
                 alert,
                 ...emitData,
               };
+              console.log(runningAlert.value.waitingForTTS)
             } else {
               runningAlert.value = null;
             }
