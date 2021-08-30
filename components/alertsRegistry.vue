@@ -667,7 +667,6 @@ export default defineComponent({
                 alert,
                 ...emitData,
               };
-              console.log(runningAlert.value.waitingForTTS)
             } else {
               runningAlert.value = null;
             }
