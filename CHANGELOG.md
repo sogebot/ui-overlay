@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.0.3](https://github.com/sogebot/ui-overlay/compare/v2.0.2...v2.0.3) (2021-08-30)
+
+
+### Bug Fixes
+
+* **alerts:** properly wait for audio to end to trigger TTS ([d7aefa0](https://github.com/sogebot/ui-overlay/commit/d7aefa095df711d09a9f04a89eb546d170273316))
+
 ### [2.0.2](https://github.com/sogebot/ui-overlay/compare/v2.0.1...v2.0.2) (2021-08-28)
 
 
