@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.0.5](https://github.com/sogebot/ui-overlay/compare/v2.0.4...v2.0.5) (2021-09-02)
+
+
+### Bug Fixes
+
+* remove loading bar and indicator ([11bbfe5](https://github.com/sogebot/ui-overlay/commit/11bbfe58ac8e6b932cda0546698dc2ef8c7bb63f))
+
 ### [2.0.4](https://github.com/sogebot/ui-overlay/compare/v2.0.3...v2.0.4) (2021-08-30)
 
 
