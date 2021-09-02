@@ -2,7 +2,7 @@
   <div>
     <component
       :is="item.type"
-      v-for="item of options"
+      v-for="item of options.items"
       :key="item.id"
       :opts="item.opts"
       :style="{
@@ -22,13 +22,21 @@
 import {
   defineComponent, onMounted, ref,
 } from '@nuxtjs/composition-api';
+import { defaultsDeep } from 'lodash';
 
 export default defineComponent({
   props: { opts: [Object, Array] },
   setup (props) {
     const url = new URL(location.href);
     const isDebug = !!url.searchParams.get('groupDebug');
-    const options = ref(Array.isArray(props.opts) ? props.opts : []);
+    const options = ref(
+      defaultsDeep(props.opts, {
+        canvas: {
+          width:  1920,
+          height: 1080,
+        },
+        items: [],
+      }));
 
     onMounted(() => {
       console.log('====== GROUP OF OVERLAYS ======');
