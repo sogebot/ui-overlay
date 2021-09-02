@@ -8,6 +8,10 @@ export default {
   target: 'static',
   ssr:    false,
 
+  // Remove loading bar
+  loading:          false,
+  loadingIndicator: false,
+
   server: { port: 3002 },
 
   env: {
