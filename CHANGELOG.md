@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.1.0](https://github.com/sogebot/ui-overlay/compare/v2.0.6...v2.1.0) (2021-09-03)
+
+
+### Features
+
+* **goals:** add interval support ([0062aef](https://github.com/sogebot/ui-overlay/commit/0062aefdc7166d97d0f303201132b21170b30b0a))
+
 ### [2.0.6](https://github.com/sogebot/ui-overlay/compare/v2.0.5...v2.0.6) (2021-09-02)
 
 
