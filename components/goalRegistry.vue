@@ -44,7 +44,7 @@
                   {{ goal.name }}
                 </v-col>
                 <v-col cols="4" class="text-no-wrap" style="text-align: center;">
-                  <template v-if="goal.type === 'tips'">
+                  <template v-if="['tips', 'intervalTips'].includes(goal.type)">
                     {{ Intl.NumberFormat($store.state.configuration.lang, { style: 'currency', currency: $store.state.configuration.currency }).format(goal.currentAmount) }}
                   </template>
                   <template v-else>
@@ -52,7 +52,7 @@
                   </template>
                 </v-col>
                 <v-col cols="4" class="text-no-wrap pr-2" style="text-align: right;">
-                  <template v-if="goal.type === 'tips'">
+                  <template v-if="['tips', 'intervalTips'].includes(goal.type)">
                     {{ Intl.NumberFormat($store.state.configuration.lang, { style: 'currency', currency: $store.state.configuration.currency }).format(goal.goalAmount) }}
                   </template>
                   <template v-else>
@@ -107,7 +107,7 @@
                   }"
                 >
                   <v-col v-if="$store.state.configuration" cols="12" class="text-center">
-                    <template v-if="goal.type === 'tips'">
+                    <template v-if="['tips', 'intervalTips'].includes(goal.type)">
                       {{ Intl.NumberFormat($store.state.configuration.lang, { style: 'currency', currency: $store.state.configuration.currency }).format(goal.currentAmount) }}
                       ({{ Intl.NumberFormat($store.state.configuration.lang, { style: 'percent' }).format(goal.currentAmount / goal.goalAmount) }})
                     </template>
@@ -130,7 +130,7 @@
               }"
             >
               <v-col class="text-left pl-2">
-                <template v-if="goal.type === 'tips'">
+                <template v-if="['tips', 'intervalTips'].includes(goal.type)">
                   {{ Intl.NumberFormat($store.state.configuration.lang, { style: 'currency', currency: $store.state.configuration.currency }).format(0) }}
                 </template>
                 <template v-else>
@@ -145,7 +145,7 @@
                 {{ dayjs().to(goal.endAfter) }}
               </v-col>
               <v-col class="text-right pr-2">
-                <template v-if="goal.type === 'tips'">
+                <template v-if="['tips', 'intervalTips'].includes(goal.type)">
                   {{ Intl.NumberFormat($store.state.configuration.lang, { style: 'currency', currency: $store.state.configuration.currency }).format(goal.goalAmount) }}
                 </template>
                 <template v-else>
