@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.1.1](https://github.com/sogebot/ui-overlay/compare/v2.1.0...v2.1.1) (2021-09-06)
+
+
+### Bug Fixes
+
+* **clipscarousel:** properly center playing vidoe ([e402597](https://github.com/sogebot/ui-overlay/commit/e402597ba9a624bd818bc7d633d86f9e4aabdf21))
+* **video:** add alerts and error message if browser not support mp4 files ([39414d0](https://github.com/sogebot/ui-overlay/commit/39414d09db43cd4704317a23e93c0a2c3ff5295a))
+
 ## [2.1.0](https://github.com/sogebot/ui-overlay/compare/v2.0.6...v2.1.0) (2021-09-03)
 
 
