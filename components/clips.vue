@@ -1,5 +1,6 @@
 <template>
   <div>
+    <v-alert color="error" width="auto" v-if="!isVideoSupported">We are sorry, but this browser doesn't support video mp4/h264</v-alert>
     <div v-if="isPlaying" v-show="options.showLabel" id="label" class="label">
       <v-icon color="red" x-large>
         {{ mdiCircleMedium }}
@@ -28,6 +29,7 @@ import {
 import { getSocket } from '@sogebot/ui-helpers/socket';
 import gsap from 'gsap';
 import { defaults } from 'lodash';
+import { isVideoSupported } from '~/functions/isVideoSupported'
 
 export default defineComponent({
   props: { opts: Object },
@@ -88,6 +90,7 @@ export default defineComponent({
       options,
       playingClip,
       mdiCircleMedium,
+      isVideoSupported,
     };
   },
 });

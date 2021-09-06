@@ -11,7 +11,9 @@ offset: {{ offset }},
 nextOffset: {{ nextOffset }}
 moveToNextClipInProgress: {{ moveToNextClipInProgress }}
 isReady: {{ isReady }}
+isVideoSupported: {{ isVideoSupported }}
   </pre>
+    <v-alert color="error" width="auto" v-if="!isVideoSupported">We are sorry, but this browser doesn't support video mp4/h264</v-alert>
     <div id="carousel" :style="{
         width: '99999999999%',
         position: 'absolute',
@@ -35,6 +37,7 @@ import {
 import { getSocket } from '@sogebot/ui-helpers/socket';
 import gsap from 'gsap';
 import { cloneDeep } from 'lodash';
+import { isVideoSupported } from '~/functions/isVideoSupported'
 
 export default defineComponent({
   props: { opts: Object },
@@ -233,6 +236,7 @@ export default defineComponent({
       nextOffset,
       moveToNextClipInProgress,
       isReady,
+      isVideoSupported,
     };
   },
 });

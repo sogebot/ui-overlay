@@ -4,6 +4,7 @@
       v-if="isDebug"
       class="debug"
     >
+isVideoSupported: {{ isVideoSupported }}
 settings: {{ settings }}
 currentPage: {{ currentPage }}
 clipsPages: {{ clipsPages }}
@@ -85,6 +86,7 @@ import {
 } from '@vue/composition-api';
 import gsap from 'gsap';
 import { defaultsDeep, groupBy } from 'lodash';
+import { isVideoSupported } from '~/functions/isVideoSupported'
 
 export default defineComponent({
   props: { opts: Object },
@@ -277,38 +279,42 @@ export default defineComponent({
         }
 
         // clips
-        for (let i = 0, length = clips.value.length; i < length; i++) {
-          clipsPages.value.push(pages.value.length);
+        if (isVideoSupported) {
+          for (let i = 0, length = clips.value.length; i < length; i++) {
+            clipsPages.value.push(pages.value.length);
 
-          const clip = clips.value[i];
-          pages.value.push([
-            {
-              text:  clip.game,
-              class: 'clip_game',
-              index: Math.random(),
-            },
-            {
-              text:  clip.title,
-              class: 'clip_title',
-              index: Math.random(),
-            },
-            {
-              text:  clip.creator_name,
-              class: 'clip_createdBy',
-              index: Math.random(),
-            },
-            {
-              text:  i + 1,
-              class: 'clip_index',
-              index: Math.random(),
-            },
-            {
-              clip:  clip.mp4,
-              class: 'clip_video',
-              type:  'video',
-              index: Math.random(),
-            },
-          ]);
+            const clip = clips.value[i];
+            pages.value.push([
+              {
+                text:  clip.game,
+                class: 'clip_game',
+                index: Math.random(),
+              },
+              {
+                text:  clip.title,
+                class: 'clip_title',
+                index: Math.random(),
+              },
+              {
+                text:  clip.creator_name,
+                class: 'clip_createdBy',
+                index: Math.random(),
+              },
+              {
+                text:  i + 1,
+                class: 'clip_index',
+                index: Math.random(),
+              },
+              {
+                clip:  clip.mp4,
+                class: 'clip_video',
+                type:  'video',
+                index: Math.random(),
+              },
+            ]);
+          }
+        } else {
+          console.error('We are sorry, but this browser doesn\'t support video mp4/h264. Clips won\'t be shown.');
         }
 
         // custom texts
@@ -476,6 +482,7 @@ export default defineComponent({
       isPlaying,
       isEnded,
       current,
+      isVideoSupported,
 
       icons: {
         mdiDeviantart,
