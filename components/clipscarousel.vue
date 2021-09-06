@@ -54,8 +54,8 @@ export default defineComponent({
     const setOffset = () => {
       try {
         const _clips = Array.from(document.getElementsByClassName('clips')) as HTMLVideoElement[];
-        nextOffset.value = -(_clips[2].offsetLeft - (window.innerWidth / 4));
-        offset.value = -(_clips[1].offsetLeft - (window.innerWidth / 4));
+        nextOffset.value = -(_clips[2].offsetLeft - (window.innerWidth / 3.4));
+        offset.value = -(_clips[1].offsetLeft - (window.innerWidth / 3.4));
       } catch (e) {}
     };
 
