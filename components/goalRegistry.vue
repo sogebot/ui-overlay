@@ -177,7 +177,7 @@ import gsap from 'gsap';
 import { find } from 'lodash';
 import safeEval from 'safe-eval';
 
-import { GoalGroupInterface, GoalInterface } from '.bot/src/bot/database/entity/goal';
+import { GoalGroupInterface, GoalInterface } from '.bot/src/database/entity/goal';
 
 const bgColors = [] as string[];
 

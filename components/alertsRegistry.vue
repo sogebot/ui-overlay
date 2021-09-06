@@ -18,7 +18,7 @@
       />
     </div>
     <template v-if="state.loaded === ButtonStates.success && data">
-      <div v-if="runningAlert">
+      <div v-if="runningAlert" :key="runningAlert.id">
         <audio
           v-if="typeOfMedia.get(runningAlert.alert.soundId) === 'audio'"
           id="audio"
@@ -214,13 +214,14 @@ import { shadowGenerator, textStrokeGenerator } from '@sogebot/ui-helpers/text';
 import { get, isEqual } from 'lodash';
 import safeEval from 'safe-eval';
 import urlRegex from 'url-regex';
+import { v4 } from 'uuid';
 import VRuntimeTemplate from 'v-runtime-template';
 import JsonViewer from 'vue-json-viewer';
 
 import {
   AlertInterface, AlertResubInterface, AlertRewardRedeemInterface, AlertTipInterface, CommonSettingsInterface, EmitData,
-} from '.bot/src/bot/database/entity/alert';
-import { CacheEmotesInterface } from '.bot/src/bot/database/entity/cacheEmotes';
+} from '.bot/src/database/entity/alert';
+import { CacheEmotesInterface } from '.bot/src/database/entity/cacheEmotes';
 
 require('animate.css');
 
@@ -236,19 +237,73 @@ let cleanupAlert = false;
 
 const alerts: (EmitData & {isTTSMuted: boolean, isSoundMuted: boolean})[] = [];
 
+const haveAvailableAlert = (emitData: EmitData, data: AlertInterface | null) => {
+  if (emitData && data) {
+    let possibleAlerts = data[emitData.event];
+
+    // select only correct triggered events
+    if (emitData.event === 'rewardredeems') {
+      possibleAlerts = (possibleAlerts as AlertRewardRedeemInterface[]).filter(o => o.rewardId === emitData.name);
+    }
+    if (possibleAlerts.length > 0) {
+      // filter variants
+      possibleAlerts = possibleAlerts.filter((o) => {
+        if (!o.enabled) {
+          return false;
+        }
+        if (o.filter && o.filter.items.length > 0) {
+          const script = itemsToEvalPart(o.filter.items, o.filter.operator);
+          const tierAsNumber = emitData.tier === 'Prime' ? 0 : Number(emitData.tier);
+          return safeEval(
+            script, {
+              username:  emitData.name,
+              name:      emitData.name,
+              amount:    emitData.amount,
+              message:   emitData.message,
+              tier:      tierAsNumber,
+              recipient: emitData.recipient,
+            },
+          );
+        }
+
+        return true;
+      });
+
+      // after we have possible alerts -> generate random
+      const possibleAlertsWithRandomCount: (CommonSettingsInterface | AlertTipInterface | AlertResubInterface)[] = [];
+      // check if exclusive alert is there then run only it (+ other exclusive)
+      if (possibleAlerts.find(o => o.variantAmount === 5)) {
+        for (const alert of possibleAlerts.filter(o => o.variantAmount === 5)) {
+          possibleAlertsWithRandomCount.push(alert);
+        }
+      } else {
+        // randomize variants
+        for (const alert of possibleAlerts) {
+          for (let i = 0; i < alert.variantAmount; i++) {
+            possibleAlertsWithRandomCount.push(alert);
+          }
+        }
+      }
+
+      const alert: CommonSettingsInterface | AlertTipInterface | AlertResubInterface | undefined = possibleAlertsWithRandomCount[Math.floor(Math.random() * possibleAlertsWithRandomCount.length)];
+      return !!alert;
+    }
+  }
+  return false;
+};
+
 export default defineComponent({
   components: {
     JsonViewer,
     VRuntimeTemplate,
     // eslint-disable-next-line vue/no-unused-components
     baffle: () => import('~/components/baffle.vue'), // this is used in VRuntimeTemplate
-  }, // enable useMeta
-  props: {
-    opts: Object,
   },
-  middleware: ['isBotStarted'],
+  middleware: ['isBotStarted'], // enable useMeta
+  props:      { opts: Object },
   setup (props) {
     const { $axios } = useContext();
+
 
     const url = new URL(location.href);
     const isDebug = !!url.searchParams.get('debug');
@@ -274,6 +329,7 @@ export default defineComponent({
     const shouldAnimate = ref(false);
 
     const runningAlert = ref(null as EmitData & {
+      id: string;
       animation: string;
       animationSpeed: number;
       animationText: string;
@@ -654,6 +710,7 @@ export default defineComponent({
 
               const isAmountForTTSInRange = alert.tts.minAmountToPlay <= emitData.amount;
               runningAlert.value = {
+                id:             v4(),
                 animation:      'none',
                 animationText:  'none',
                 animationSpeed: 1000,
@@ -718,7 +775,18 @@ export default defineComponent({
           }
         }
 
-        alerts.push(data2);
+        if (data.value && ['tips', 'cheers', 'resubs', 'subs'].includes(data2.event) && runningAlert.value && data.value.parry.enabled && haveAvailableAlert(data2, data.value)) {
+          alerts.push(data2);
+          console.log('Skipping playing alert - parrying enabled');
+          setTimeout(() => {
+            runningAlert.value = null;
+            if (typeof window.responsiveVoice !== 'undefined') {
+              window.responsiveVoice.cancel();
+            }
+          }, data.value.parry.delay);
+        } else {
+          alerts.push(data2);
+        }
       });
     });
 

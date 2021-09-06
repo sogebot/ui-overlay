@@ -8,11 +8,11 @@ import { getSocket } from '@sogebot/ui-helpers/socket';
 import { defineComponent, onMounted } from '@vue/composition-api';
 import OBSWebSocket from 'obs-websocket-js';
 
-import type { OBSWebsocketInterface } from '~/.bot/src/bot/database/entity/obswebsocket';
-import { switchScenes } from '~/.bot/src/bot/helpers/obswebsocket/listeners';
-import { listScenes } from '~/.bot/src/bot/helpers/obswebsocket/scenes';
-import { getSourcesList, getSourceTypesList } from '~/.bot/src/bot/helpers/obswebsocket/sources';
-import { taskRunner } from '~/.bot/src/bot/helpers/obswebsocket/taskrunner';
+import type { OBSWebsocketInterface } from '~/.bot/src/database/entity/obswebsocket';
+import { switchScenes } from '~/.bot/src/helpers/obswebsocket/listeners';
+import { listScenes } from '~/.bot/src/helpers/obswebsocket/scenes';
+import { getSourcesList, getSourceTypesList } from '~/.bot/src/helpers/obswebsocket/sources';
+import { taskRunner } from '~/.bot/src/helpers/obswebsocket/taskrunner';
 
 type Props = {
   opts: {

@@ -66,6 +66,7 @@
 import {
   defineComponent, nextTick, onMounted, ref, useMeta,
 } from '@nuxtjs/composition-api';
+import Winwheel from '@shubhrank/winwheeljs';
 import { getContrastColor } from '@sogebot/ui-helpers/colors';
 import { getSocket } from '@sogebot/ui-helpers/socket';
 import { shadowGenerator, textStrokeGenerator } from '@sogebot/ui-helpers/text';
@@ -74,9 +75,8 @@ import {
   cloneDeep, isEqual, orderBy,
 } from 'lodash';
 import JsonViewer from 'vue-json-viewer';
-import Winwheel from '@shubhrank/winwheeljs';
 
-import type { RandomizerInterface, RandomizerItemInterface } from '~/.bot/src/bot/database/entity/randomizer';
+import type { RandomizerInterface, RandomizerItemInterface } from '~/.bot/src/database/entity/randomizer';
 
 declare global {
   interface Window {
@@ -189,7 +189,7 @@ export default defineComponent({ // enable useMeta
 
           let shouldReinitWof = false;
           if (!isEqual(_data, data.value)) {
-            showSimpleValueIndex.value = Math.floor(Math.random() * generateItems(_data.items).length);
+            showSimpleValueIndex.value = Math.floor(Math.random() * generateItems(_data.items as Required<RandomizerItemInterface>[]).length);
             shouldReinitWof = true;
             data.value = _data;
           }
@@ -208,7 +208,7 @@ export default defineComponent({ // enable useMeta
               }
 
               const segments = [];
-              for (const option of generateItems(_data.items)) {
+              for (const option of generateItems(_data.items as Required<RandomizerItemInterface>[])) {
                 segments.push({
                   fillStyle: option.color, textFillStyle: getContrastColor(option.color), text: option.name,
                 });
@@ -217,7 +217,7 @@ export default defineComponent({ // enable useMeta
               gsap.to(document.getElementById('canvas'), { duration: 1.5, opacity: 1 });
 
               theWheel.value = new Winwheel({
-                numSegments:    generateItems(_data.items).length, // Number of segments
+                numSegments:    generateItems(_data.items as Required<RandomizerItemInterface>[]).length, // Number of segments
                 outerRadius:    450, // The size of the wheel.
                 centerX:        960, // Used to position on the background correctly.
                 centerY:        540,
@@ -292,7 +292,7 @@ export default defineComponent({ // enable useMeta
           if (showSimpleLoop.value > 0) {
             return; // do nothing if in progress
           }
-          showSimpleLoop.value = 500 + Math.floor(Math.random() * generateItems(data.value.items).length);
+          showSimpleLoop.value = 500 + Math.floor(Math.random() * generateItems(data.value.items as Required<RandomizerItemInterface>[]).length);
           showSimpleSpeed.value = 1;
           const blink = () => {
             if (showSimpleLoop.value > -10) {
@@ -328,7 +328,7 @@ export default defineComponent({ // enable useMeta
             }
 
             showSimpleValueIndex.value++;
-            if (typeof generateItems(data.value.items)[showSimpleValueIndex.value] === 'undefined') {
+            if (typeof generateItems(data.value.items as Required<RandomizerItemInterface>[])[showSimpleValueIndex.value] === 'undefined') {
               showSimpleValueIndex.value = 0;
             }
             showSimpleLoop.value--;
@@ -339,7 +339,7 @@ export default defineComponent({ // enable useMeta
                 if (Math.random() > 0.3) {
                   blink();
                   if (data.value && data.value.tts.enabled) {
-                    speak(generateItems(data.value.items)[showSimpleValueIndex.value].name, data.value.tts.voice, data.value.tts.rate, data.value.tts.pitch, data.value.tts.volume);
+                    speak(generateItems(data.value.items as Required<RandomizerItemInterface>[])[showSimpleValueIndex.value].name, data.value.tts.voice, data.value.tts.rate, data.value.tts.pitch, data.value.tts.volume);
                   }
                 } else {
                   next();
