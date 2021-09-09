@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.1.1](https://github.com/sogebot/ui-overlay/compare/v4.1.0...v4.1.1) (2021-09-09)
+
+
+### Bug Fixes
+
+* **group:** add countdown id if used in group ([55a22e6](https://github.com/sogebot/ui-overlay/commit/55a22e6277c00435f6146c3031c956ec89697ceb))
+
 ## [4.1.0](https://github.com/sogebot/ui-overlay/compare/v4.0.0...v4.1.0) (2021-09-09)
 
 
