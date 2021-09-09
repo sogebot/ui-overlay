@@ -4,6 +4,7 @@
       :is="item.type"
       v-for="item of options.items"
       :key="item.id"
+      :id="item.id"
       :opts="item.opts"
       :style="{
         border: isDebug ? '2px solid orange' : 'inherit',

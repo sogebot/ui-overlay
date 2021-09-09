@@ -27,7 +27,7 @@ import { shadowGenerator, textStrokeGenerator } from '@sogebot/ui-helpers/text';
 import { defaultsDeep } from 'lodash';
 
 export default defineComponent({ // enable useMeta
-  props: { opts: Object },
+  props: { opts: Object, id: [String, Object] },
   setup (props) {
     const enabled = ref(true);
     const route = useRoute();
@@ -95,7 +95,7 @@ export default defineComponent({ // enable useMeta
           }
 
           if (options.value.isPersistent) {
-            fetch(`${process.env.isNuxtDev ? 'http://localhost:20000' : location.origin}/api/v1/overlay/${route.value.params.id}/tick`)
+            fetch(`${process.env.isNuxtDev ? 'http://localhost:20000' : location.origin}/api/v1/overlay/${props.id ? props.id : route.value.params.id}/tick`)
           }
           }
       }, 1000);
