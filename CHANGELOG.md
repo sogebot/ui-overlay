@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.1.0](https://github.com/sogebot/ui-overlay/compare/v4.0.0...v4.1.0) (2021-09-09)
+
+
+### Features
+
+* **overlay:** add countdown persistency and start on load ([b1b243e](https://github.com/sogebot/ui-overlay/commit/b1b243e45623460e792a37bdb7d36224d09c63d1))
+
 ## [4.0.0](https://github.com/sogebot/ui-overlay/compare/v3.0.0...v4.0.0) (2021-09-08)
 
 
