@@ -7,7 +7,7 @@
 </template>
 
 <script lang="ts">
-import { useRoute, useStore } from '@nuxtjs/composition-api';
+import { useStore } from '@nuxtjs/composition-api';
 import { getSocket } from '@sogebot/ui-helpers/socket';
 import {
   defineComponent, nextTick, onMounted, ref, watch,

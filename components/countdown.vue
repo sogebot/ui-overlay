@@ -18,7 +18,7 @@
 <script lang="ts">
 import {
   computed,
-  defineComponent, onMounted, ref,
+  defineComponent, onMounted, ref, useRoute,
 } from '@nuxtjs/composition-api';
 import {
   DAY, HOUR, MINUTE, SECOND,
@@ -29,10 +29,14 @@ import { defaultsDeep } from 'lodash';
 export default defineComponent({ // enable useMeta
   props: { opts: Object },
   setup (props) {
+    const enabled = ref(true);
+    const route = useRoute();
     const options = ref(
       defaultsDeep(props.opts, {
         time:                       60000,
         messageWhenReachedZero:     '',
+        isPersistent:               false,
+        isStartedOnSourceLoad:      true,
         showMessageWhenReachedZero: false,
         countdownFont:              {
           family:      'PT Sans',
@@ -81,10 +85,19 @@ export default defineComponent({ // enable useMeta
     onMounted(() => {
       console.log('====== COUNTDOWN ======');
 
+      enabled.value = options.value.isStartedOnSourceLoad;
+      options.value.time = options.value.isPersistent ? options.value.currentTime : options.value.time;
+
       setInterval(() => {
-        if (options.value.time > 0) {
-          options.value.time -= 1000;
-        }
+        if (enabled.value) {
+          if (options.value.time > 0) {
+            options.value.time -= 1000;
+          }
+
+          if (options.value.isPersistent) {
+            fetch(`${process.env.isNuxtDev ? 'http://localhost:20000' : location.origin}/api/v1/overlay/${route.value.params.id}/tick`)
+          }
+          }
       }, 1000);
 
       // add fonts import
