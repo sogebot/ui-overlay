@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.1.2](https://github.com/sogebot/ui-overlay/compare/v4.1.1...v4.1.2) (2021-09-09)
+
+
+### Bug Fixes
+
+* **alertRegistry:** skip TTS if message is not available ([9bd70ad](https://github.com/sogebot/ui-overlay/commit/9bd70ad32e34eebdb0dc1c88a1bc06a2172ffc67))
+
 ### [4.1.1](https://github.com/sogebot/ui-overlay/compare/v4.1.0...v4.1.1) (2021-09-09)
 
 
