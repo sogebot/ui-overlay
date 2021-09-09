@@ -30,7 +30,20 @@ All notable changes to this project will be documented in this file. See [standa
 
 * **overlays:** add countdown support ([d964636](https://github.com/sogebot/ui-overlay/commit/d9646367b4a4d03a6e397ea04b416f164cc8bd13))
 
+### [3.0.1](https://github.com/sogebot/ui-overlay/compare/v3.0.0...v3.0.1) (2021-09-09)
+
+
+### Bug Fixes
+
+* **alertRegistry:** skip TTS if message is not available ([2eb17b4](https://github.com/sogebot/ui-overlay/commit/2eb17b49d505c178c58e28507e8a1443219c9208))
+
 ## [3.0.0](https://github.com/sogebot/ui-overlay/compare/v2.1.1...v3.0.0) (2021-09-06)
+
+
+### Features
+
+* **alert:** add alert parries support ([f4549a5a58cb5a47626ee53eb4171ac69ac47dab](https://github.com/sogebot/ui-overlay/commit/f4549a5a58cb5a47626ee53eb4171ac69ac47dab))
+
 
 ### [2.1.1](https://github.com/sogebot/ui-overlay/compare/v2.1.0...v2.1.1) (2021-09-06)
 
