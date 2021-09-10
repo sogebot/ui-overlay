@@ -23,6 +23,7 @@ import {
 import {
   DAY, HOUR, MINUTE, SECOND,
 } from '@sogebot/ui-helpers/constants';
+import { getSocket } from '@sogebot/ui-helpers/socket';
 import { shadowGenerator, textStrokeGenerator } from '@sogebot/ui-helpers/text';
 import { defaultsDeep } from 'lodash';
 
@@ -82,6 +83,24 @@ export default defineComponent({ // enable useMeta
       }
     });
 
+    const update = () => {
+      getSocket('/overlays/countdown', true)
+        .emit('countdown::update', {
+          id:        props.id ? String(props.id) : route.value.params.id,
+          isEnabled: enabled.value,
+          time:      options.value.time,
+        }, (_err: null, data?: { isEnabled: boolean | null, time :string | null }) => {
+          if (data) {
+            if (data.isEnabled !== null) {
+              enabled.value = data.isEnabled;
+            }
+            if (data.time !== null) {
+              options.value.time = data.time;
+            }
+          }
+        });
+    };
+
     onMounted(() => {
       console.log('====== COUNTDOWN ======');
 
@@ -95,9 +114,11 @@ export default defineComponent({ // enable useMeta
           }
 
           if (options.value.isPersistent) {
-            fetch(`${process.env.isNuxtDev ? 'http://localhost:20000' : location.origin}/api/v1/overlay/${props.id ? props.id : route.value.params.id}/tick`)
+            fetch(`${process.env.isNuxtDev ? 'http://localhost:20000' : location.origin}/api/v1/overlay/${props.id ? props.id : route.value.params.id}/tick`);
           }
-          }
+        }
+
+        update();
       }, 1000);
 
       // add fonts import
