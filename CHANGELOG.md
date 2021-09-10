@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.2.0](https://github.com/sogebot/ui-overlay/compare/v4.1.2...v4.2.0) (2021-09-10)
+
+
+### Features
+
+* **overlay:** add countdown control from dashboard ([c8e329f](https://github.com/sogebot/ui-overlay/commit/c8e329f085a4cd35c19810285e07ab5121a90b44))
+
 ### [4.1.2](https://github.com/sogebot/ui-overlay/compare/v4.1.1...v4.1.2) (2021-09-09)
 
 
