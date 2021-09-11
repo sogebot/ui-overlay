@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.2.1](https://github.com/sogebot/ui-overlay/compare/v4.2.0...v4.2.1) (2021-09-11)
+
+
+### Bug Fixes
+
+* **alertsRegistry:** add undefined check for message ([cc28f65](https://github.com/sogebot/ui-overlay/commit/cc28f65ea4c354c2c37fadfc0c29ecdd1b8aa835))
+
 ## [4.2.0](https://github.com/sogebot/ui-overlay/compare/v4.1.2...v4.2.0) (2021-09-10)
 
 
