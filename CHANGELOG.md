@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.2.2](https://github.com/sogebot/ui-overlay/compare/v4.2.1...v4.2.2) (2021-09-11)
+
+
+### Bug Fixes
+
+* **alertRegistry:** fix incorrect length check ([40db4fc](https://github.com/sogebot/ui-overlay/commit/40db4fc86e0175a11a81e45d33e3ba91803591e3))
+
 ### [4.2.1](https://github.com/sogebot/ui-overlay/compare/v4.2.0...v4.2.1) (2021-09-11)
 
 
