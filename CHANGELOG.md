@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.2.3](https://github.com/sogebot/ui-overlay/compare/v4.2.2...v4.2.3) (2021-09-12)
+
+
+### Bug Fixes
+
+* **alertsRegistry:** show message ig minAmountToShow is not defined ([157571e](https://github.com/sogebot/ui-overlay/commit/157571e580579b9ba0dd95c5b928bfcb30a303ca))
+
 ### [4.2.2](https://github.com/sogebot/ui-overlay/compare/v4.2.1...v4.2.2) (2021-09-11)
 
 
