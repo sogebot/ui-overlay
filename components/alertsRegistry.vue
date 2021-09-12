@@ -123,8 +123,9 @@
               <div
                 v-if="
                   typeof runningAlert.alert.message !== 'undefined'
-                    && typeof runningAlert.alert.message.minAmountToShow !== 'undefined'
-                    && runningAlert.alert.message.minAmountToShow <= runningAlert.amount"
+                    && typeof runningAlert.alert.message.minAmountToShow === 'undefined'
+                      || (typeof runningAlert.alert.message.minAmountToShow !== 'undefined'
+                      && runningAlert.alert.message.minAmountToShow <= runningAlert.amount)"
                 :class="{
                 }"
                 :style="{
@@ -169,8 +170,9 @@
               <div
                 v-if="
                   typeof runningAlert.alert.message !== 'undefined'
-                    && typeof runningAlert.alert.message.minAmountToShow !== 'undefined'
-                    && runningAlert.alert.message.minAmountToShow <= runningAlert.amount"
+                    && typeof runningAlert.alert.message.minAmountToShow === 'undefined'
+                      || (typeof runningAlert.alert.message.minAmountToShow !== 'undefined'
+                      && runningAlert.alert.message.minAmountToShow <= runningAlert.amount)"
                 :class="{
                 }"
                 :style="{
