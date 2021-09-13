@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [5.0.0](https://github.com/sogebot/ui-overlay/compare/v4.2.3...v5.0.0) (2021-09-13)
+
+
+### Features
+
+* **stopwatch:** add stopwatch overlay support ([772fabe](https://github.com/sogebot/ui-overlay/commit/772fabeae92cc78d367c91f3ac22af0dcbf7b550))
+
 ### [4.2.3](https://github.com/sogebot/ui-overlay/compare/v4.2.2...v4.2.3) (2021-09-12)
 
 
