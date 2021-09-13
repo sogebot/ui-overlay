@@ -121,13 +121,7 @@
                 <v-runtime-template :template="prepareMessageTemplate(runningAlert.alert.messageTemplate)" />
               </span>
               <div
-                v-if="
-                  typeof runningAlert.alert.message !== 'undefined'
-                    && typeof runningAlert.alert.message.minAmountToShow === 'undefined'
-                      || (typeof runningAlert.alert.message.minAmountToShow !== 'undefined'
-                      && runningAlert.alert.message.minAmountToShow <= runningAlert.amount)"
-                :class="{
-                }"
+                v-if="runningAlert.alert.message && (runningAlert.alert.message.minAmountToShow || 0) <= runningAlert.amount"
                 :style="{
                   'width': '30rem',
                   'text-align': runningAlert.alert.message.font ? runningAlert.alert.message.font.align : data.fontMessage.align,
@@ -168,13 +162,7 @@
                 <v-runtime-template :template="prepareMessageTemplate(runningAlert.alert.messageTemplate)" />
               </span>
               <div
-                v-if="
-                  typeof runningAlert.alert.message !== 'undefined'
-                    && typeof runningAlert.alert.message.minAmountToShow === 'undefined'
-                      || (typeof runningAlert.alert.message.minAmountToShow !== 'undefined'
-                      && runningAlert.alert.message.minAmountToShow <= runningAlert.amount)"
-                :class="{
-                }"
+                v-if="runningAlert.alert.message && (runningAlert.alert.message.minAmountToShow || 0) <= runningAlert.amount"
                 :style="{
                   'width': '30rem',
                   'text-align': runningAlert.alert.message.font ? runningAlert.alert.message.font.align : data.fontMessage.align,
@@ -305,7 +293,6 @@ export default defineComponent({
   props:      { opts: Object },
   setup (props) {
     const { $axios } = useContext();
-
 
     const url = new URL(location.href);
     const isDebug = !!url.searchParams.get('debug');
