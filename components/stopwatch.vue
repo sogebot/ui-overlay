@@ -27,29 +27,17 @@ import { getSocket } from '@sogebot/ui-helpers/socket';
 import { shadowGenerator, textStrokeGenerator } from '@sogebot/ui-helpers/text';
 import { defaultsDeep } from 'lodash';
 
-export default defineComponent({ // enable useMeta
+export default defineComponent({
   props: { opts: Object, id: [String, Object] },
   setup (props) {
     const enabled = ref(true);
     const route = useRoute();
     const options = ref(
       defaultsDeep(props.opts, {
-        time:                       60000,
-        currentTime:                       60000,
-        messageWhenReachedZero:     '',
+        currentTime:                       0,
         isPersistent:               false,
         isStartedOnSourceLoad:      true,
-        showMessageWhenReachedZero: false,
-        countdownFont:              {
-          family:      'PT Sans',
-          size:        16,
-          borderPx:    1,
-          borderColor: '#000000',
-          weight:      '500',
-          color:       '#ffffff',
-          shadow:      [],
-        },
-        messageFont: {
+        stopwatchFont:              {
           family:      'PT Sans',
           size:        16,
           borderPx:    1,
@@ -61,57 +49,51 @@ export default defineComponent({ // enable useMeta
       }),
     );
     const font = computed(() => {
-      return options.value.time > 0 || !options.value.showMessageWhenReachedZero
-        ? options.value.countdownFont
-        : options.value.messageFont;
+      return options.value.stopwatchFont;
     });
 
     const time = computed(() => {
-      if (options.value.time > 0 || !options.value.showMessageWhenReachedZero) {
-        const days = Math.floor(options.value.time / DAY);
-        const hours = Math.floor((options.value.time - days * DAY) / HOUR);
-        const minutes = Math.floor((options.value.time - (days * DAY) - (hours * HOUR)) / MINUTE);
-        const seconds = Math.floor((options.value.time - (days * DAY) - (hours * HOUR) - (minutes * MINUTE)) / SECOND);
+      const days = Math.floor(options.value.currentTime / DAY);
+      const hours = Math.floor((options.value.currentTime - days * DAY) / HOUR);
+      const minutes = Math.floor((options.value.currentTime - (days * DAY) - (hours * HOUR)) / MINUTE);
+      const seconds = Math.floor((options.value.currentTime - (days * DAY) - (hours * HOUR) - (minutes * MINUTE)) / SECOND);
 
-        let output = '';
-        if (days > 0) {
-          output += `${days}d`;
-        }
-        output += `${hours < 10 ? '0' : ''}${hours}:${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-        return output;
-      } else {
-        return options.value.messageWhenReachedZero;
+      let output = '';
+      if (days > 0) {
+        output += `${days}d`;
       }
+      output += `${hours < 10 ? '0' : ''}${hours}:${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+      return output;
     });
 
     const update = () => {
-      getSocket('/overlays/countdown', true)
-        .emit('countdown::update', {
+      getSocket('/overlays/stopwatch', true)
+        .emit('stopwatch::update', {
           id:        props.id ? String(props.id) : route.value.params.id,
           isEnabled: enabled.value,
-          time:      options.value.time,
+          time:      options.value.currentTime,
         }, (_err: null, data?: { isEnabled: boolean | null, time :string | null }) => {
           if (data) {
             if (data.isEnabled !== null) {
               enabled.value = data.isEnabled;
             }
             if (data.time !== null) {
-              options.value.time = data.time;
+              options.value.currentTime = data.time;
             }
           }
         });
     };
 
     onMounted(() => {
-      console.log('====== COUNTDOWN ======');
+      console.log('====== STOPWATCH ======');
 
       enabled.value = options.value.isStartedOnSourceLoad;
-      options.value.time = options.value.isPersistent ? options.value.currentTime : options.value.time;
+      options.value.currentTime = options.value.isPersistent ? options.value.currentTime : options.value.currentTime;
 
       setInterval(() => {
         if (enabled.value) {
-          if (options.value.time > 0) {
-            options.value.time -= 1000;
+          if (options.value.currentTime > 0) {
+            options.value.currentTime += 1000;
           }
 
           if (options.value.isPersistent) {
@@ -126,7 +108,7 @@ export default defineComponent({ // enable useMeta
       const head = document.getElementsByTagName('head')[0];
       const style = document.createElement('style');
       style.type = 'text/css';
-      for (const fontToLoad of [options.value.countdownFont.family, options.value.messageFont.family]) {
+      for (const fontToLoad of [options.value.stopwatchFont.family]) {
         console.debug('Loading font', fontToLoad);
         const fontFamily = fontToLoad.replace(/ /g, '+');
         const css = '@import url(\'https://fonts.googleapis.com/css?family=' + fontFamily + '\');';
