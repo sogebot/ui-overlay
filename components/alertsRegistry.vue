@@ -225,6 +225,8 @@ let _key = '';
 let isTTSPlaying = false;
 let cleanupAlert = false;
 
+const loadedScripts: string[] = [];
+
 const alerts: (EmitData & {isTTSMuted: boolean, isSoundMuted: boolean})[] = [];
 
 const haveAvailableAlert = (emitData: EmitData, data: AlertInterface | null) => {
@@ -382,7 +384,7 @@ export default defineComponent({
     onMounted(() => {
       console.log('====== ALERTS REGISTRY ======');
       checkResponsiveVoiceAPIKey();
-      window.setInterval(() => {
+      window.setInterval(async () => {
         if (runningAlert.value) {
           runningAlert.value.animation = animationClass();
           runningAlert.value.animationSpeed = animationSpeed();
@@ -451,6 +453,16 @@ export default defineComponent({
                 shouldAnimate.value = true;
               }
             })();
+
+            if (runningAlert.value.alert.enableAdvancedMode) {
+              setTimeout(() => {
+                if (runningAlert.value) {
+                  // eslint-disable-next-line no-eval
+                  eval(`${runningAlert.value.alert.advancedMode.js}; if (typeof onStarted === 'function') { onStarted() } else { console.log('no onStarted() function found'); }`);
+                }
+              }, 1000)
+
+            }
           }
 
           const audio = document.getElementById('audio') as null | HTMLMediaElement;
@@ -562,6 +574,28 @@ export default defineComponent({
               if (alert.enableAdvancedMode) {
               // prepare HTML
                 preparedAdvancedHTML.value = alert.advancedMode.html || '';
+
+                const scriptRegex = /<script.*src="(.*)"\/?>/gm;
+                let scriptMatch = scriptRegex.exec(preparedAdvancedHTML.value);
+                while (scriptMatch !== null) {
+                  const link = scriptMatch[1];
+                  if (loadedScripts.includes(link)) {
+                    continue;
+                  }
+                  const script = document.createElement('script');
+                  script.src = link;
+                  document.getElementsByTagName('head')[0].appendChild(script);
+                  scriptMatch = scriptRegex.exec(preparedAdvancedHTML.value);
+
+                  // wait for load
+                  await new Promise((resolve) => {
+                    script.onload = () => {
+                      console.log(`Custom script loaded: ${link}`);
+                      loadedScripts.push(link);
+                      resolve(true);
+                    };
+                  });
+                }
 
                 // load ref="text" class
                 const refTextClassMatch = /<div.*class="(.*?)".*ref="text"|<div.*ref="text".*class="(.*?)"/gm.exec(preparedAdvancedHTML.value);
@@ -680,17 +714,6 @@ export default defineComponent({
                   style.appendChild(document.createTextNode(css));
                   head.appendChild(style);
                 }
-
-                // eval JS
-                nextTick(() => {
-                // eval onStarted
-                  nextTick(() => {
-                    if (alert && alert.enableAdvancedMode) {
-                      // eslint-disable-next-line no-eval
-                      eval(`${alert.advancedMode.js}; if (typeof onStarted === 'function') { onStarted() } else { console.log('no onStarted() function found'); }`);
-                    }
-                  });
-                });
               } else {
               // we need to add :highlight to name, amount, monthName, currency by default
                 alert.messageTemplate = alert.messageTemplate
@@ -833,8 +856,8 @@ export default defineComponent({
         return runningAlert.value.hideAt - Date.now() <= 0
         && (!isTTSPlaying || !runningAlert.value.alert.tts.keepAlertShown)
         && !runningAlert.value.waitingForTTS
-          ? runningAlert.value.alert.animationOutDuration
-          : runningAlert.value.alert.animationInDuration;
+          ? (runningAlert.value.alert.animationOut === 'none' ? 0 : runningAlert.value.alert.animationOutDuration)
+          : (runningAlert.value.alert.animationIn === 'none' ? 0 : runningAlert.value.alert.animationInDuration);
       } else {
         return 1000;
       }
