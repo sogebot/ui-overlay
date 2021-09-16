@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [5.0.2](https://github.com/sogebot/ui-overlay/compare/v5.0.1...v5.0.2) (2021-09-16)
+
+
+### Bug Fixes
+
+* **alertRegistry:** remove class if included in refs ([43fd53f](https://github.com/sogebot/ui-overlay/commit/43fd53fea36a9cd39d7da5ae4361688e8b9fd815))
+
 ### [5.0.1](https://github.com/sogebot/ui-overlay/compare/v5.0.0...v5.0.1) (2021-09-13)
 
 
