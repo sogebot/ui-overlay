@@ -578,7 +578,6 @@ export default defineComponent({
 
                 // load ref="image" class
                 const refImageClassMatch = /<div.*class="(.*?)".*ref="image"|<div.*ref="image".*class="(.*?)"/gm.exec(preparedAdvancedHTML.value);
-                console.log(refImageClassMatch)
                 let refImageClass = '';
                 if (refImageClassMatch) {
                   if (refImageClassMatch[1]) {
