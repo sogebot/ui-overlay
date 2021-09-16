@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [5.0.4](https://github.com/sogebot/ui-overlay/compare/v5.0.3...v5.0.4) (2021-09-16)
+
+
+### Bug Fixes
+
+* **alertsRegistry:** load <scripts> properly ([282d1ed](https://github.com/sogebot/ui-overlay/commit/282d1edc042d4cad1f5da29e193505ec1837ea54))
+
 ### [5.0.3](https://github.com/sogebot/ui-overlay/compare/v5.0.2...v5.0.3) (2021-09-16)
 
 
