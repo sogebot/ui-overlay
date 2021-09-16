@@ -564,7 +564,7 @@ export default defineComponent({
                 preparedAdvancedHTML.value = alert.advancedMode.html || '';
 
                 // load ref="text" class
-                const refTextClassMatch = /<div.*class="(.*?)".*ref="text">|<div.*ref="text".*class="(.*?)">/gm.exec(preparedAdvancedHTML.value);
+                const refTextClassMatch = /<div.*class="(.*?)".*ref="text"|<div.*ref="text".*class="(.*?)"/gm.exec(preparedAdvancedHTML.value);
                 let refTextClass = '';
                 if (refTextClassMatch) {
                   if (refTextClassMatch[1]) {
@@ -573,10 +573,12 @@ export default defineComponent({
                   if (refTextClassMatch[2]) {
                     refTextClass = refTextClassMatch[2];
                   }
+                  preparedAdvancedHTML.value = preparedAdvancedHTML.value.replace(refTextClassMatch[0], '<div ref="text"');
                 }
 
                 // load ref="image" class
-                const refImageClassMatch = /<div.*class="(.*?)".*ref="image">|<div.*ref="image".*class="(.*?)">/gm.exec(preparedAdvancedHTML.value);
+                const refImageClassMatch = /<div.*class="(.*?)".*ref="image"|<div.*ref="image".*class="(.*?)"/gm.exec(preparedAdvancedHTML.value);
+                console.log(refImageClassMatch)
                 let refImageClass = '';
                 if (refImageClassMatch) {
                   if (refImageClassMatch[1]) {
@@ -585,6 +587,7 @@ export default defineComponent({
                   if (refImageClassMatch[2]) {
                     refImageClass = refImageClassMatch[2];
                   }
+                  preparedAdvancedHTML.value = preparedAdvancedHTML.value.replace(refImageClassMatch[0], '<div ref="image"');
                 }
 
                 const fontFamily = alert.font ? alert.font.family : data.value.font.family;
