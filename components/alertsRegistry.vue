@@ -591,6 +591,7 @@ export default defineComponent({
                 while (scriptMatch !== null) {
                   const link = scriptMatch[1];
                   if (loadedScripts.includes(link)) {
+                    scriptMatch = scriptRegex.exec(preparedAdvancedHTML.value);
                     continue;
                   }
                   const script = document.createElement('script');
