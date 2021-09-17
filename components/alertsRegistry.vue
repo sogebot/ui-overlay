@@ -455,13 +455,24 @@ export default defineComponent({
             })();
 
             if (runningAlert.value.alert.enableAdvancedMode) {
-              setTimeout(() => {
-                if (runningAlert.value) {
-                  // eslint-disable-next-line no-eval
-                  eval(`${runningAlert.value.alert.advancedMode.js}; if (typeof onStarted === 'function') { onStarted() } else { console.log('no onStarted() function found'); }`);
+              let evaluated = false;
+              const interval = setInterval(() => {
+                if (evaluated) {
+                  clearInterval(interval);
+                  return
                 }
-              }, 1000)
-
+                if (runningAlert.value) {
+                  // wait for wrap to be available
+                  if (!document.getElementById('wrap-' + runningAlert.value.alert.id)) {
+                    console.log('Wrap element not yet ready to run onStarted, trying again.')
+                  } else {
+                    evaluated = true;
+                    console.log('Wrap element found, triggerind onStarted.')
+                    // eslint-disable-next-line no-eval
+                    eval(`${runningAlert.value.alert.advancedMode.js}; if (typeof onStarted === 'function') { onStarted() } else { console.log('no onStarted() function found'); }`);
+                  }
+                }
+              }, 10);
             }
           }
 
@@ -790,7 +801,6 @@ export default defineComponent({
             }
           }
         }
-
         if (data.value && ['tips', 'cheers', 'resubs', 'subs'].includes(data2.event) && runningAlert.value && data.value.parry.enabled && haveAvailableAlert(data2, data.value)) {
           alerts.push(data2);
           console.log('Skipping playing alert - parrying enabled');
