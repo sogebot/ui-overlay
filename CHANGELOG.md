@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [5.0.5](https://github.com/sogebot/ui-overlay/compare/v5.0.4...v5.0.5) (2021-09-17)
+
+
+### Bug Fixes
+
+* **alertsRegistry:** fix infinite loop on script load ([e122679](https://github.com/sogebot/ui-overlay/commit/e122679e4f7e1199531826367360f57d2d79ee66))
+* **alertsRegistry:** run onStarted when wrap element is rendered ([6ae7c8c](https://github.com/sogebot/ui-overlay/commit/6ae7c8c616e4e46106e3d62e64d34a883fca129e))
+
 ### [5.0.4](https://github.com/sogebot/ui-overlay/compare/v5.0.3...v5.0.4) (2021-09-16)
 
 
