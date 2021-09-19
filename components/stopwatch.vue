@@ -25,19 +25,21 @@ import {
 } from '@sogebot/ui-helpers/constants';
 import { getSocket } from '@sogebot/ui-helpers/socket';
 import { shadowGenerator, textStrokeGenerator } from '@sogebot/ui-helpers/text';
+import gsap from 'gsap';
 import { defaultsDeep } from 'lodash';
 
 export default defineComponent({
   props: { opts: Object, id: [String, Object] },
   setup (props) {
+    let animation: null | gsap.core.Tween = null;
     const enabled = ref(true);
     const route = useRoute();
     const options = ref(
       defaultsDeep(props.opts, {
-        currentTime:                       0,
-        isPersistent:               false,
-        isStartedOnSourceLoad:      true,
-        stopwatchFont:              {
+        currentTime:           0,
+        isPersistent:          false,
+        isStartedOnSourceLoad: true,
+        stopwatchFont:         {
           family:      'PT Sans',
           size:        16,
           borderPx:    1,
@@ -57,12 +59,19 @@ export default defineComponent({
       const hours = Math.floor((options.value.currentTime - days * DAY) / HOUR);
       const minutes = Math.floor((options.value.currentTime - (days * DAY) - (hours * HOUR)) / MINUTE);
       const seconds = Math.floor((options.value.currentTime - (days * DAY) - (hours * HOUR) - (minutes * MINUTE)) / SECOND);
+      let millis: number | string = Math.floor((options.value.currentTime - (days * DAY) - (hours * HOUR) - (minutes * MINUTE) - (seconds * SECOND)));
+
+      if (millis < 10) {
+        millis = `00${millis}`;
+      } else if (millis < 100) {
+        millis = `0${millis}`;
+      }
 
       let output = '';
       if (days > 0) {
         output += `${days}d`;
       }
-      output += `${hours < 10 ? '0' : ''}${hours}:${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+      output += `${hours < 10 ? '0' : ''}${hours}:${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}.${millis}`;
       return output;
     });
 
@@ -74,15 +83,44 @@ export default defineComponent({
           time:      options.value.currentTime,
         }, (_err: null, data?: { isEnabled: boolean | null, time :string | null }) => {
           if (data) {
+            const origEnabled = enabled.value;
             if (data.isEnabled !== null) {
               enabled.value = data.isEnabled;
             }
             if (data.time !== null) {
               options.value.currentTime = data.time;
             }
+            if (enabled.value && !origEnabled) {
+              tick();
+            }
+            if (!enabled.value && animation) {
+              animation.kill();
+            }
           }
         });
     };
+
+    function tick () {
+      if (enabled.value) {
+        animation = gsap.to(options.value, {
+          duration:    1,
+          currentTime: options.value.currentTime + 1000,
+          roundProps:  'value',
+          ease:        'linear',
+          onInterrupt: () => {
+            // we need to send part of tick
+            fetch(`${process.env.isNuxtDev ? 'http://localhost:20000' : location.origin}/api/v1/overlay/${props.id ? props.id : route.value.params.id}/tick/${options.value.currentTime}`);
+          },
+          onComplete: () => {
+            // reset lastMillis
+            if (options.value.isPersistent) {
+              fetch(`${process.env.isNuxtDev ? 'http://localhost:20000' : location.origin}/api/v1/overlay/${props.id ? props.id : route.value.params.id}/tick`);
+            }
+            tick();
+          },
+        });
+      }
+    }
 
     onMounted(() => {
       console.log('====== STOPWATCH ======');
@@ -90,19 +128,13 @@ export default defineComponent({
       enabled.value = options.value.isStartedOnSourceLoad;
       options.value.currentTime = options.value.isPersistent ? options.value.currentTime : options.value.currentTime;
 
+      if (enabled.value) {
+        tick();
+      }
+
       setInterval(() => {
-        if (enabled.value) {
-          if (options.value.currentTime > 0) {
-            options.value.currentTime += 1000;
-          }
-
-          if (options.value.isPersistent) {
-            fetch(`${process.env.isNuxtDev ? 'http://localhost:20000' : location.origin}/api/v1/overlay/${props.id ? props.id : route.value.params.id}/tick`);
-          }
-        }
-
         update();
-      }, 1000);
+      }, 100);
 
       // add fonts import
       const head = document.getElementsByTagName('head')[0];
