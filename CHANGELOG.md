@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.0.0](https://github.com/sogebot/ui-overlay/compare/v5.0.5...v6.0.0) (2021-09-19)
+
+
+### Features
+
+* **stopwatch:** add milliseconds ([b8c6da7](https://github.com/sogebot/ui-overlay/commit/b8c6da7bea6716c1b9d8ed8e426e3006252cb7a5)), closes [#4824](https://github.com/sogebot/ui-overlay/issues/4824)
+
 ### [5.0.5](https://github.com/sogebot/ui-overlay/compare/v5.0.4...v5.0.5) (2021-09-17)
 
 
