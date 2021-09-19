@@ -39,6 +39,7 @@ export default defineComponent({
         currentTime:           0,
         isPersistent:          false,
         isStartedOnSourceLoad: true,
+        showMilliseconds:      true,
         stopwatchFont:         {
           family:      'PT Sans',
           size:        16,
@@ -71,7 +72,11 @@ export default defineComponent({
       if (days > 0) {
         output += `${days}d`;
       }
-      output += `${hours < 10 ? '0' : ''}${hours}:${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}.${millis}`;
+
+      output += `${hours < 10 ? '0' : ''}${hours}:${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+      if (options.value.showMilliseconds) {
+        output += `.${millis}`;
+      }
       return output;
     });
 
@@ -108,16 +113,27 @@ export default defineComponent({
           roundProps:  'value',
           ease:        'linear',
           onInterrupt: () => {
-            // we need to send part of tick
-            fetch(`${process.env.isNuxtDev ? 'http://localhost:20000' : location.origin}/api/v1/overlay/${props.id ? props.id : route.value.params.id}/tick/${options.value.currentTime}`);
+            saveState();
           },
           onComplete: () => {
-            // reset lastMillis
-            if (options.value.isPersistent) {
-              fetch(`${process.env.isNuxtDev ? 'http://localhost:20000' : location.origin}/api/v1/overlay/${props.id ? props.id : route.value.params.id}/tick`);
-            }
+            saveState();
             tick();
           },
+        });
+      }
+    }
+
+    function saveState () {
+      if (options.value.isPersistent) {
+        fetch(`${process.env.isNuxtDev ? 'http://localhost:20000' : location.origin}/api/v1/overlay/${props.id ? props.id : route.value.params.id}/tick/`, {
+          method:         'POST', // *GET, POST, PUT, DELETE, etc.
+          mode:           'cors', // no-cors, *cors, same-origin
+          cache:          'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+          credentials:    'same-origin', // include, *same-origin, omit
+          redirect:       'follow', // manual, *follow, error
+          headers:        { 'Content-Type': 'application/json' },
+          referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+          body:           JSON.stringify({ time: options.value.currentTime }), // body data type must match "Content-Type" header
         });
       }
     }
