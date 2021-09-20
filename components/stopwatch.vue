@@ -42,7 +42,7 @@ export default defineComponent({
         showMilliseconds:      true,
         stopwatchFont:         {
           family:      'PT Sans',
-          size:        16,
+          size:        50,
           borderPx:    1,
           borderColor: '#000000',
           weight:      '500',
