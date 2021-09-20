@@ -44,7 +44,7 @@ export default defineComponent({ // enable useMeta
         showMessageWhenReachedZero: false,
         countdownFont:              {
           family:      'PT Sans',
-          size:        16,
+          size:        50,
           borderPx:    1,
           borderColor: '#000000',
           weight:      '500',
@@ -53,7 +53,7 @@ export default defineComponent({ // enable useMeta
         },
         messageFont: {
           family:      'PT Sans',
-          size:        16,
+          size:        35,
           borderPx:    1,
           borderColor: '#000000',
           weight:      '500',
