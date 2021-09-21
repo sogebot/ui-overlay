@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [7.0.0](https://github.com/sogebot/ui-overlay/compare/v6.0.0...v7.0.0) (2021-09-21)
+
+
+### Features
+
+* **countdown:** add millis support ([a5dc556](https://github.com/sogebot/ui-overlay/commit/a5dc556ec20b5d0b8c323ef7ada4868ecd9fb9bf))
+* **marathon:** add marathon support ([782b34f](https://github.com/sogebot/ui-overlay/commit/782b34f86d44177e1170a406d9ac96aa8f3e9f5e))
+* **stopwatch:** add millis support ([04c8f7b](https://github.com/sogebot/ui-overlay/commit/04c8f7bc51d1cb78344e147978d3c06064d95ad2))
+
+
+### Bug Fixes
+
+* **countdown:** update default font sizes ([9a1a24f](https://github.com/sogebot/ui-overlay/commit/9a1a24f19a9a7a8cb543b6690b3e51d4beec3b1d))
+* **stopwatch:** update default font sizes ([edaa5f5](https://github.com/sogebot/ui-overlay/commit/edaa5f5bb38aa8d4561c98e2e5c7d2d535b42c25))
+
 ## [6.0.0](https://github.com/sogebot/ui-overlay/compare/v5.0.5...v6.0.0) (2021-09-19)
 
 
