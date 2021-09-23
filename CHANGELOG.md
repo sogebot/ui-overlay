@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [7.0.1](https://github.com/sogebot/ui-overlay/compare/v7.0.0...v7.0.1) (2021-09-23)
+
+
+### Bug Fixes
+
+* **obswebsocket:** remove const socket ([00761f8](https://github.com/sogebot/ui-overlay/commit/00761f86493f711c2c52dfcf03f5ff56ecb5c010))
+
 ## [7.0.0](https://github.com/sogebot/ui-overlay/compare/v6.0.0...v7.0.0) (2021-09-21)
 
 
