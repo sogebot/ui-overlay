@@ -20,8 +20,6 @@ type Props = {
   }
 };
 
-const socket = getSocket('/integrations/obswebsocket', true);
-
 export default defineComponent({
   props: { opts: Object },
   setup (props: Props) {
@@ -40,7 +38,7 @@ export default defineComponent({
       }
 
       const address: string = await new Promise((resolve, reject) => {
-        socket.emit('get.value', 'address', (err: null | Error, val: string) => {
+        getSocket('/integrations/obswebsocket', true).emit('get.value', 'address', (err: null | Error, val: string) => {
           if (err) {
             reject(err);
           } else {
@@ -49,7 +47,7 @@ export default defineComponent({
         });
       });
       const password: string = await new Promise((resolve, reject) => {
-        socket.emit('get.value', 'password', (err: null | Error, val: string) => {
+        getSocket('/integrations/obswebsocket', true).emit('get.value', 'password', (err: null | Error, val: string) => {
           if (err) {
             reject(err);
           } else {
@@ -64,7 +62,7 @@ export default defineComponent({
         await obs.connect({ address, password });
       }
 
-      socket.on('integration::obswebsocket::trigger', async (tasks: OBSWebsocketInterface['simpleModeTasks'] | string, cb: any) => {
+      getSocket('/integrations/obswebsocket', true).on('integration::obswebsocket::trigger', async (tasks: OBSWebsocketInterface['simpleModeTasks'] | string, cb: any) => {
         console.log('integration::obswebsocket::trigger', tasks);
         cb(); // resolve first so connection is OK
         try {
@@ -74,7 +72,7 @@ export default defineComponent({
         }
       });
 
-      socket.on('integration::obswebsocket::function', async (fnc: any, cb: any) => {
+      getSocket('/integrations/obswebsocket', true).on('integration::obswebsocket::function', async (fnc: any, cb: any) => {
         console.debug('integration::obswebsocket::function', fnc);
         switch (fnc) {
           case 'getSourcesList':
@@ -91,7 +89,7 @@ export default defineComponent({
       });
 
       // add listeners
-      switchScenes(obs, socket);
+      switchScenes(obs, getSocket('/integrations/obswebsocket', true));
     });
   },
 });
