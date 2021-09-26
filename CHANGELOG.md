@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [7.0.2](https://github.com/sogebot/ui-overlay/compare/v7.0.1...v7.0.2) (2021-09-26)
+
+
+### Bug Fixes
+
+* **obswebsocket:** reconnect if connection fails ([74307d6](https://github.com/sogebot/ui-overlay/commit/74307d62bb4111c151f4ed04b9d77c20671324b7))
+
 ### [7.0.1](https://github.com/sogebot/ui-overlay/compare/v7.0.0...v7.0.1) (2021-09-23)
 
 
