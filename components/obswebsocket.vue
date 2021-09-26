@@ -23,6 +23,29 @@ type Props = {
 export default defineComponent({
   props: { opts: Object },
   setup (props: Props) {
+    const obs = new OBSWebSocket();
+    obs.on('error', (err) => {
+      console.error('socket error:', err);
+      setTimeout(() => { connect(); }, 1000);
+    });
+
+    let address = '';
+    let password = '';
+
+    const connect = async () => {
+      try {
+        if (password === '') {
+          await obs.connect({ address });
+        } else {
+          await obs.connect({ address, password });
+        }
+      } catch (e) {
+        console.error(e);
+        // try to reconnect
+        setTimeout(() => { connect(); }, 1000);
+      }
+    };
+
     onMounted(async () => {
       console.log('====== OBS WEBSOCKET ======');
       if (props.opts.allowedIPs.length > 0) {
@@ -37,7 +60,7 @@ export default defineComponent({
         console.log(`There is no IP restrictions set.`);
       }
 
-      const address: string = await new Promise((resolve, reject) => {
+      address = await new Promise((resolve, reject) => {
         getSocket('/integrations/obswebsocket', true).emit('get.value', 'address', (err: null | Error, val: string) => {
           if (err) {
             reject(err);
@@ -46,7 +69,7 @@ export default defineComponent({
           }
         });
       });
-      const password: string = await new Promise((resolve, reject) => {
+      password = await new Promise((resolve, reject) => {
         getSocket('/integrations/obswebsocket', true).emit('get.value', 'password', (err: null | Error, val: string) => {
           if (err) {
             reject(err);
@@ -55,12 +78,7 @@ export default defineComponent({
           }
         });
       });
-      const obs = new OBSWebSocket();
-      if (password === '') {
-        await obs.connect({ address });
-      } else {
-        await obs.connect({ address, password });
-      }
+      connect();
 
       getSocket('/integrations/obswebsocket', true).on('integration::obswebsocket::trigger', async (tasks: OBSWebsocketInterface['simpleModeTasks'] | string, cb: any) => {
         console.log('integration::obswebsocket::trigger', tasks);

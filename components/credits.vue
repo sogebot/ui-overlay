@@ -74,9 +74,7 @@ import {
   mdiSonyPlaystation,
   mdiSpotify,
   mdiSteam,
-  mdiTelegram,
   mdiTwitter,
-  mdiVk,
   mdiYoutube,
 } from '@mdi/js';
 import { defineComponent, useStore } from '@nuxtjs/composition-api';
@@ -499,9 +497,7 @@ export default defineComponent({
         mdiSnapchat,
         mdiSpotify,
         mdiSteam,
-        mdiTelegram,
         mdiTwitter,
-        mdiVk,
         mdiMicrosoftWindows,
         mdiMicrosoftXbox,
         mdiYoutube,
