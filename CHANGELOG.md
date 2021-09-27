@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [8.0.0](https://github.com/sogebot/ui-overlay/compare/v7.0.2...v8.0.0) (2021-09-27)
+
+
+### Features
+
+* **obswebsocket:** trigger task with event variable ([66cef89](https://github.com/sogebot/ui-overlay/commit/66cef893278381f7f6889ba70929d81d8e9e56bf))
+
 ### [7.0.2](https://github.com/sogebot/ui-overlay/compare/v7.0.1...v7.0.2) (2021-09-26)
 
 
