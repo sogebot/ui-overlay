@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [8.1.0](https://github.com/sogebot/ui-overlay/compare/v8.0.1...v8.1.0) (2021-09-29)
+
+
+### Features
+
+* **randomizer:** add tape type ([32da368](https://github.com/sogebot/ui-overlay/commit/32da3689005c69d19bb8c2892f72d347c6497a61))
+
 ### [8.0.1](https://github.com/sogebot/ui-overlay/compare/v8.0.0...v8.0.1) (2021-09-29)
 
 
