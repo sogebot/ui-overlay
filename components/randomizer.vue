@@ -11,7 +11,51 @@
         :expand-depth="4"
       />
     </div>
-    <div id="simpleRandomizer">
+    <div id="positionAnchor">
+      <div
+        v-if="data && data.type === 'tape'"
+        style="width: max-content"
+        :style="{
+          transform: positionGenerator()
+        }"
+      >
+        <!-- line -->
+        <div
+          :style="{
+            'text-align': 'center',
+            'z-index': '9999',
+            left: '50%',
+            width: '2px',
+            height: '50px',
+            position: 'absolute',
+            margin: 'auto',
+            'border-left': '3px solid black',
+            'border-right': '3px solid white',
+          }"
+        />
+        <div id="tape">
+          <template v-for="loop in (tapeLoops + 5)">
+            <div
+              v-for="(item, index) in generateItems(data.items)"
+              :key="'tape-' + index + '-' + loop"
+              :style="{
+                'background-color': item.color,
+                color: getContrastColor(item.color),
+                width: 'fit-content',
+                padding: '10px',
+                display: 'inline-block',
+                'font-size': data.customizationFont.size + 'px',
+                'font-weight': data.customizationFont.weight,
+                'font-family': data.customizationFont.family,
+                'text-shadow': [textStrokeGenerator(data.customizationFont.borderPx, data.customizationFont.borderColor), shadowGenerator(data.customizationFont.shadow)].filter(Boolean).join(', '),
+                'transform': position[index] ? position[index] : '',
+              }"
+            >
+              {{ item.name }}
+            </div>
+          </template>
+        </div>
+      </div>
       <div v-if="data && data.type === 'simple'">
         <div
           v-for="(item, index) in generateItems(data.items)"
@@ -101,6 +145,9 @@ export default defineComponent({ // enable useMeta
     const showSimpleBlink = ref(true);
     const showSimpleLoop = ref(0);
 
+    const tapeLoops = ref(0);
+    const tapeInProgress = ref(false);
+
     const theWheel = ref(null as any);
     const wheelWin = ref(null as any);
 
@@ -156,6 +203,25 @@ export default defineComponent({ // enable useMeta
         setTimeout(() => checkResponsiveVoiceAPIKey(), 10000);
       });
     };
+
+    function getMiddleElement () {
+      const clientWidth = window.innerWidth;
+      let element: null | HTMLElement = null;
+      for (const child of Array.from(document.getElementById('tape')?.children ?? [])) {
+        if (child.getBoundingClientRect().x < clientWidth / 2) {
+          element = child as HTMLElement;
+        } else {
+          break;
+        }
+      }
+      return element;
+    }
+
+    function blinkElementBackground (element: HTMLElement) {
+      const tl = gsap.timeline({ repeat: 4, repeatDelay: 0 });
+      tl.to(element, { backgroundColor: 'darkorange' });
+      tl.to(element, { backgroundColor: element.style.backgroundColor });
+    }
 
     onMounted(() => {
       console.log('====== RANDOMIZER ======');
@@ -288,6 +354,40 @@ export default defineComponent({ // enable useMeta
           theWheel.value.rotationAngle = theWheel.value.rotationAngle % 360; // reset angle
           theWheel.value.startAnimation();
         }
+        if (data.value.type === 'tape') {
+          if (tapeInProgress.value) {
+            return;
+          }
+          tapeInProgress.value = true;
+
+          // get initial size of div of 1 loop
+          const width = (document.getElementById('tape')?.clientWidth ?? 0) / (tapeLoops.value + 5);
+
+          // add several loops
+          const newLoops = Math.floor(Math.random() * 5);
+          tapeLoops.value += newLoops;
+
+          // we need to move x loops with last loop random
+          const newPos = width * (tapeLoops.value + 1) + Math.floor(Math.random() * width);
+
+          gsap.to(document.getElementById('tape'), {
+            x:          -newPos,
+            duration:   5 + Math.random() * 5,
+            ease:       'ease-out',
+            onComplete: () => {
+              tapeInProgress.value = false;
+
+              // we need to get element in the middle
+              const winnerEl = getMiddleElement();
+              if (winnerEl) {
+                if (data.value && data.value.tts.enabled) {
+                  speak(winnerEl.innerHTML.trim(), data.value.tts.voice, data.value.tts.rate, data.value.tts.pitch, data.value.tts.volume);
+                }
+                blinkElementBackground(winnerEl);
+              }
+            },
+          });
+        }
         if (data.value.type === 'simple') {
           if (showSimpleLoop.value > 0) {
             return; // do nothing if in progress
@@ -354,35 +454,42 @@ export default defineComponent({ // enable useMeta
 
     const positionGenerator = () => {
       position.value = [];
-      const el = document.getElementById('simpleRandomizer');
+      const el = document.getElementById('positionAnchor');
       if (el) {
-        const child = el.children[0];
-        if (child) {
-          const child2 = child.children;
-          for (let i = 0; i < child2.length; i++) {
-            if (child2[i] && data.value) {
-              const widthPxPerCent = window.innerWidth / 100;
-              const heightPxPerCent = window.innerHeight / 100;
+        if (data.value?.type === 'simple') {
+          const child = el.children[0];
+          if (child) {
+            const child2 = child.children;
+            for (let i = 0; i < child2.length; i++) {
+              if (child2[i] && data.value) {
+                const widthPxPerCent = window.innerWidth / 100;
+                const heightPxPerCent = window.innerHeight / 100;
 
-              let top = 0;
-              if (data.value.position.anchorY === 'middle') {
-                top = Number(window.getComputedStyle(child2[i]).getPropertyValue('height').replace('px', '')) / 2;
-              } else if (data.value.position.anchorY === 'bottom') {
-                top = Number(window.getComputedStyle(child2[i]).getPropertyValue('height').replace('px', ''));
+                let top = 0;
+                if (data.value.position.anchorY === 'middle') {
+                  top = Number(window.getComputedStyle(child2[i]).getPropertyValue('height').replace('px', '')) / 2;
+                } else if (data.value.position.anchorY === 'bottom') {
+                  top = Number(window.getComputedStyle(child2[i]).getPropertyValue('height').replace('px', ''));
+                }
+
+                let left = 0;
+                if (data.value.position.anchorX === 'middle') {
+                  left = Number(window.getComputedStyle(child2[i]).getPropertyValue('width').replace('px', '')) / 2;
+                } else if (data.value.position.anchorX === 'right') {
+                  left = Number(window.getComputedStyle(child2[i]).getPropertyValue('width').replace('px', ''));
+                }
+
+                position.value[i] = `translate(${(data.value.position.x * widthPxPerCent) - left}px, ${(data.value.position.y * heightPxPerCent) - top}px)`;
+              } else {
+                position.value[i] = `translate(0, 0)`;
               }
-
-              let left = 0;
-              if (data.value.position.anchorX === 'middle') {
-                left = Number(window.getComputedStyle(child2[i]).getPropertyValue('width').replace('px', '')) / 2;
-              } else if (data.value.position.anchorX === 'right') {
-                left = Number(window.getComputedStyle(child2[i]).getPropertyValue('width').replace('px', ''));
-              }
-
-              position.value[i] = `translate(${(data.value.position.x * widthPxPerCent) - left}px, ${(data.value.position.y * heightPxPerCent) - top}px)`;
-            } else {
-              position.value[i] = `translate(0, 0)`;
             }
           }
+        } else if (data.value?.type === 'tape') {
+          const heightPxPerCent = window.innerHeight / 100;
+          return `translate(0, ${data.value.position.y * heightPxPerCent}px)`;
+        } else {
+          return `translate(0, 0)`;
         }
       }
     };
@@ -432,9 +539,11 @@ export default defineComponent({ // enable useMeta
     return {
       isDebug,
       data,
+      tapeLoops,
       generateItems,
       showSimpleValueIndex,
       showSimpleBlink,
+      positionGenerator,
       position,
       wheelWin,
       getContrastColor,
