@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [8.0.1](https://github.com/sogebot/ui-overlay/compare/v8.0.0...v8.0.1) (2021-09-29)
+
+
+### Bug Fixes
+
+* **countdown:** make millis smaller ([7a2d920](https://github.com/sogebot/ui-overlay/commit/7a2d92036db70feb55dca7dbc1eb92e7ddf0c1a4))
+* **marathon:** make millis smaller ([2c6c15a](https://github.com/sogebot/ui-overlay/commit/2c6c15ab00967ffc8a46879c2cac28430b8db7e0))
+* **stopwatch:** make millis smaller ([9a6937d](https://github.com/sogebot/ui-overlay/commit/9a6937d0e6952f8eaca18dbd7a97e11e05192202))
+
 ## [8.0.0](https://github.com/sogebot/ui-overlay/compare/v7.0.2...v8.0.0) (2021-09-27)
 
 
