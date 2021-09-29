@@ -10,9 +10,7 @@
         'font-size': font.size + 'px',
         'text-shadow': [textStrokeGenerator(font.borderPx, font.borderColor), shadowGenerator(font.shadow)].filter(Boolean).join(', ')
       }"
-    >
-      {{ time }}
-    </div>
+      v-html="time"/>
     <v-sparkline
       v-if="options.showProgressGraph"
       :smooth="25"
@@ -107,11 +105,9 @@ export default defineComponent({
       const hours = Math.floor((currentTime.value.value - days * DAY) / HOUR);
       const minutes = Math.floor((currentTime.value.value - (days * DAY) - (hours * HOUR)) / MINUTE);
       const seconds = Math.floor((currentTime.value.value - (days * DAY) - (hours * HOUR) - (minutes * MINUTE)) / SECOND);
-      let millis: number | string = Math.floor((currentTime.value.value - (days * DAY) - (hours * HOUR) - (minutes * MINUTE) - (seconds * SECOND)));
+      let millis: number | string = Math.floor((currentTime.value.value - (days * DAY) - (hours * HOUR) - (minutes * MINUTE) - (seconds * SECOND)) / 10);
 
       if (millis < 10) {
-        millis = `00${millis}`;
-      } else if (millis < 100) {
         millis = `0${millis}`;
       }
 
@@ -122,7 +118,7 @@ export default defineComponent({
 
       output += `${hours < 10 ? '0' : ''}${hours}:${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
       if (options.value.showMilliseconds) {
-        output += `.${millis}`;
+        output += `<small>.${millis}</small>`;
       }
       return output;
     });
