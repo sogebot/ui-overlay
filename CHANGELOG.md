@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [8.1.1](https://github.com/sogebot/ui-overlay/compare/v8.1.0...v8.1.1) (2021-10-04)
+
+
+### Bug Fixes
+
+* **clipscarousel:** simplify code to get rid of cpu loop after 30 minutes ([046a121](https://github.com/sogebot/ui-overlay/commit/046a1219a8d2c6cf90345049cc817ef71d315380))
+
 ## [8.1.0](https://github.com/sogebot/ui-overlay/compare/v8.0.1...v8.1.0) (2021-09-29)
 
 
