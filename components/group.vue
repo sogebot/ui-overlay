@@ -5,7 +5,7 @@
       v-for="item of options.items"
       :key="item.id"
       :id="item.id"
-      :opts="item.opts"
+      :opts="JSON.parse(item.opts)"
       :style="{
         border: isDebug ? '2px solid orange' : 'inherit',
         position: 'absolute',

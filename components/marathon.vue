@@ -107,11 +107,9 @@ export default defineComponent({
       const hours = Math.floor((currentTime.value.value - days * DAY) / HOUR);
       const minutes = Math.floor((currentTime.value.value - (days * DAY) - (hours * HOUR)) / MINUTE);
       const seconds = Math.floor((currentTime.value.value - (days * DAY) - (hours * HOUR) - (minutes * MINUTE)) / SECOND);
-      let millis: number | string = Math.floor((currentTime.value.value - (days * DAY) - (hours * HOUR) - (minutes * MINUTE) - (seconds * SECOND)));
+      let millis: number | string = Math.floor((currentTime.value.value - (days * DAY) - (hours * HOUR) - (minutes * MINUTE) - (seconds * SECOND)) / 10);
 
       if (millis < 10) {
-        millis = `00${millis}`;
-      } else if (millis < 100) {
         millis = `0${millis}`;
       }
 

@@ -48,6 +48,7 @@ export default {
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
     { src: '@/plugins/log-version.js', ssr: false },
+    '@/plugins/apollo-hook.ts',
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -71,10 +72,16 @@ export default {
   modules: [
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
+    '@nuxtjs/apollo',
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {},
+
+  apollo: {
+    includeNodeModules: true,
+    clientConfigs:      { default: '~/plugins/apollo-config.js' },
+  },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {

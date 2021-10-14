@@ -1,0 +1,3 @@
+mutation OverlayTick($id: String!, $millis: Float!) {
+  overlaysTick(id: $id, millis: $millis)
+}

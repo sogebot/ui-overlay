@@ -44,13 +44,15 @@
     "vue-json-viewer": "^2.2.19"
   },
   "devDependencies": {
-    "@babel/eslint-parser": "^7.15.7",
+    "@nuxtjs/apollo": "^4.0.1-rc.5",
+    "@vue/apollo-composable": "^4.0.0-alpha.15",
+    "@babel/eslint-parser": "^7.15.8",
     "@commitlint/cli": "^13.1.0",
     "@commitlint/config-conventional": "^13.1.0",
     "@mdi/js": "^6.1.95",
     "@nuxt/types": "^2.15.8",
     "@nuxt/typescript-build": "^2.1.0",
-    "@nuxtjs/composition-api": "^0.29.2",
+    "@nuxtjs/composition-api": "^0.29.3",
     "@nuxtjs/eslint-config-typescript": "^6.0.1",
     "@nuxtjs/eslint-module": "^3.0.2",
     "@nuxtjs/stylelint-module": "^4.0.0",

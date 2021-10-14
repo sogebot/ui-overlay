@@ -1,0 +1,164 @@
+fragment commonFields on CommonSettingsObject {
+  id, enabled title variantAmount messageTemplate
+  layout filter animationInDuration animationIn
+  animationOutDuration animationOut animationText
+  animationTextOptions {
+    speed maxTimeToDecrypt characters
+  }
+  imageId
+  imageOptions {
+    translateX translateY scale
+  }
+  soundId soundVolume
+  tts {
+    enabled skipUrls keepAlertShown minAmountToPlay
+  }
+  alertDurationInMs
+  alertTextDelayInMs
+  enableAdvancedMode
+  advancedMode { html css js }
+  font {
+    align family size borderPx borderColor weight color highlightcolor
+    shadow { shiftRight shiftDown blur opacity color }
+  }
+}
+
+fragment tipFields on AlertTipObject {
+  id, enabled title variantAmount messageTemplate
+  layout filter animationInDuration animationIn
+  animationOutDuration animationOut animationText
+  animationTextOptions {
+    speed maxTimeToDecrypt characters
+  }
+  imageId
+  imageOptions {
+    translateX translateY scale
+  }
+  soundId soundVolume
+  tts {
+    enabled skipUrls keepAlertShown minAmountToPlay
+  }
+  alertDurationInMs
+  alertTextDelayInMs
+  enableAdvancedMode
+  advancedMode { html css js }
+  font {
+    align family size borderPx borderColor weight color highlightcolor
+    shadow { shiftRight shiftDown blur opacity color }
+  }
+  message {
+    minAmountToShow
+    allowEmotes {
+      twitch ffz bttv
+    }
+    font {
+      align family size borderPx borderColor weight color highlightcolor
+      shadow { shiftRight shiftDown blur opacity color }
+    }
+  }
+}
+
+fragment resubFields on AlertResubObject {
+  id, enabled title variantAmount messageTemplate
+  layout filter animationInDuration animationIn
+  animationOutDuration animationOut animationText
+  animationTextOptions {
+    speed maxTimeToDecrypt characters
+  }
+  imageId
+  imageOptions {
+    translateX translateY scale
+  }
+  soundId soundVolume
+  tts {
+    enabled skipUrls keepAlertShown minAmountToPlay
+  }
+  alertDurationInMs
+  alertTextDelayInMs
+  enableAdvancedMode
+  advancedMode { html css js }
+  font {
+    align family size borderPx borderColor weight color highlightcolor
+    shadow { shiftRight shiftDown blur opacity color }
+  }
+  message {
+    allowEmotes {
+      twitch ffz bttv
+    }
+    font {
+      align family size borderPx borderColor weight color highlightcolor
+      shadow { shiftRight shiftDown blur opacity color }
+    }
+  }
+}
+
+fragment rewardFields on AlertRewardRedeemObject {
+  id, enabled title variantAmount messageTemplate
+  layout filter animationInDuration animationIn
+  animationOutDuration animationOut animationText
+  animationTextOptions {
+    speed maxTimeToDecrypt characters
+  }
+  imageId
+  imageOptions {
+    translateX translateY scale
+  }
+  soundId soundVolume
+  tts {
+    enabled skipUrls keepAlertShown minAmountToPlay
+  }
+  alertDurationInMs
+  alertTextDelayInMs
+  enableAdvancedMode
+  advancedMode { html css js }
+  font {
+    align family size borderPx borderColor weight color highlightcolor
+    shadow { shiftRight shiftDown blur opacity color }
+  }
+  message {
+    minAmountToShow
+    allowEmotes {
+      twitch ffz bttv
+    }
+    font {
+      align family size borderPx borderColor weight color highlightcolor
+      shadow { shiftRight shiftDown blur opacity color }
+    }
+  }
+  rewardId
+}
+
+query AlertGetOne($id: String!) {
+  alerts(id: $id) {
+    id
+    updatedAt
+    name
+    alertDelayInMs
+    profanityFilterType
+    loadStandardProfanityList { cs en ru }
+    parry { enabled delay }
+    tts { voice pitch volume rate }
+    fontMessage {
+      align family size borderPx borderColor weight color
+      shadow {
+        shiftRight shiftDown blur opacity color
+      }
+    }
+    font {
+      align family size borderPx borderColor weight color highlightcolor
+      shadow { shiftRight shiftDown blur opacity color }
+    }
+    customProfanityList
+    follows { ...commonFields }
+    subs { ...commonFields }
+    subgifts { ...commonFields }
+    subcommunitygifts { ...commonFields }
+    hosts { ...commonFields }
+    raids { ...commonFields }
+    tips { ...tipFields }
+    cheers { ...tipFields }
+    resubs { ...resubFields }
+    cmdredeems { ...commonFields }
+    rewardredeems { ...rewardFields }
+  }
+}
