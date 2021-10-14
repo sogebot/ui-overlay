@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [9.0.0](https://github.com/sogebot/ui-overlay/compare/v8.1.1...v9.0.0) (2021-10-14)
+
+
+### Features
+
+* **gql:** add graphql support ([#77](https://github.com/sogebot/ui-overlay/issues/77)) ([683b86c](https://github.com/sogebot/ui-overlay/commit/683b86cd3a9d93b10e92e4e5355fe0f5d7d58f64))
+
 ### [8.1.1](https://github.com/sogebot/ui-overlay/compare/v8.1.0...v8.1.1) (2021-10-04)
 
 
