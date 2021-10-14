@@ -1,0 +1,14 @@
+query CarouselGetAll {
+  carousels {
+    id
+    order
+    waitBefore
+    waitAfter
+    duration
+    animationInDuration
+    animationIn
+    animationOutDuration
+    animationOut
+    showOnlyOncePerStream
+  }
+}

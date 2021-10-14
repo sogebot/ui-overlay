@@ -169,39 +169,156 @@
 <script lang="ts">
 import {
   defineComponent, nextTick,
-  onMounted, ref, useContext,
+  onMounted, ref, watch,
 } from '@nuxtjs/composition-api';
 import { dayjs } from '@sogebot/ui-helpers/dayjsHelper';
 import { shadowGenerator, textStrokeGenerator } from '@sogebot/ui-helpers/text';
+import { useQuery, useResult } from '@vue/apollo-composable';
 import gsap from 'gsap';
 import { find } from 'lodash';
 import safeEval from 'safe-eval';
 
 import { GoalGroupInterface, GoalInterface } from '.bot/src/database/entity/goal';
+import GET_ONE from '~/queries/goals/getOne.gql';
 
 const bgColors = [] as string[];
 
 export default defineComponent({
   middleware: ['isBotStarted'],
-  props: {
-    opts: Object,
-  },
+  props:      { opts: Object },
   setup (props) {
     const show = ref(-1);
+
     const group = ref(null as GoalGroupInterface | null);
+    const current = ref({ subscribers: 0, followers: 0 });
+
     const loadedFonts = ref([] as string[]);
     const loadedCSS = ref([] as string[]);
     const lastSwapTime = ref(Date.now());
     const triggerUpdate = ref([] as string[]);
     const cssLoaded = ref([] as string[]);
-    const current = ref({ subscribers: 0, followers: 0 });
 
-    const { $axios } = useContext();
+    const query = useQuery(GET_ONE, { id: props.opts?.id }, { pollInterval: 5000 });
+    const cache = useResult<{ goals: GoalGroupInterface[], goalsCurrent: typeof current.value }, null>(query.result, null);
+
+    watch(cache, (value) => {
+      if (!value) {
+        return;
+      }
+      current.value = value.goalsCurrent;
+      group.value = value.goals[0] || null;
+
+      if (group.value) {
+        for (const goal of group.value.goals) {
+          if (!bgColors.includes(goal.customizationBar.backgroundColor)) {
+            bgColors.push(goal.customizationBar.backgroundColor);
+            // create css background colors
+            document.head.insertAdjacentHTML(
+              'beforeend',
+              `<style type="text/css">.color-${goal.customizationBar.backgroundColor.replace('#', '')} .v-progress-linear__background {
+                      opacity: 1 !important;
+                      background-color: ${goal.customizationBar.backgroundColor} !important;
+                    }</style>`,
+            );
+          }
+        }
+
+        if (group.value.goals.length > 0) {
+          for (const goal of group.value.goals) {
+            const _goal = find(group.value.goals, o => o.id === goal.id);
+            if (typeof _goal !== 'undefined') {
+              if (Number(_goal.currentAmount) !== Number(goal.currentAmount)) {
+                console.debug(_goal.currentAmount + ' => ' + goal.currentAmount);
+                triggerUpdate.value.push((goal as Required<GoalInterface>).id);
+              }
+            }
+          }
+        }
+
+        // update currentAmount for current types
+        for (const goal of group.value.goals) {
+          if (goal.type === 'currentFollowers') {
+            if (goal.currentAmount !== current.value.followers) {
+              triggerUpdate.value.push((goal as Required<GoalInterface>).id);
+            }
+            goal.currentAmount = current.value.followers;
+          }
+          if (goal.type === 'currentSubscribers') {
+            if (goal.currentAmount !== current.value.subscribers) {
+              triggerUpdate.value.push((goal as Required<GoalInterface>).id);
+            }
+            goal.currentAmount = current.value.subscribers;
+          }
+        }
+
+        // add css import
+        for (const goal of group.value.goals) {
+          if (!cssLoaded.value.includes((goal as Required<GoalInterface>).id)) {
+            cssLoaded.value.push((goal as Required<GoalInterface>).id);
+            const head = document.getElementsByTagName('head')[0];
+            const style = document.createElement('style');
+            style.type = 'text/css';
+            if (!loadedCSS.value.includes(goal.customizationCss)) {
+              loadedCSS.value.push(goal.customizationCss);
+              const css = goal.customizationCss
+                .replace(/#wrap/g, '#wrap-' + goal.id); // replace .wrap with only this goal wrap
+              style.appendChild(document.createTextNode(css));
+            }
+            head.appendChild(style);
+          }
+        }
+
+        // add fonts import
+        const head = document.getElementsByTagName('head')[0];
+        const style = document.createElement('style');
+        style.type = 'text/css';
+
+        for (const goal of group.value.goals) {
+          if (!loadedFonts.value.includes(goal.customizationFont.family)) {
+            console.debug('Loading font', goal.customizationFont.family);
+            loadedFonts.value.push(goal.customizationFont.family);
+            const font = goal.customizationFont.family.replace(/ /g, '+');
+            const css = '@import url(\'https://fonts.googleapis.com/css?family=' + font + '\');';
+            style.appendChild(document.createTextNode(css));
+          }
+        }
+        head.appendChild(style);
+
+        // if custom html update all variables
+        for (const goal of group.value.goals) {
+          if (goal.display === 'custom') {
+            goal.customizationHtml = goal.customizationHtml
+              .replace(/\$name/g, goal.name)
+              .replace(/\$type/g, goal.type)
+              .replace(/\$goalAmount/g, String(goal.goalAmount))
+              .replace(/\$currentAmount/g, String(goal.currentAmount))
+              .replace(/\$percentageAmount/g, Number((100 / (goal.goalAmount ?? 0)) * (goal.currentAmount ?? 0)).toFixed())
+              .replace(/\$endAfter/g, new Date(goal.endAfter).toISOString());
+          }
+
+          // trigger onUpdate on nextTick
+          nextTick(() => {
+            if (triggerUpdate.value.includes((goal as Required<GoalInterface>).id)) {
+              const idx = triggerUpdate.value.indexOf((goal as Required<GoalInterface>).id);
+              triggerUpdate.value.splice(idx, 1);
+
+              console.debug('onUpdate : ' + goal.id);
+              const toEval = `(function evaluation () { ${goal.customizationJs}; onChange(${goal.currentAmount}) })()`;
+              safeEval(toEval);
+            }
+          });
+        }
+
+        nextTick(() => {
+          if (show.value === -1) {
+            show.value = 0;
+          }
+        });
+      }
+    });
 
     onMounted(() => {
       console.log('====== GOAL REGISTRY ======');
-      refresh();
-      window.setInterval(() => refresh(), 5000);
       window.setInterval(() => {
         if (group.value === null) {
           return;
@@ -269,130 +386,6 @@ export default defineComponent({
 
     const getFontFamilyCSS = (family: string) => {
       return `"${family}" !important`;
-    };
-
-    const refresh = () => {
-      const id = props.opts?.id;
-      if (id) {
-        $axios.get<{ subscribers: number; followers: number; }>(`${location.origin}/api/v1/registry/goals/current`)
-          .then((response) => {
-            current.value = response.data;
-          });
-        $axios.get<GoalGroupInterface>(`${location.origin}/api/v1/registry/goals/${id}`)
-          .then((response) => {
-            group.value = response.data || null;
-
-            if (group.value) {
-              for (const goal of group.value.goals) {
-                if (!bgColors.includes(goal.customizationBar.backgroundColor)) {
-                  bgColors.push(goal.customizationBar.backgroundColor);
-                  // create css background colors
-                  document.head.insertAdjacentHTML(
-                    'beforeend',
-                    `<style type="text/css">.color-${goal.customizationBar.backgroundColor.replace('#', '')} .v-progress-linear__background {
-                      opacity: 1 !important;
-                      background-color: ${goal.customizationBar.backgroundColor} !important;
-                    }</style>`,
-                  );
-                }
-              }
-
-              if (group.value.goals.length > 0) {
-                for (const goal of group.value.goals) {
-                  const _goal = find(group.value.goals, o => o.id === goal.id);
-                  if (typeof _goal !== 'undefined') {
-                    if (Number(_goal.currentAmount) !== Number(goal.currentAmount)) {
-                      console.debug(_goal.currentAmount + ' => ' + goal.currentAmount);
-                      triggerUpdate.value.push((goal as Required<GoalInterface>).id);
-                    }
-                  }
-                }
-              }
-
-              // update currentAmount for current types
-              for (const goal of group.value.goals) {
-                if (goal.type === 'currentFollowers') {
-                  if (goal.currentAmount !== current.value.followers) {
-                    triggerUpdate.value.push((goal as Required<GoalInterface>).id);
-                  }
-                  goal.currentAmount = current.value.followers;
-                }
-                if (goal.type === 'currentSubscribers') {
-                  if (goal.currentAmount !== current.value.subscribers) {
-                    triggerUpdate.value.push((goal as Required<GoalInterface>).id);
-                  }
-                  goal.currentAmount = current.value.subscribers;
-                }
-              }
-
-              // add css import
-              for (const goal of group.value.goals) {
-                if (!cssLoaded.value.includes((goal as Required<GoalInterface>).id)) {
-                  cssLoaded.value.push((goal as Required<GoalInterface>).id);
-                  const head = document.getElementsByTagName('head')[0];
-                  const style = document.createElement('style');
-                  style.type = 'text/css';
-                  if (!loadedCSS.value.includes(goal.customizationCss)) {
-                    loadedCSS.value.push(goal.customizationCss);
-                    const css = goal.customizationCss
-                      .replace(/#wrap/g, '#wrap-' + goal.id); // replace .wrap with only this goal wrap
-                    style.appendChild(document.createTextNode(css));
-                  }
-                  head.appendChild(style);
-                }
-              }
-
-              // add fonts import
-              const head = document.getElementsByTagName('head')[0];
-              const style = document.createElement('style');
-              style.type = 'text/css';
-
-              for (const goal of group.value.goals) {
-                if (!loadedFonts.value.includes(goal.customizationFont.family)) {
-                  console.debug('Loading font', goal.customizationFont.family);
-                  loadedFonts.value.push(goal.customizationFont.family);
-                  const font = goal.customizationFont.family.replace(/ /g, '+');
-                  const css = '@import url(\'https://fonts.googleapis.com/css?family=' + font + '\');';
-                  style.appendChild(document.createTextNode(css));
-                }
-              }
-              head.appendChild(style);
-
-              // if custom html update all variables
-              for (const goal of group.value.goals) {
-                if (goal.display === 'custom') {
-                  goal.customizationHtml = goal.customizationHtml
-                    .replace(/\$name/g, goal.name)
-                    .replace(/\$type/g, goal.type)
-                    .replace(/\$goalAmount/g, String(goal.goalAmount))
-                    .replace(/\$currentAmount/g, String(goal.currentAmount))
-                    .replace(/\$percentageAmount/g, Number((100 / (goal.goalAmount ?? 0)) * (goal.currentAmount ?? 0)).toFixed())
-                    .replace(/\$endAfter/g, new Date(goal.endAfter).toISOString());
-                }
-
-                // trigger onUpdate on nextTick
-                nextTick(() => {
-                  if (triggerUpdate.value.includes((goal as Required<GoalInterface>).id)) {
-                    const idx = triggerUpdate.value.indexOf((goal as Required<GoalInterface>).id);
-                    triggerUpdate.value.splice(idx, 1);
-
-                    console.debug('onUpdate : ' + goal.id);
-                    const toEval = `(function evaluation () { ${goal.customizationJs}; onChange(${goal.currentAmount}) })()`;
-                    safeEval(toEval);
-                  }
-                });
-              }
-
-              nextTick(() => {
-                if (show.value === -1) {
-                  show.value = 0;
-                }
-              });
-            }
-          });
-      } else {
-        console.error('Missing id param in url');
-      }
     };
 
     return {

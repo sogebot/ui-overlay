@@ -25,6 +25,8 @@ import { getSocket } from '@sogebot/ui-helpers/socket';
 import { shadowGenerator, textStrokeGenerator } from '@sogebot/ui-helpers/text';
 import gsap from 'gsap';
 import { defaultsDeep } from 'lodash';
+import { useMutation } from '@vue/apollo-composable';
+import TICK from '~/queries/overlays/tick.gql';
 
 export default defineComponent({ // enable useMeta
   props: { opts: Object, id: [String, Object] },
@@ -32,6 +34,9 @@ export default defineComponent({ // enable useMeta
     let animation: null | gsap.core.Tween = null;
     const enabled = ref(true);
     const route = useRoute();
+
+    const { mutate: tickMutation } = useMutation(TICK);
+
     const options = ref(
       defaultsDeep(props.opts, {
         time:                       60000,
@@ -61,12 +66,15 @@ export default defineComponent({ // enable useMeta
       }),
     );
     const font = computed(() => {
-      return options.value.time > 0 || !options.value.showMessageWhenReachedZero
+      return options.value.currentTime > 0 || !options.value.showMessageWhenReachedZero
         ? options.value.countdownFont
         : options.value.messageFont;
     });
 
     const time = computed(() => {
+      if (Number(options.value.currentTime) === 0 && options.value.showMessageWhenReachedZero) {
+        return options.value.messageWhenReachedZero;
+      }
       const days = Math.floor(options.value.currentTime / DAY);
       const hours = Math.floor((options.value.currentTime - days * DAY) / HOUR);
       const minutes = Math.floor((options.value.currentTime - (days * DAY) - (hours * HOUR)) / MINUTE);
@@ -102,7 +110,13 @@ export default defineComponent({ // enable useMeta
               enabled.value = data.isEnabled;
             }
             if (data.time !== null) {
+              if (animation) {
+                animation.kill();
+              }
               options.value.currentTime = data.time;
+              if (animation) {
+                tick() // restart tick
+              }
             }
             if (enabled.value && !origEnabled) {
               tick();
@@ -138,15 +152,9 @@ export default defineComponent({ // enable useMeta
 
     function saveState () {
       if (options.value.isPersistent) {
-        fetch(`${process.env.isNuxtDev ? 'http://localhost:20000' : location.origin}/api/v1/overlay/${props.id ? props.id : route.value.params.id}/tick/`, {
-          method:         'POST', // *GET, POST, PUT, DELETE, etc.
-          mode:           'cors', // no-cors, *cors, same-origin
-          cache:          'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-          credentials:    'same-origin', // include, *same-origin, omit
-          redirect:       'follow', // manual, *follow, error
-          headers:        { 'Content-Type': 'application/json' },
-          referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-          body:           JSON.stringify({ time: options.value.currentTime }), // body data type must match "Content-Type" header
+        tickMutation({
+          id:     props.id ? props.id : route.value.params.id,
+          millis: options.value.currentTime,
         });
       }
     }
@@ -163,7 +171,7 @@ export default defineComponent({ // enable useMeta
 
       setInterval(() => {
         update();
-      }, 100);
+      }, 500);
 
       // add fonts import
       const head = document.getElementsByTagName('head')[0];

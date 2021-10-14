@@ -23,8 +23,11 @@ import {
 } from '@sogebot/ui-helpers/constants';
 import { getSocket } from '@sogebot/ui-helpers/socket';
 import { shadowGenerator, textStrokeGenerator } from '@sogebot/ui-helpers/text';
+import { useMutation } from '@vue/apollo-composable';
 import gsap from 'gsap';
 import { defaultsDeep } from 'lodash';
+
+import TICK from '~/queries/overlays/tick.gql';
 
 export default defineComponent({
   props: { opts: Object, id: [String, Object] },
@@ -52,6 +55,8 @@ export default defineComponent({
     const font = computed(() => {
       return options.value.stopwatchFont;
     });
+
+    const { mutate: tickMutation } = useMutation(TICK);
 
     const time = computed(() => {
       const days = Math.floor(options.value.currentTime / DAY);
@@ -89,7 +94,13 @@ export default defineComponent({
               enabled.value = data.isEnabled;
             }
             if (data.time !== null) {
+              if (animation) {
+                animation.kill();
+              }
               options.value.currentTime = data.time;
+              if (animation) {
+                tick() // restart tick
+              }
             }
             if (enabled.value && !origEnabled) {
               tick();
@@ -105,7 +116,7 @@ export default defineComponent({
       if (enabled.value) {
         animation = gsap.to(options.value, {
           duration:    1,
-          currentTime: options.value.currentTime + 1000,
+          currentTime: Number(options.value.currentTime) + 1000,
           roundProps:  'value',
           ease:        'linear',
           onInterrupt: () => {
@@ -121,15 +132,9 @@ export default defineComponent({
 
     function saveState () {
       if (options.value.isPersistent) {
-        fetch(`${process.env.isNuxtDev ? 'http://localhost:20000' : location.origin}/api/v1/overlay/${props.id ? props.id : route.value.params.id}/tick/`, {
-          method:         'POST', // *GET, POST, PUT, DELETE, etc.
-          mode:           'cors', // no-cors, *cors, same-origin
-          cache:          'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-          credentials:    'same-origin', // include, *same-origin, omit
-          redirect:       'follow', // manual, *follow, error
-          headers:        { 'Content-Type': 'application/json' },
-          referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-          body:           JSON.stringify({ time: options.value.currentTime }), // body data type must match "Content-Type" header
+        tickMutation({
+          id:     props.id ? props.id : route.value.params.id,
+          millis: options.value.currentTime,
         });
       }
     }

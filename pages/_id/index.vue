@@ -12,33 +12,37 @@
 
 <script lang="ts">
 import {
-  defineComponent, onMounted, ref, useContext, useRoute,
+  defineComponent, ref, useRoute, watch,
 } from '@nuxtjs/composition-api';
+import { useQuery, useResult } from '@vue/apollo-composable';
+import { cloneDeep } from 'lodash';
 
-import type { OverlayMapperInterface, OverlayMapperOBSWebsocket } from '~/.bot/src/database/entity/overlay';
+import type {
+  OverlayMapperInterface, OverlayMapperOBSWebsocket, OverlayMappers,
+} from '~/.bot/src/database/entity/overlay';
+import GET from '~/queries/overlays/get.gql';
 
 export default defineComponent({
   components: { textRegistry: () => import('~/pages/text/_id/index.vue') },
   middleware: ['isBotStarted'],
   setup () {
-    const { $axios } = useContext();
     const route = useRoute();
-    const type = ref(null as null | OverlayMapperInterface | OverlayMapperOBSWebsocket);
-    onMounted(async () => {
-      try {
-        if (!route.value.params.id) {
-          throw new Error('Unknown overlay link!');
-        }
 
-        type.value = await new Promise((resolve, reject) => {
-          $axios.get(location.origin + '/api/v1/overlay/' + route.value.params.id)
-            .then(response => resolve(response.data))
-            .catch(() => reject(new Error('Unknown overlay link ' + route.value.params.id + '!')));
-        });
-      } catch (e) {
-        console.error(e);
+    const { result } = useQuery(GET, { id: route.value.params.id });
+    const cache = useResult<{ overlays: any[] }, OverlayMappers[]>(result, []);
+    const type = ref(null as null | OverlayMapperInterface | OverlayMapperOBSWebsocket);
+
+    watch(cache, (value) => {
+      for (const key of Object.keys(value)) {
+        if (key.startsWith('__')) {
+          continue;
+        }
+        if (value[key as any].length > 0) {
+          type.value = cloneDeep(value[key as any][0]);
+          break;
+        }
       }
-    });
+    }, { immediate: true, deep: true });
 
     return { type };
   },

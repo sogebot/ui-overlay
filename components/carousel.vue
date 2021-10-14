@@ -1,34 +1,39 @@
 <template>
   <div>
-    <img v-for="e of images" v-show="currentImage === e.order" :id="e.id" :key="e.id" :src="e.imageUrl">
+    <img v-for="e of images" v-show="currentImage === e.order" :id="e.id" :key="e.id" :src="`/api/v2/carousel/image/${e.id}`">
   </div>
 </template>
 
 <script lang="ts">
 import {
-  defineComponent, onMounted, ref, useContext,
+  defineComponent, onMounted, ref,
 } from '@nuxtjs/composition-api';
+import { useQuery, useResult } from '@vue/apollo-composable';
 import gsap from 'gsap';
+
+import type { CarouselInterface } from '.bot/src/database/entity/carousel';
+import GET_ALL from '~/queries/carousel/getAll.gql';
 
 export default defineComponent({
   setup () {
-    const currentImage = ref(null as any);
+    const currentImage = ref(null as null | number);
     const ready = ref(true);
-    const images = ref([] as any[]);
-    const { $axios } = useContext();
+
+    const { result } = useQuery(GET_ALL, null, { pollInterval: 5000 });
+    const images = useResult<{ carousels: CarouselInterface[] }, CarouselInterface[], CarouselInterface[]>(result, [], data => data.carousels);
 
     onMounted(() => {
       console.log('====== CAROUSEL ======');
-      $axios.get(location.origin + '/api/v1/carousel').then((response) => {
-        images.value = response.data.data;
-        setInterval(() => {
-          triggerAnimation();
-        });
-      });
+      setInterval(() => {
+        triggerAnimation();
+      }, 100);
     });
 
-    const wait = (type: string) => {
+    const wait = (type: 'waitBefore' | 'duration' | 'waitAfter') => {
       return new Promise<void>((resolve) => {
+        if (currentImage.value === null) {
+          return resolve();
+        }
         setTimeout(() => resolve(), images.value[currentImage.value][type]);
       });
     };
@@ -36,7 +41,11 @@ export default defineComponent({
     const doEnterAnimation = () => {
       let animation: any = { opacity: 1 };
 
-      const el = document.getElementById(images.value[currentImage.value].id) as HTMLElement;
+      if (currentImage.value === null) {
+        return;
+      }
+
+      const el = document.getElementById(images.value[currentImage.value].id ?? '') as HTMLElement;
 
       // force refresh of styles
       el.style.filter = 'blur(0px)';
@@ -72,6 +81,9 @@ export default defineComponent({
       }
 
       return new Promise<void>((resolve) => {
+        if (currentImage.value === null) {
+          return resolve();
+        }
         gsap.to(el, {
           duration:   images.value[currentImage.value].animationInDuration / 1000,
           ...animation,
@@ -84,7 +96,10 @@ export default defineComponent({
 
     const doLeaveAnimation = () => {
       let animation: any = { opacity: 0 };
-      const el = document.getElementById(images.value[currentImage.value].id) as HTMLElement;
+      if (currentImage.value === null) {
+        return;
+      }
+      const el = document.getElementById(images.value[currentImage.value].id ?? '') as HTMLElement;
 
       switch (images.value[currentImage.value].animationOut) {
         case 'blurOut':
@@ -105,6 +120,9 @@ export default defineComponent({
       }
 
       return new Promise<void>((resolve) => {
+        if (currentImage.value === null) {
+          return resolve();
+        }
         gsap.to(el, {
           duration:   images.value[currentImage.value].animationOutDuration / 1000,
           ...animation,
@@ -126,7 +144,6 @@ export default defineComponent({
         if (images.value.length <= currentImage.value) {
           currentImage.value = 0;
         }
-
         await wait('waitBefore');
         await doEnterAnimation();
         await wait('duration');

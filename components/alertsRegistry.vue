@@ -23,7 +23,7 @@
           v-if="typeOfMedia.get(runningAlert.alert.soundId) === 'audio'"
           id="audio"
         >
-          <source :src="'/api/v1/registry/alerts/media/' + runningAlert.alert.soundId">
+          <source :src="'/api/v2/registry/alerts/media/' + runningAlert.alert.soundId">
         </audio>
         <div
           v-if="runningAlert.isShowing"
@@ -58,7 +58,7 @@
                 }"
               >
                 <source
-                  :src="'/api/v1/registry/alerts/media/' + runningAlert.alert.imageId"
+                  :src="'/api/v2/registry/alerts/media/' + runningAlert.alert.imageId"
                   type="video/webm"
                 >
                 Your browser does not support the video tag.
@@ -78,7 +78,7 @@
               @error="showImage=false"
             >
               <img
-                :src="'/api/v1/registry/alerts/media/' + runningAlert.alert.imageId"
+                :src="'/api/v2/registry/alerts/media/' + runningAlert.alert.imageId"
                 :style="{
                   /* center */
                   'display': 'block',
@@ -195,12 +195,13 @@
 <script lang="ts">
 
 import {
-  defineComponent, nextTick, onMounted, ref, useContext, useMeta,
+  defineComponent, nextTick, onMounted, ref, useMeta, watch,
 } from '@nuxtjs/composition-api';
 import { ButtonStates } from '@sogebot/ui-helpers/buttonStates';
 import { itemsToEvalPart } from '@sogebot/ui-helpers/queryFilter';
 import { getSocket } from '@sogebot/ui-helpers/socket';
 import { shadowGenerator, textStrokeGenerator } from '@sogebot/ui-helpers/text';
+import { useQuery, useResult } from '@vue/apollo-composable';
 import { get, isEqual } from 'lodash';
 import safeEval from 'safe-eval';
 import urlRegex from 'url-regex';
@@ -212,6 +213,7 @@ import {
   AlertInterface, AlertResubInterface, AlertRewardRedeemInterface, AlertTipInterface, CommonSettingsInterface, EmitData,
 } from '.bot/src/database/entity/alert';
 import { CacheEmotesInterface } from '.bot/src/database/entity/cacheEmotes';
+import GET_ONE from '~/queries/alert/getOne.gql';
 
 require('animate.css');
 
@@ -294,8 +296,6 @@ export default defineComponent({
   middleware: ['isBotStarted'], // enable useMeta
   props:      { opts: Object },
   setup (props) {
-    const { $axios } = useContext();
-
     const url = new URL(location.href);
     const isDebug = !!url.searchParams.get('debug');
 
@@ -310,7 +310,7 @@ export default defineComponent({
 
     const state = ref({ loaded: ButtonStates.progress as number });
 
-    const id = ref(null as null | string);
+    const id = ref(props.opts?.id as null | string);
     const updatedAt = ref(-1); // force initial load
     const data = ref(null as null | AlertInterface);
     const defaultProfanityList = ref([] as string[]);
@@ -335,6 +335,171 @@ export default defineComponent({
       isTTSMuted: boolean;
       isSoundMuted: boolean;
     } | null);
+
+    const { result, refetch } = useQuery(GET_ONE, { id: id.value }, { pollInterval: 5000 });
+    const cache = useResult<{ alerts: AlertInterface[] }, null, AlertInterface[]>(result, null, r => r.alerts);
+
+    watch(cache, async (value) => {
+      if (!value || value.length === 0) {
+        return;
+      }
+
+      try {
+        if (runningAlert.value !== null) {
+          return; // skip any changes if alert in progress
+        }
+        if (!isEqual(value[0], data.value)) {
+          data.value = value[0];
+
+          // determinate if image is image or video
+          for (const event of [
+            ...data.value.subcommunitygifts,
+            ...data.value.hosts,
+            ...data.value.raids,
+            ...data.value.tips,
+            ...data.value.cheers,
+            ...data.value.resubs,
+            ...data.value.subs,
+            ...data.value.follows,
+            ...data.value.subgifts,
+            ...data.value.cmdredeems,
+            ...data.value.rewardredeems,
+          ]) {
+            fetch('/api/v2/registry/alerts/media/' + event.soundId)
+              .then((response2) => {
+                if (!response2.ok) {
+                  throw new Error('Network response was not ok');
+                }
+                return response2.blob();
+              })
+              .then(() => {
+                console.log(`Audio ${event.soundId} was found on server.`);
+                typeOfMedia.set(event.soundId, 'audio');
+              })
+              .catch((error) => {
+                typeOfMedia.set(event.soundId, null);
+                console.error(`Audio ${event.soundId} was not found on server.`);
+                console.error(error);
+              });
+            fetch('/api/v2/registry/alerts/media/' + event.imageId)
+              .then(async (response2) => {
+                if (!response2.ok) {
+                  throw new Error('Network response was not ok');
+                }
+                const myBlob = await response2.blob();
+                console.log(`${myBlob.type.startsWith('video') ? 'Video' : 'Image'} ${event.imageId} was found on server.`);
+                typeOfMedia.set(event.imageId, myBlob.type.startsWith('video') ? 'video' : 'image');
+
+                const getMeta = (mediaId: string, type: 'Video' | 'Image') => {
+                  if (type === 'Video') {
+                    const vid = document.createElement('video');
+                    vid.addEventListener('loadedmetadata', (ev) => {
+                      const el = ev.target as HTMLVideoElement;
+                      sizeOfMedia.set(mediaId, [el.videoWidth, el.videoHeight]);
+                    });
+                    vid.src = `/api/v2/registry/alerts/media/${mediaId}`;
+                  } else {
+                    const img = new Image();
+                    img.addEventListener('load', (ev) => {
+                      const el = ev.target as HTMLImageElement;
+                      sizeOfMedia.set(mediaId, [el.naturalWidth, el.naturalHeight]);
+                    });
+                    img.src = `/api/v2/registry/alerts/media/${mediaId}`;
+                  }
+                };
+                getMeta(event.imageId, myBlob.type.startsWith('video') ? 'Video' : 'Image');
+              })
+              .catch((error) => {
+                console.error(error);
+                typeOfMedia.set(event.imageId, null);
+                console.error(`Image/Video ${event.imageId} was not found on server.`);
+              });
+          }
+          for (const [lang, isEnabled] of Object.entries(data.value.loadStandardProfanityList)) {
+            if (lang.startsWith('_')) {
+              continue;
+            }
+            if (isEnabled) {
+              fetch(`${process.env.isNuxtDev ? 'http://localhost:20000' : location.origin}/assets/vulgarities/${lang}.txt`)
+                .then(response2 => response2.text())
+                .then((text) => {
+                  defaultProfanityList.value = [...defaultProfanityList.value, ...text.split(/\r?\n/)];
+                })
+                .catch((e) => {
+                  console.error(e);
+                });
+
+              fetch(`${process.env.isNuxtDev ? 'http://localhost:20000' : location.origin}/assets/happyWords/${lang}.txt`)
+                .then(response2 => response2.text())
+                .then((text) => {
+                  listHappyWords.value = [...listHappyWords.value, ...text.split(/\r?\n/)];
+                })
+                .catch((e) => {
+                  console.error(e);
+                });
+            }
+          }
+
+          defaultProfanityList.value = [
+            ...defaultProfanityList.value,
+            ...value[0].customProfanityList.split(',').map(o => o.trim()),
+          ].filter(o => o.trim().length > 0);
+
+          state.value.loaded = ButtonStates.success;
+
+          const head = document.getElementsByTagName('head')[0];
+          const style = document.createElement('style');
+          style.type = 'text/css';
+          for (const event of [
+            ...value[0].cheers,
+            ...value[0].follows,
+            ...value[0].hosts,
+            ...value[0].raids,
+            ...value[0].resubs,
+            ...value[0].subgifts,
+            ...value[0].subs,
+            ...value[0].tips,
+            ...value[0].cmdredeems,
+            ...value[0].rewardredeems,
+          ]) {
+            const fontFamily = event.font ? event.font.family : data.value.font.family;
+            if (!loadedFonts.value.includes(fontFamily)) {
+              console.debug('Loading font', fontFamily);
+              loadedFonts.value.push(fontFamily);
+              const font = fontFamily.replace(/ /g, '+');
+              const css = '@import url(\'https://fonts.googleapis.com/css?family=' + font + '\');';
+              style.appendChild(document.createTextNode(css));
+            }
+            if (typeof (event as AlertTipInterface).message !== 'undefined' && !loadedFonts.value.includes(fontFamily)) {
+              console.debug('Loading font', fontFamily);
+              loadedFonts.value.push(fontFamily);
+              const font = ((event as AlertTipInterface).message.font ? (event as any).message.font.family : data.value.fontMessage.family).replace(/ /g, '+');
+              const css = '@import url(\'https://fonts.googleapis.com/css?family=' + font + '\');';
+              style.appendChild(document.createTextNode(css));
+            }
+          }
+          head.appendChild(style);
+
+          // load emotes
+          // eslint-disable-next-line promise/param-names
+          await new Promise((done) => {
+            getSocket('/core/emotes', true).emit('getCache', (err3: string | null, data3: any) => {
+              if (err3) {
+                return console.error(err3);
+              }
+              emotes.value = data3;
+              console.debug('= Emotes loaded');
+              done(true);
+            });
+          });
+
+          console.debug('== alerts ready ==');
+        }
+      } catch (e) {
+        console.error({ data });
+        console.error(e);
+      }
+    }, { deep: true, immediate: true });
 
     useMeta(() => {
       if (responsiveAPIKey.value && _key !== responsiveAPIKey.value) {
@@ -459,15 +624,15 @@ export default defineComponent({
               const interval = setInterval(() => {
                 if (evaluated) {
                   clearInterval(interval);
-                  return
+                  return;
                 }
                 if (runningAlert.value) {
                   // wait for wrap to be available
                   if (!document.getElementById('wrap-' + runningAlert.value.alert.id)) {
-                    console.log('Wrap element not yet ready to run onStarted, trying again.')
+                    console.log('Wrap element not yet ready to run onStarted, trying again.');
                   } else {
                     evaluated = true;
-                    console.log('Wrap element found, triggerind onStarted.')
+                    console.log('Wrap element found, triggerind onStarted.');
                     // eslint-disable-next-line no-eval
                     eval(`${runningAlert.value.alert.advancedMode.js}; if (typeof onStarted === 'function') { onStarted() } else { console.log('no onStarted() function found'); }`);
                   }
@@ -711,7 +876,7 @@ export default defineComponent({
                       'animation-duration': runningAlert.animationSpeed + 'ms'
                     }"
                     class="animate__animated ${refImageClass}"
-                    :src="'/api/v1/registry/alerts/media/' + runningAlert.alert.imageId"
+                    :src="'/api/v2/registry/alerts/media/' + runningAlert.alert.imageId"
                   `);
 
                 // load CSS
@@ -761,7 +926,6 @@ export default defineComponent({
         }
       }, 100);
 
-      id.value = props.opts?.id;
       refreshAlert();
       setInterval(() => refreshAlert(), 10000);
 
@@ -918,168 +1082,7 @@ export default defineComponent({
         if (isUpdated && updatedAt.value === -1) {
           console.debug('Alert is loading...');
           updatedAt.value = updatedAt2;
-          await new Promise<void>((resolve) => {
-            $axios.get<AlertInterface>(`${process.env.isNuxtDev ? 'http://localhost:20000' : location.origin}/api/v1/registry/alerts/${id.value}`)
-              .catch(err2 => console.error(err2))
-              .then(async (response) => {
-                if (!response) {
-                  return;
-                }
-                try {
-                  if (runningAlert.value !== null) {
-                    return; // skip any changes if alert in progress
-                  }
-                  if (!isEqual(response.data, data.value)) {
-                    data.value = response.data;
-
-                    // determinate if image is image or video
-                    for (const event of [
-                      ...data.value.subcommunitygifts,
-                      ...data.value.hosts,
-                      ...data.value.raids,
-                      ...data.value.tips,
-                      ...data.value.cheers,
-                      ...data.value.resubs,
-                      ...data.value.subs,
-                      ...data.value.follows,
-                      ...data.value.subgifts,
-                      ...data.value.cmdredeems,
-                      ...data.value.rewardredeems,
-                    ]) {
-                      fetch('/api/v1/registry/alerts/media/' + event.soundId)
-                        .then((response2) => {
-                          if (!response2.ok) {
-                            throw new Error('Network response was not ok');
-                          }
-                          return response2.blob();
-                        })
-                        .then(() => {
-                          console.log(`Audio ${event.soundId} was found on server.`);
-                          typeOfMedia.set(event.soundId, 'audio');
-                        })
-                        .catch((error) => {
-                          typeOfMedia.set(event.soundId, null);
-                          console.error(`Audio ${event.soundId} was not found on server.`);
-                          console.error(error);
-                        });
-                      fetch('/api/v1/registry/alerts/media/' + event.imageId)
-                        .then(async (response2) => {
-                          if (!response2.ok) {
-                            throw new Error('Network response was not ok');
-                          }
-                          const myBlob = await response2.blob();
-                          console.log(`${myBlob.type.startsWith('video') ? 'Video' : 'Image'} ${event.imageId} was found on server.`);
-                          typeOfMedia.set(event.imageId, myBlob.type.startsWith('video') ? 'video' : 'image');
-
-                          const getMeta = (mediaId: string, type: 'Video' | 'Image') => {
-                            if (type === 'Video') {
-                              const vid = document.createElement('video');
-                              vid.addEventListener('loadedmetadata', (ev) => {
-                                const el = ev.target as HTMLVideoElement;
-                                sizeOfMedia.set(mediaId, [el.videoWidth, el.videoHeight]);
-                              });
-                              vid.src = `/api/v1/registry/alerts/media/${mediaId}`;
-                            } else {
-                              const img = new Image();
-                              img.addEventListener('load', (ev) => {
-                                const el = ev.target as HTMLImageElement;
-                                sizeOfMedia.set(mediaId, [el.naturalWidth, el.naturalHeight]);
-                              });
-                              img.src = `/api/v1/registry/alerts/media/${mediaId}`;
-                            }
-                          };
-                          getMeta(event.imageId, myBlob.type.startsWith('video') ? 'Video' : 'Image');
-                        })
-                        .catch((error) => {
-                          console.error(error);
-                          typeOfMedia.set(event.imageId, null);
-                          console.error(`Image/Video ${event.imageId} was not found on server.`);
-                        });
-                    }
-                    for (const [lang, isEnabled] of Object.entries(data.value.loadStandardProfanityList)) {
-                      if (isEnabled) {
-                        fetch(`${process.env.isNuxtDev ? 'http://localhost:20000' : location.origin}/assets/vulgarities/${lang}.txt`)
-                          .then(response2 => response2.text())
-                          .then((text) => {
-                            defaultProfanityList.value = [...defaultProfanityList.value, ...text.split(/\r?\n/)];
-                          })
-                          .catch((e) => {
-                            console.error(e);
-                          });
-
-                        fetch(`${process.env.isNuxtDev ? 'http://localhost:20000' : location.origin}/assets/happyWords/${lang}.txt`)
-                          .then(response2 => response2.text())
-                          .then((text) => {
-                            listHappyWords.value = [...listHappyWords.value, ...text.split(/\r?\n/)];
-                          })
-                          .catch((e) => {
-                            console.error(e);
-                          });
-                      }
-                    }
-
-                    defaultProfanityList.value = [
-                      ...defaultProfanityList.value,
-                      ...response.data.customProfanityList.split(',').map(o => o.trim()),
-                    ].filter(o => o.trim().length > 0);
-
-                    state.value.loaded = ButtonStates.success;
-
-                    const head = document.getElementsByTagName('head')[0];
-                    const style = document.createElement('style');
-                    style.type = 'text/css';
-                    for (const event of [
-                      ...response.data.cheers,
-                      ...response.data.follows,
-                      ...response.data.hosts,
-                      ...response.data.raids,
-                      ...response.data.resubs,
-                      ...response.data.subgifts,
-                      ...response.data.subs,
-                      ...response.data.tips,
-                      ...response.data.cmdredeems,
-                      ...response.data.rewardredeems,
-                    ]) {
-                      const fontFamily = event.font ? event.font.family : data.value.font.family;
-                      if (!loadedFonts.value.includes(fontFamily)) {
-                        console.debug('Loading font', fontFamily);
-                        loadedFonts.value.push(fontFamily);
-                        const font = fontFamily.replace(/ /g, '+');
-                        const css = '@import url(\'https://fonts.googleapis.com/css?family=' + font + '\');';
-                        style.appendChild(document.createTextNode(css));
-                      }
-                      if (typeof (event as AlertTipInterface).message !== 'undefined' && !loadedFonts.value.includes(fontFamily)) {
-                        console.debug('Loading font', fontFamily);
-                        loadedFonts.value.push(fontFamily);
-                        const font = ((event as AlertTipInterface).message.font ? (event as any).message.font.family : data.value.fontMessage.family).replace(/ /g, '+');
-                        const css = '@import url(\'https://fonts.googleapis.com/css?family=' + font + '\');';
-                        style.appendChild(document.createTextNode(css));
-                      }
-                    }
-                    head.appendChild(style);
-
-                    // load emotes
-                    // eslint-disable-next-line promise/param-names
-                    await new Promise((done) => {
-                      getSocket('/core/emotes', true).emit('getCache', (err3: string | null, data3: any) => {
-                        if (err3) {
-                          return console.error(err3);
-                        }
-                        emotes.value = data3;
-                        console.debug('= Emotes loaded');
-                        done(true);
-                      });
-                    });
-
-                    console.debug('== alerts ready ==');
-                    resolve();
-                  }
-                } catch (e) {
-                  console.error({ data });
-                  console.error(e);
-                }
-              });
-          });
+          refetch();
         }
       });
     };

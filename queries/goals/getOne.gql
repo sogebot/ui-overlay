@@ -1,0 +1,61 @@
+query GoalsGetOne($id: String!) {
+  goalsCurrent {
+    subscribers
+    followers
+  }
+  goals(id: $id) {
+    id
+    goals {
+      id
+      name
+      type
+      countBitsAsTips
+      display
+      timestamp
+      interval
+      goalAmount
+      currentAmount
+      endAfter
+      endAfterIgnore
+      customizationHtml
+      customizationJs
+      customizationCss
+      customizationBar {
+        color
+        backgroundColor
+        borderColor
+        borderPx
+        height
+      }
+      customizationFont {
+        family
+        color
+        size
+        weight
+        borderColor
+        borderPx
+        shadow {
+          shiftRight
+          shiftDown
+          blur
+          opacity
+          color
+        }
+      }
+    }
+    createdAt
+    name
+    display {
+      ...on GoalGroupDisplayFadeObject {
+        type
+        durationMs
+        animationInMs
+        animationOutMs
+      }
+      ...on GoalGroupDisplayMultiObject {
+        type
+        spaceBetweenGoalsInPx
+      }
+    }
+  }
+}
