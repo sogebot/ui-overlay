@@ -8,6 +8,7 @@ import { getSocket } from '@sogebot/ui-helpers/socket';
 import { defineComponent, onMounted } from '@vue/composition-api';
 import OBSWebSocket from 'obs-websocket-js';
 
+import type { Events } from '~/.bot/src/database/entity/event';
 import type { OBSWebsocketInterface } from '~/.bot/src/database/entity/obswebsocket';
 import { switchScenes } from '~/.bot/src/helpers/obswebsocket/listeners';
 import { listScenes } from '~/.bot/src/helpers/obswebsocket/scenes';
@@ -80,11 +81,11 @@ export default defineComponent({
       });
       connect();
 
-      getSocket('/integrations/obswebsocket', true).on('integration::obswebsocket::trigger', async (tasks: OBSWebsocketInterface['simpleModeTasks'] | string, cb: any) => {
-        console.log('integration::obswebsocket::trigger', tasks);
+      getSocket('/integrations/obswebsocket', true).on('integration::obswebsocket::trigger', async (opts: { tasks: OBSWebsocketInterface['simpleModeTasks'] | string, attributes?: Events.Attributes }, cb: any) => {
+        console.log('integration::obswebsocket::trigger', opts);
         cb(); // resolve first so connection is OK
         try {
-          await taskRunner(obs, tasks);
+          await taskRunner(obs, opts);
         } catch (e) {
           console.error(e);
         }

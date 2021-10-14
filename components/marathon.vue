@@ -10,9 +10,7 @@
         'font-size': font.size + 'px',
         'text-shadow': [textStrokeGenerator(font.borderPx, font.borderColor), shadowGenerator(font.shadow)].filter(Boolean).join(', ')
       }"
-    >
-      {{ time }}
-    </div>
+      v-html="time"/>
     <v-sparkline
       v-if="options.showProgressGraph"
       :smooth="25"
@@ -120,7 +118,7 @@ export default defineComponent({
 
       output += `${hours < 10 ? '0' : ''}${hours}:${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
       if (options.value.showMilliseconds) {
-        output += `.${millis}`;
+        output += `<small>.${millis}</small>`;
       }
       return output;
     });

@@ -2,6 +2,36 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [8.1.1](https://github.com/sogebot/ui-overlay/compare/v8.1.0...v8.1.1) (2021-10-04)
+
+
+### Bug Fixes
+
+* **clipscarousel:** simplify code to get rid of cpu loop after 30 minutes ([046a121](https://github.com/sogebot/ui-overlay/commit/046a1219a8d2c6cf90345049cc817ef71d315380))
+
+## [8.1.0](https://github.com/sogebot/ui-overlay/compare/v8.0.1...v8.1.0) (2021-09-29)
+
+
+### Features
+
+* **randomizer:** add tape type ([32da368](https://github.com/sogebot/ui-overlay/commit/32da3689005c69d19bb8c2892f72d347c6497a61))
+
+### [8.0.1](https://github.com/sogebot/ui-overlay/compare/v8.0.0...v8.0.1) (2021-09-29)
+
+
+### Bug Fixes
+
+* **countdown:** make millis smaller ([7a2d920](https://github.com/sogebot/ui-overlay/commit/7a2d92036db70feb55dca7dbc1eb92e7ddf0c1a4))
+* **marathon:** make millis smaller ([2c6c15a](https://github.com/sogebot/ui-overlay/commit/2c6c15ab00967ffc8a46879c2cac28430b8db7e0))
+* **stopwatch:** make millis smaller ([9a6937d](https://github.com/sogebot/ui-overlay/commit/9a6937d0e6952f8eaca18dbd7a97e11e05192202))
+
+## [8.0.0](https://github.com/sogebot/ui-overlay/compare/v7.0.2...v8.0.0) (2021-09-27)
+
+
+### Features
+
+* **obswebsocket:** trigger task with event variable ([66cef89](https://github.com/sogebot/ui-overlay/commit/66cef893278381f7f6889ba70929d81d8e9e56bf))
+
 ### [7.0.2](https://github.com/sogebot/ui-overlay/compare/v7.0.1...v7.0.2) (2021-09-26)
 
 
