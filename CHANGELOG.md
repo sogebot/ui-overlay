@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [9.0.5](https://github.com/sogebot/ui-overlay/compare/v9.0.4...v9.0.5) (2021-10-21)
+
+
+### Bug Fixes
+
+* **marathon:** json parse opts ([ab0b953](https://github.com/sogebot/ui-overlay/commit/ab0b953a4d00c1bf5a9bbc0ce75cc91e6f43aa48))
+
 ### [9.0.4](https://github.com/sogebot/ui-overlay/compare/v9.0.3...v9.0.4) (2021-10-21)
 
 
