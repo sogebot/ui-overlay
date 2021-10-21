@@ -105,7 +105,7 @@ export default defineComponent({
       console.log('====== MEDIA ======');
       if (options.value.galleryCache) {
         console.log(`Gallery cache enabled (${options.value.galleryCacheLimitInMb}Mb)`);
-        getSocket('/overlays/alerts', true).emit('cache', options.value.galleryCacheLimitInMb, async (err: string | null, data: any) => {
+        getSocket('/overlays/media', true).emit('cache', options.value.galleryCacheLimitInMb, async (err: string | null, data: any) => {
           if (err) {
             return console.error(err);
           }
@@ -117,7 +117,7 @@ export default defineComponent({
       } else {
         console.log('Gallery cache disabled.');
       }
-      getSocket('/overlays/alerts', true).on('alert', (data: any) => {
+      getSocket('/overlays/media', true).on('alert', (data: any) => {
         for (const d of data) {
           d.run = false;
           d.isLoaded = false;
