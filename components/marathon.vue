@@ -130,10 +130,10 @@ export default defineComponent({
             animation.kill();
           }
           if (data) {
-            options.value = data.opts;
+            options.value = typeof data.opts === 'string' ? JSON.parse(data.opts) : data.opts;
             animation = gsap.to(currentTime.value, {
               duration:   1,
-              value:      Math.max(data.opts.endTime - Date.now(), 0),
+              value:      Math.max(options.value.endTime - Date.now(), 0),
               roundProps: 'value',
               ease:       'linear',
             });
