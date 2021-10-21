@@ -245,8 +245,9 @@ const haveAvailableAlert = (emitData: EmitData, data: AlertInterface | null) => 
         if (!o.enabled) {
           return false;
         }
-        if (o.filter && o.filter.items.length > 0) {
-          const script = itemsToEvalPart(o.filter.items, o.filter.operator);
+        const filter = JSON.parse(o.filter ?? '');
+        if (filter && filter.items.length > 0) {
+          const script = itemsToEvalPart(filter.items, filter.operator);
           const tierAsNumber = emitData.tier === 'Prime' ? 0 : Number(emitData.tier);
           return safeEval(
             script, {
@@ -701,8 +702,9 @@ export default defineComponent({
                 if (!o.enabled) {
                   return false;
                 }
-                if (o.filter && o.filter.items.length > 0) {
-                  const script = itemsToEvalPart(o.filter.items, o.filter.operator);
+                const filter = JSON.parse(o.filter ?? '');
+                if (filter && filter.items.length > 0) {
+                  const script = itemsToEvalPart(filter.items, filter.operator);
                   const tierAsNumber = emitData.tier === 'Prime' ? 0 : Number(emitData.tier);
                   return safeEval(
                     script,
@@ -1070,7 +1072,7 @@ export default defineComponent({
     };
 
     const refreshAlert = () => {
-      getSocket('/registries/alerts', true).emit('isAlertUpdated', { updatedAt: updatedAt.value, id: id.value }, async (err: Error | null, isUpdated: boolean, updatedAt2: number) => {
+      getSocket('/registries/alerts', true).emit('isAlertUpdated', { updatedAt: updatedAt.value, id: id.value }, (err: Error | null, isUpdated: boolean, updatedAt2: number) => {
         if (err) {
           return console.error(err);
         }
