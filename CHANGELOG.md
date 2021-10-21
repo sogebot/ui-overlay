@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [9.0.3](https://github.com/sogebot/ui-overlay/compare/v9.0.2...v9.0.3) (2021-10-21)
+
+
+### Bug Fixes
+
+* **media:** fix socket namespace ([9d7a1e7](https://github.com/sogebot/ui-overlay/commit/9d7a1e78cf4ef243b466d6769aa3ec32c89cbf73))
+
 ### [9.0.2](https://github.com/sogebot/ui-overlay/compare/v9.0.1...v9.0.2) (2021-10-21)
 
 
