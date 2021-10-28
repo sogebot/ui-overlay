@@ -245,7 +245,7 @@ const haveAvailableAlert = (emitData: EmitData, data: AlertInterface | null) => 
         if (!o.enabled) {
           return false;
         }
-        const filter = JSON.parse(o.filter ?? '');
+        const filter = o.filter ? JSON.parse(o.filter) : null;
         if (filter && filter.items.length > 0) {
           const script = itemsToEvalPart(filter.items, filter.operator);
           const tierAsNumber = emitData.tier === 'Prime' ? 0 : Number(emitData.tier);
@@ -702,7 +702,7 @@ export default defineComponent({
                 if (!o.enabled) {
                   return false;
                 }
-                const filter = JSON.parse(o.filter ?? '');
+                const filter = o.filter ? JSON.parse(o.filter) : null;
                 if (filter && filter.items.length > 0) {
                   const script = itemsToEvalPart(filter.items, filter.operator);
                   const tierAsNumber = emitData.tier === 'Prime' ? 0 : Number(emitData.tier);
