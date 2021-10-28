@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [9.0.6](https://github.com/sogebot/ui-overlay/compare/v9.0.5...v9.0.6) (2021-10-28)
+
+
+### Bug Fixes
+
+* **alertsRegistry:** parser filter properly ([607d2d9](https://github.com/sogebot/ui-overlay/commit/607d2d943aa8e4fc791f5cfe404167043c7aca97))
+
 ### [9.0.5](https://github.com/sogebot/ui-overlay/compare/v9.0.4...v9.0.5) (2021-10-21)
 
 
