@@ -1,5 +1,9 @@
 query OverlayGet($id: String) {
   overlays(id: $id) {
+    stats {
+      id
+      value
+    }
     carousel {
       id
       value
