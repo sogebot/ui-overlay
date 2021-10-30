@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.0.0](https://github.com/sogebot/ui-overlay/compare/v9.0.6...v10.0.0) (2021-10-30)
+
+
+### Bug Fixes
+
+* **overlay:** add stats to query ([653e35b](https://github.com/sogebot/ui-overlay/commit/653e35b72faec34b8c94d27cd6fb6c044a1beda2))
+
 ### [9.0.6](https://github.com/sogebot/ui-overlay/compare/v9.0.5...v9.0.6) (2021-10-28)
 
 
