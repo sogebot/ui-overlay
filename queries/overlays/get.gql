@@ -1,5 +1,18 @@
 query OverlayGet($id: String) {
   overlays(id: $id) {
+    wordcloud {
+      id
+      value
+      opts {
+        fadeOutInterval
+        fadeOutIntervalType
+        wordFont {
+          family
+          color
+          weight
+        }
+      }
+    }
     stats {
       id
       value
