@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [11.0.0](https://github.com/sogebot/ui-overlay/compare/v10.0.0...v11.0.0) (2021-11-02)
+
+
+### Features
+
+* **overlay:** add wordcloud ([05362e4](https://github.com/sogebot/ui-overlay/commit/05362e4498f94c6a9effa35243f1e58259af139d))
+
 ## [10.0.0](https://github.com/sogebot/ui-overlay/compare/v9.0.6...v10.0.0) (2021-10-30)
 
 
