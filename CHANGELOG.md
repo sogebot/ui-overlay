@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [12.0.0](https://github.com/sogebot/ui-overlay/compare/v11.0.0...v12.0.0) (2021-11-06)
+
+
+### Bug Fixes
+
+* **media:** correctly load media overlays ([b59b1d2](https://github.com/sogebot/ui-overlay/commit/b59b1d226aa0b3c021f59e4165065e9b0c78b94e))
+
 ## [11.0.0](https://github.com/sogebot/ui-overlay/compare/v10.0.0...v11.0.0) (2021-11-02)
 
 
