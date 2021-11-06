@@ -214,7 +214,7 @@ query OverlayGet($id: String) {
         showLabel
       }
     }
-    alerts {
+    media {
       id
       value
       opts {
