@@ -471,9 +471,10 @@ export default defineComponent({
               const css = '@import url(\'https://fonts.googleapis.com/css?family=' + font + '\');';
               style.appendChild(document.createTextNode(css));
             }
-            if (typeof (event as AlertTipInterface).message !== 'undefined' && !loadedFonts.value.includes(fontFamily)) {
-              console.debug('Loading font', fontFamily);
-              loadedFonts.value.push(fontFamily);
+            const messageFontFamily = (event as AlertTipInterface).message?.font?.family || data.value.fontMessage.family;
+            if (typeof (event as AlertTipInterface).message !== 'undefined' && !loadedFonts.value.includes(messageFontFamily)) {
+              console.debug('Loading font', messageFontFamily);
+              loadedFonts.value.push(messageFontFamily);
               const font = ((event as AlertTipInterface).message.font ? (event as any).message.font.family : data.value.fontMessage.family).replace(/ /g, '+');
               const css = '@import url(\'https://fonts.googleapis.com/css?family=' + font + '\');';
               style.appendChild(document.createTextNode(css));
