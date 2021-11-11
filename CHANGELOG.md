@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [12.0.1](https://github.com/sogebot/ui-overlay/compare/v12.0.0...v12.0.1) (2021-11-11)
+
+
+### Bug Fixes
+
+* **alerts:** load custom message font ([ea6b699](https://github.com/sogebot/ui-overlay/commit/ea6b6996b8eb211439734f9c623d0ac5df629b8d))
+
 ## [12.0.0](https://github.com/sogebot/ui-overlay/compare/v11.0.0...v12.0.0) (2021-11-06)
 
 
