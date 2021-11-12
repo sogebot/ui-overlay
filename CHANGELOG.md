@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [12.0.2](https://github.com/sogebot/ui-overlay/compare/v12.0.1...v12.0.2) (2021-11-12)
+
+
+### Bug Fixes
+
+* **goalRegistry:** cast endAfter to number ([45fcf08](https://github.com/sogebot/ui-overlay/commit/45fcf083459c17cbb667a093253530c47f0a6411))
+
 ### [12.0.1](https://github.com/sogebot/ui-overlay/compare/v12.0.0...v12.0.1) (2021-11-11)
 
 
