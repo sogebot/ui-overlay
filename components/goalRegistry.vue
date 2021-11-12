@@ -286,6 +286,7 @@ export default defineComponent({
 
         // if custom html update all variables
         for (const goal of group.value.goals) {
+          console.debug({goal})
           if (goal.display === 'custom') {
             goal.customizationHtml = goal.customizationHtml
               .replace(/\$name/g, goal.name)
@@ -293,7 +294,7 @@ export default defineComponent({
               .replace(/\$goalAmount/g, String(goal.goalAmount))
               .replace(/\$currentAmount/g, String(goal.currentAmount))
               .replace(/\$percentageAmount/g, Number((100 / (goal.goalAmount ?? 0)) * (goal.currentAmount ?? 0)).toFixed())
-              .replace(/\$endAfter/g, new Date(goal.endAfter).toISOString());
+              .replace(/\$endAfter/g, new Date(Number(goal.endAfter)).toISOString());
           }
 
           // trigger onUpdate on nextTick
