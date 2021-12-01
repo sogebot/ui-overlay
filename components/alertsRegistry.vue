@@ -229,7 +229,7 @@ let cleanupAlert = false;
 
 const loadedScripts: string[] = [];
 
-const alerts: (EmitData & {isTTSMuted: boolean, isSoundMuted: boolean})[] = [];
+const alerts: (EmitData & {isTTSMuted: boolean, isSoundMuted: boolean, TTSService: number, TTSKey: string})[] = [];
 
 const haveAvailableAlert = (emitData: EmitData, data: AlertInterface | null) => {
   if (emitData && data) {
@@ -335,6 +335,8 @@ export default defineComponent({
       alert: CommonSettingsInterface | AlertTipInterface | AlertResubInterface;
       isTTSMuted: boolean;
       isSoundMuted: boolean;
+      TTSService: number,
+      TTSKey: string
     } | null);
 
     const { result, refetch } = useQuery(GET_ONE, { id: id.value }, { pollInterval: 5000 });
@@ -485,7 +487,7 @@ export default defineComponent({
           // load emotes
           // eslint-disable-next-line promise/param-names
           await new Promise((done) => {
-            getSocket('/core/emotes', true).emit('getCache', (err3: string | null, data3: any) => {
+            getSocket('/services/twitch', true).emit('getCache', (err3: string | null, data3: any) => {
               if (err3) {
                 return console.error(err3);
               }
@@ -531,26 +533,8 @@ export default defineComponent({
       console.debug('= ResponsiveVoice init OK');
     };
 
-    const checkResponsiveVoiceAPIKey = () => {
-      getSocket('/integrations/responsivevoice', true).emit('get.value', 'key', (err: string | null, value: string) => {
-        if (err) {
-          console.error(err);
-          return;
-        }
-        if (responsiveAPIKey.value !== value) {
-          // unload if values doesn't match
-          if (value.trim().length === 0) {
-            console.debug('TTS disabled, responsiveVoice key is not set');
-          }
-        }
-        responsiveAPIKey.value = value;
-        setTimeout(() => checkResponsiveVoiceAPIKey(), 10000);
-      });
-    };
-
     onMounted(() => {
       console.log('====== ALERTS REGISTRY ======');
-      checkResponsiveVoiceAPIKey();
       window.setInterval(async () => {
         if (runningAlert.value) {
           runningAlert.value.animation = animationClass();
@@ -655,7 +639,7 @@ export default defineComponent({
               if (data.value?.tts === null) {
               // use default values
                 console.log('TTS running with default values.');
-                speak(message, 'UK English Female', 1, 1, 1);
+                speak(message, runningAlert.value.TTSService === 0 ? 'UK English Female' : 'en-US-Wavenet-A', 1, 1, 1);
               } else {
                 speak(message, data.value.tts.voice, data.value.tts.rate, data.value.tts.pitch, data.value.tts.volume);
               }
@@ -903,7 +887,6 @@ export default defineComponent({
                   .replace(/\{monthName\}/g, '{monthName:highlight}')
                   .replace(/\{currency\}/g, '{currency:highlight}');
               }
-
               const isAmountForTTSInRange = alert.tts.minAmountToPlay <= emitData.amount;
               runningAlert.value = {
                 id:             v4(),
@@ -916,7 +899,7 @@ export default defineComponent({
                 showAt:         data.value.alertDelayInMs + Date.now(),
                 hideAt:         data.value.alertDelayInMs + Date.now() + alert.alertDurationInMs + alert.animationInDuration,
                 showTextAt:     data.value.alertDelayInMs + Date.now() + alert.alertTextDelayInMs,
-                waitingForTTS:  alert.tts.enabled && isAmountForTTSInRange && typeof window.responsiveVoice !== 'undefined',
+                waitingForTTS:  alert.tts.enabled && isAmountForTTSInRange,
                 alert,
                 ...emitData,
               };
@@ -944,8 +927,12 @@ export default defineComponent({
         }
       });
 
-      getSocket('/registries/alerts', true).on('alert', (data2: (EmitData & {isTTSMuted: boolean, isSoundMuted: boolean })) => {
+      getSocket('/registries/alerts', true).on('alert', (data2: (EmitData & {isTTSMuted: boolean, isSoundMuted: boolean, TTSKey: string, TTSService: number; })) => {
         console.debug('Incoming alert', data2);
+
+        if (data2.TTSService === 0) {
+          responsiveAPIKey.value = data2.TTSKey;
+        }
 
         // checking for vulgarities
         if (data2.message && data2.message.length > 0) {
@@ -1058,18 +1045,38 @@ export default defineComponent({
 
     const speak = async (text: string, voice: string, rate: number, pitch: number, volume: number) => {
       isTTSPlaying = true;
-      for (const TTS of text.split('/ ')) {
-        await new Promise<void>((resolve) => {
-          if (TTS.trim().length === 0) {
-            setTimeout(() => resolve(), 500);
-          } else {
-            window.responsiveVoice.speak(TTS, voice, {
-              rate, pitch, volume, onend: () => setTimeout(() => resolve(), 500),
-            });
+      if (runningAlert.value?.TTSService === 0) {
+        console.log('Using ResponsiveVoice as TTS Service.')
+        for (const TTS of text.split('/ ')) {
+          await new Promise<void>((resolve) => {
+            if (TTS.trim().length === 0) {
+              setTimeout(() => resolve(), 500);
+            } else if (window.responsiveVoice) {
+              window.responsiveVoice.speak(TTS, voice, {
+                rate, pitch, volume, onend: () => setTimeout(() => resolve(), 500),
+              });
+            } else {
+              resolve();
+            }
+          });
+          isTTSPlaying = false;
+        }
+      } else if (runningAlert.value?.TTSService === 1) {
+        console.log('Using Google TTS as TTS Service.')
+        getSocket('/registries/alerts', true).emit('speak', {
+          volume, pitch, rate, voice, text, key: runningAlert.value.TTSKey,
+        }, (err: Error | null, b64mp3: string) => {
+          if (err) {
+            isTTSPlaying = false;
+            return console.error(err);
           }
+          const snd = new Audio(`data:audio/mp3;base64,` + b64mp3);
+          snd.play();
+          snd.onended = () => (isTTSPlaying = false);
         });
+      } else {
+        isTTSPlaying = false;
       }
-      isTTSPlaying = false;
     };
 
     const refreshAlert = () => {

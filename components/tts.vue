@@ -81,6 +81,7 @@ export default defineComponent({ // enable useMeta
         isSpeaking.value = true;
         getSocket('/overlays/texttospeech').emit('speak', { ...options.value, key: data.key, text: data.text }, (err: Error | null, b64mp3: string) => {
           if (err) {
+            isSpeaking.value = false;
             return console.error(err);
           }
           const snd = new Audio(`data:audio/mp3;base64,` + b64mp3);
