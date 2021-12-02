@@ -94,11 +94,11 @@ export default defineComponent({
         }
       }, 1000);
 
-      getSocket('/core/eventsub', true).on('hypetrain-end', () => {
+      getSocket('/services/twitch', true).on('hypetrain-end', () => {
         subs.value = [];
       });
 
-      getSocket('/core/eventsub', true).on('hypetrain-update', (data: { level: number, goal: number, total: number, subs: Record<string, string>}) => {
+      getSocket('/services/twitch', true).on('hypetrain-update', (data: { level: number, goal: number, total: number, subs: Record<string, string>}) => {
         // process subs first
         for (const username of Object.keys(data.subs)) {
           if (!subs.value.find(o => o.username === username)) {
