@@ -1,5 +1,5 @@
 <template>
-  <div/>
+  <div />
 </template>
 
 <script lang="ts">
@@ -17,8 +17,7 @@ declare global {
 
 let _key = '';
 
-export default defineComponent({
-  head:  {}, // enable useMeta
+export default defineComponent({ // enable useMeta
   props: { opts: Object },
   setup (props) {
     const options = ref(
@@ -31,6 +30,7 @@ export default defineComponent({
       }));
     const enabled = ref(false);
     const responsiveAPIKey = ref(null as string | null);
+    const isSpeaking = ref(false);
 
     useMeta(() => {
       if (responsiveAPIKey.value && _key !== responsiveAPIKey.value) {
@@ -51,27 +51,44 @@ export default defineComponent({
       }
     });
 
-    const isTTSPlaying = () => {
-      return typeof window.responsiveVoice !== 'undefined' && window.responsiveVoice.isPlaying();
+    const isTTSPlaying = {
+      0: () => typeof window.responsiveVoice !== 'undefined' && window.responsiveVoice.isPlaying(),
+      1: () => isSpeaking.value,
     };
 
-    const speak = (data: { text: string; highlight: boolean }) => {
+    const speak = (data: { text: string; highlight: boolean, key: string, service: 0 | 1 }) => {
       if (data.highlight && !options.value.triggerTTSByHighlightedMessage) {
         console.debug('This TTS is not set for higlighted messages.');
         return;
       }
       if (!enabled.value) {
-        console.error('ResponsiveVoice is not properly set, skipping');
+        console.error('TTS is not properly set, skipping');
         return;
       }
-      if (isTTSPlaying()) {
+      if (isTTSPlaying[data.service]()) {
         // wait and try later
         setTimeout(() => speak(data), 1000);
         return;
       }
-      window.responsiveVoice.speak(data.text, options.value.voice, {
-        rate: options.value.rate, pitch: options.value.pitch, volume: options.value.volume,
-      });
+
+      if (data.service === 0) {
+        // RESPONSIVE VOICE
+        window.responsiveVoice.speak(data.text, options.value.voice, {
+          rate: options.value.rate, pitch: options.value.pitch, volume: options.value.volume,
+        });
+      } else {
+        // GOOGLE
+        isSpeaking.value = true;
+        getSocket('/overlays/texttospeech').emit('speak', { ...options.value, key: data.key, text: data.text }, (err: Error | null, b64mp3: string) => {
+          if (err) {
+            isSpeaking.value = false;
+            return console.error(err);
+          }
+          const snd = new Audio(`data:audio/mp3;base64,` + b64mp3);
+          snd.play();
+          snd.onended = () => (isSpeaking.value = false);
+        });
+      }
     };
 
     const initResponsiveVoice = () => {
@@ -84,34 +101,22 @@ export default defineComponent({
       enabled.value = true;
     };
 
-    const checkResponsiveVoiceAPIKey = () => {
-      getSocket('/integrations/responsivevoice', true).emit('get.value', 'key', (err: string | null, value: string) => {
-        if (err) {
-          console.error(err);
-          return;
-        }
-        if (responsiveAPIKey.value !== value) {
-          // unload if values doesn't match
-          if (value.trim().length === 0) {
-            console.debug('TTS disabled, responsiveVoice key is not set');
-            enabled.value = false;
-          }
-        }
-        responsiveAPIKey.value = value;
-        setTimeout(() => checkResponsiveVoiceAPIKey(), 10000);
-      });
-    };
-
     onMounted(() => {
       console.log('====== TTS ======');
-      checkResponsiveVoiceAPIKey();
-      getSocket('/overlays/texttospeech', true).on('speak', (data: { text: string; highlight: boolean }) => {
+      getSocket('/overlays/texttospeech', true).on('speak', (data: { text: string; highlight: boolean, service: 0 | 1, key: string }) => {
         console.debug('Incoming speak', data);
+        if (data.service === 0) {
+          responsiveAPIKey.value = data.key;
+        } else {
+          responsiveAPIKey.value = null;
+          enabled.value = true;
+        }
         speak(data);
       });
     });
 
     return { options };
   },
+  head: {},
 });
 </script>
