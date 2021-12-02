@@ -1,6 +1,6 @@
 {
   "name": "@sogebot/ui-overlay",
-  "version": "12.0.2",
+  "version": "13.0.0",
   "author": "sogehige@gmail.com",
   "engines": {
     "npm": ">7.19.0"

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [13.0.0](https://github.com/sogebot/ui-overlay/compare/v12.0.2...v13.0.0) (2021-12-02)
+
+
+### Features
+
+* **tts:** add multiple service support for !tts and alerts ([#105](https://github.com/sogebot/ui-overlay/issues/105)) ([a8ff4d8](https://github.com/sogebot/ui-overlay/commit/a8ff4d852086e9b71e368eb9c5566fa5c1be5a6e))
+
 ### [12.0.2](https://github.com/sogebot/ui-overlay/compare/v12.0.1...v12.0.2) (2021-11-12)
 
 
