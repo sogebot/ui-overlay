@@ -47,8 +47,9 @@ export default defineComponent({
   props: { opts: Object },
   setup () {
     let animationIsFree = true;
+    const shakeOffset = 6;
 
-    const width = ref(1920);
+    const width = ref(1920 + shakeOffset);
     const left = ref({ value: 0 });
     const level = ref(0);
 
@@ -88,7 +89,7 @@ export default defineComponent({
     onMounted(() => {
       console.log('=========== HYPETRAIN ==========');
       setInterval(() => {
-        width.value = window.innerWidth;
+        width.value = window.innerWidth + shakeOffset;
         if (animationIsFree && events.length > 0) {
           process((events.shift()) as typeof events[number]);
         }
