@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [14.0.1](https://github.com/sogebot/ui-overlay/compare/v14.0.0...v14.0.1) (2021-12-02)
+
+
+### Bug Fixes
+
+* **hypetrain:** add shake offset to hide train if not started ([4a88e93](https://github.com/sogebot/ui-overlay/commit/4a88e93cb8df3cabdf321a4989f9e96025ab2956))
+* **hypetrain:** change socket namespace ([7feaf13](https://github.com/sogebot/ui-overlay/commit/7feaf13eadc8fa9f35d7f44fbc6846e3e8d069ab))
+
 ## [14.0.0](https://github.com/sogebot/ui-overlay/compare/v12.0.2...v14.0.0) (2021-12-02)
 
 
