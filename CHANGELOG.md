@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [14.0.3](https://github.com/sogebot/ui-overlay/compare/v14.0.2...v14.0.3) (2021-12-21)
+
+
+### Bug Fixes
+
+* **tts:** fix several tts issues on randomizer and tts ([bc3e049](https://github.com/sogebot/ui-overlay/commit/bc3e049ae4931b244057c666687524ba8d050c06))
+
 ### [14.0.2](https://github.com/sogebot/ui-overlay/compare/v14.0.1...v14.0.2) (2021-12-21)
 
 
