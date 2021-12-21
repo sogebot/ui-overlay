@@ -31,7 +31,7 @@ export default defineComponent({
 
     onMounted(() => {
       console.log('====== EMOTES EXPLODE ======');
-      getSocket('/core/emotes', true).on('emote.explode', (opts: any) => explode(opts));
+      getSocket('/services/twitch', true).on('emote.explode', (opts: any) => explode(opts));
 
       setInterval(() => {
         triggerAnimation();

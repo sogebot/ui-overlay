@@ -32,7 +32,7 @@ export default defineComponent({
 
     onMounted(() => {
       console.log('====== EMOTES FIREWORKS ======');
-      getSocket('/core/emotes', true).on('emote.firework', (opts: any) => firework(opts));
+      getSocket('/services/twitch', true).on('emote.firework', (opts: any) => firework(opts));
 
       setInterval(() => {
         triggerAnimation();

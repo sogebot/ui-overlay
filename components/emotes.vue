@@ -35,7 +35,7 @@ export default defineComponent({
 
     onMounted(() => {
       console.log('====== EMOTES ======');
-      getSocket('/core/emotes', true).on('emote', (opts: any) => addEmote(opts));
+      getSocket('/services/twitch', true).on('emote', (opts: any) => addEmote(opts));
 
       setInterval(() => {
         triggerAnimation();
