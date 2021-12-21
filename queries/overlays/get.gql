@@ -13,6 +13,10 @@ query OverlayGet($id: String) {
         }
       }
     }
+    randomizer {
+      id
+      value
+    }
     stats {
       id
       value

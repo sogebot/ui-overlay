@@ -79,7 +79,9 @@ export default defineComponent({ // enable useMeta
       } else {
         // GOOGLE
         isSpeaking.value = true;
-        getSocket('/overlays/texttospeech').emit('speak', { ...options.value, key: data.key, text: data.text }, (err: Error | null, b64mp3: string) => {
+        getSocket('/core/tts', true).emit('speak', {
+          ...options.value, key: data.key, text: data.text,
+        }, (err: Error | null, b64mp3: string) => {
           if (err) {
             isSpeaking.value = false;
             return console.error(err);

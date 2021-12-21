@@ -138,6 +138,9 @@ export default defineComponent({ // enable useMeta
 
     const loadedFonts = ref([] as string[]);
     const responsiveAPIKey = ref(null as string | null);
+    const TTSservice = ref(0 as 0 | 1);
+    const TTSenabled = ref(false);
+    const isSpeaking = ref(false);
     const data = ref(null as Required<RandomizerInterface> | null);
 
     const showSimpleValueIndex = ref(0);
@@ -172,6 +175,11 @@ export default defineComponent({ // enable useMeta
       }
     });
 
+    const isTTSPlaying = {
+      0: () => typeof window.responsiveVoice !== 'undefined' && window.responsiveVoice.isPlaying(),
+      1: () => isSpeaking.value,
+    };
+
     const initResponsiveVoice = () => {
       if (typeof window.responsiveVoice === 'undefined') {
         setTimeout(() => initResponsiveVoice(), 200);
@@ -179,29 +187,40 @@ export default defineComponent({ // enable useMeta
       }
       window.responsiveVoice.init();
       console.debug('= ResponsiveVoice init OK');
+      TTSenabled.value = true;
     };
 
     const speak = (text: string, voice: string, rate: number, pitch: number, volume: number) => {
-      window.responsiveVoice.speak(text, voice, {
-        rate, pitch, volume,
-      });
-    };
+      if (!TTSenabled.value) {
+        console.error('TTS is not properly set, skipping');
+        return;
+      }
+      if (isTTSPlaying[TTSservice.value]()) {
+        // wait and try later
+        setTimeout(() => speak(text, voice, rate, pitch, volume), 1000);
+        return;
+      }
 
-    const checkResponsiveVoiceAPIKey = () => {
-      getSocket('/integrations/responsivevoice', true).emit('get.value', 'key', (err: string | null, value: string) => {
-        if (err) {
-          console.error(err);
-          return;
-        }
-        if (responsiveAPIKey.value !== value) {
-          // unload if values doesn't match
-          if (value.trim().length === 0) {
-            console.debug('TTS disabled, responsiveVoice key is not set');
+      if (TTSservice.value === 0) {
+        // RESPONSIVE VOICE
+        window.responsiveVoice.speak(text, voice, {
+          rate, pitch, volume,
+        });
+      } else {
+        // GOOGLE
+        isSpeaking.value = true;
+        getSocket('/core/tts', true).emit('speak', {
+          voice, rate, pitch, volume, key: _key, text,
+        }, (err: Error | null, b64mp3: string) => {
+          if (err) {
+            isSpeaking.value = false;
+            return console.error(err);
           }
-        }
-        responsiveAPIKey.value = value;
-        setTimeout(() => checkResponsiveVoiceAPIKey(), 10000);
-      });
+          const snd = new Audio(`data:audio/mp3;base64,` + b64mp3);
+          snd.play();
+          snd.onended = () => (isSpeaking.value = false);
+        });
+      }
     };
 
     function getMiddleElement () {
@@ -225,9 +244,8 @@ export default defineComponent({ // enable useMeta
 
     onMounted(() => {
       console.log('====== RANDOMIZER ======');
-      checkResponsiveVoiceAPIKey();
       setInterval(() => {
-        getSocket('/registries/randomizer', true).emit('randomizer::getVisible', (err: string | null, _data: Required<RandomizerInterface>) => {
+        getSocket('/registries/randomizer', true).emit('randomizer::getVisible', async (err: string | null, _data: Required<RandomizerInterface>) => {
           if (err) {
             return console.error(err);
           }
@@ -251,6 +269,7 @@ export default defineComponent({ // enable useMeta
             const css = '@import url(\'https://fonts.googleapis.com/css?family=' + font + '\');';
             style.appendChild(document.createTextNode(css));
             head.appendChild(style);
+            return;
           }
 
           let shouldReinitWof = false;
@@ -281,7 +300,6 @@ export default defineComponent({ // enable useMeta
               }
 
               gsap.to(document.getElementById('canvas'), { duration: 1.5, opacity: 1 });
-
               theWheel.value = new Winwheel({
                 numSegments:    generateItems(_data.items as Required<RandomizerItemInterface>[]).length, // Number of segments
                 outerRadius:    450, // The size of the wheel.
@@ -316,7 +334,18 @@ export default defineComponent({ // enable useMeta
           });
         });
       }, 1000);
-      getSocket('/registries/randomizer', true).on('spin', spin);
+      getSocket('/registries/randomizer', true).on('spin', ({ service, key }) => {
+        // initialize tts
+        if (service === 0) {
+          responsiveAPIKey.value = key;
+        } else {
+          responsiveAPIKey.value = null;
+          _key = key;
+          TTSenabled.value = true;
+        }
+        TTSservice.value = service;
+        spin();
+      });
     });
 
     const alertPrize = () => {
