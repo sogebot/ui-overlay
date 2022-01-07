@@ -332,7 +332,7 @@ export default defineComponent({
       showTextAt: number;
       showAt: number;
       waitingForTTS: boolean;
-      alert: CommonSettingsInterface | AlertTipInterface | AlertResubInterface;
+      alert: (CommonSettingsInterface | AlertTipInterface | AlertResubInterface) & { ttsTemplate?: string };
       isTTSMuted: boolean;
       isSoundMuted: boolean;
       TTSService: number,
@@ -618,7 +618,7 @@ export default defineComponent({
                     console.log('Wrap element not yet ready to run onStarted, trying again.');
                   } else {
                     evaluated = true;
-                    console.log('Wrap element found, triggerind onStarted.');
+                    console.log('Wrap element found, triggering onStarted.');
                     // eslint-disable-next-line no-eval
                     eval(`${runningAlert.value.alert.advancedMode.js}; if (typeof onStarted === 'function') { onStarted() } else { console.log('no onStarted() function found'); }`);
                   }
@@ -636,12 +636,22 @@ export default defineComponent({
               }
             }
             if (!runningAlert.value.isTTSMuted && !runningAlert.value.isSoundMuted && data.value) {
+              let ttsTemplate = message;
+              if (runningAlert.value.alert.ttsTemplate) {
+                ttsTemplate = runningAlert.value.alert.ttsTemplate
+                  .replace(/\{name\}/g, runningAlert.value.name)
+                  .replace(/\{amount\}/g, String(runningAlert.value.amount))
+                  .replace(/\{monthsName\}/g, runningAlert.value.monthsName)
+                  .replace(/\{currency\}/g, runningAlert.value.currency)
+                  .replace(/\{message\}/g, message);
+              }
+
               if (data.value?.tts === null) {
               // use default values
                 console.log('TTS running with default values.');
-                speak(message, runningAlert.value.TTSService === 0 ? 'UK English Female' : 'en-US-Wavenet-A', 1, 1, 1);
+                speak(ttsTemplate, runningAlert.value.TTSService === 0 ? 'UK English Female' : 'en-US-Wavenet-A', 1, 1, 1);
               } else {
-                speak(message, data.value.tts.voice, data.value.tts.rate, data.value.tts.pitch, data.value.tts.volume);
+                speak(ttsTemplate, data.value.tts.voice, data.value.tts.rate, data.value.tts.pitch, data.value.tts.volume);
               }
             } else {
               console.log('TTS is muted.');
@@ -1046,7 +1056,7 @@ export default defineComponent({
     const speak = async (text: string, voice: string, rate: number, pitch: number, volume: number) => {
       isTTSPlaying = true;
       if (runningAlert.value?.TTSService === 0) {
-        console.log('Using ResponsiveVoice as TTS Service.')
+        console.log('Using ResponsiveVoice as TTS Service.');
         for (const TTS of text.split('/ ')) {
           await new Promise<void>((resolve) => {
             if (TTS.trim().length === 0) {
@@ -1062,7 +1072,7 @@ export default defineComponent({
           isTTSPlaying = false;
         }
       } else if (runningAlert.value?.TTSService === 1) {
-        console.log('Using Google TTS as TTS Service.')
+        console.log('Using Google TTS as TTS Service.');
         getSocket('/registries/alerts', true).emit('speak', {
           volume, pitch, rate, voice, text, key: runningAlert.value.TTSKey,
         }, (err: Error | null, b64mp3: string) => {

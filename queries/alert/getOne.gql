@@ -35,6 +35,7 @@ fragment tipFields on AlertTipObject {
     translateX translateY scale
   }
   soundId soundVolume
+  ttsTemplate
   tts {
     enabled skipUrls keepAlertShown minAmountToPlay
   }
@@ -70,6 +71,7 @@ fragment resubFields on AlertResubObject {
     translateX translateY scale
   }
   soundId soundVolume
+  ttsTemplate
   tts {
     enabled skipUrls keepAlertShown minAmountToPlay
   }
@@ -104,6 +106,7 @@ fragment rewardFields on AlertRewardRedeemObject {
     translateX translateY scale
   }
   soundId soundVolume
+  ttsTemplate
   tts {
     enabled skipUrls keepAlertShown minAmountToPlay
   }
