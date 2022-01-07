@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [14.0.4](https://github.com/sogebot/ui-overlay/compare/v14.0.3...v14.0.4) (2022-01-07)
+
+
+### Bug Fixes
+
+* **alerts:** add ttsTemplate support ([9d1c225](https://github.com/sogebot/ui-overlay/commit/9d1c2255e49d423ef683d4f1dcf8408ab8776e58))
+
 ### [14.0.3](https://github.com/sogebot/ui-overlay/compare/v14.0.2...v14.0.3) (2021-12-21)
 
 
