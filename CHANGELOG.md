@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [15.0.0](https://github.com/sogebot/ui-overlay/compare/v14.0.4...v15.0.0) (2022-01-12)
+
+
+### Features
+
+* **alertsRegistry:** add loop support ([79af521](https://github.com/sogebot/ui-overlay/commit/79af521e9c846dc8c136d1f0d8037507f9d8a57b))
+
 ### [14.0.4](https://github.com/sogebot/ui-overlay/compare/v14.0.3...v14.0.4) (2022-01-07)
 
 
