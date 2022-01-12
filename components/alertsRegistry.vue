@@ -47,6 +47,7 @@
             >
               <video
                 id="video"
+                :loop="runningAlert.alert.imageOptions.loop"
                 :style="{
                   /* center */
                   'display': 'block',

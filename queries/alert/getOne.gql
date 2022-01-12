@@ -7,7 +7,7 @@ fragment commonFields on CommonSettingsObject {
   }
   imageId
   imageOptions {
-    translateX translateY scale
+    translateX translateY scale loop
   }
   soundId soundVolume
   tts {
@@ -32,7 +32,7 @@ fragment tipFields on AlertTipObject {
   }
   imageId
   imageOptions {
-    translateX translateY scale
+    translateX translateY scale loop
   }
   soundId soundVolume
   ttsTemplate
@@ -68,7 +68,7 @@ fragment resubFields on AlertResubObject {
   }
   imageId
   imageOptions {
-    translateX translateY scale
+    translateX translateY scale loop
   }
   soundId soundVolume
   ttsTemplate
@@ -103,7 +103,7 @@ fragment rewardFields on AlertRewardRedeemObject {
   }
   imageId
   imageOptions {
-    translateX translateY scale
+    translateX translateY scale loop
   }
   soundId soundVolume
   ttsTemplate
