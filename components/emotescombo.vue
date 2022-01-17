@@ -9,11 +9,14 @@
       />
     </div>
     <transition name="fade">
-      <img
-        v-if="url !== null && count >= threshold && currentTime - updatedAt < inactivity * 1000"
-        :src="url"
-        width="100%"
-      >
+      <div v-if="url !== null && count >= threshold && currentTime - updatedAt < inactivity * 1000" style="padding: 5px">
+        <div style="display: inline-block" class="emotes-combo-text">
+          {{ count }}x
+        </div>
+        <img
+          :src="url"
+        >
+      </div>
     </transition>
   </div>
 </template>
@@ -60,6 +63,8 @@ export default defineComponent({
 </script>
 
 <style>
+@import url('https://fonts.googleapis.com/css?family=Dongle');
+
 .fade-enter-active, .fade-leave-active {
   transition: opacity .5s;
 }
@@ -83,5 +88,16 @@ img {
   position: absolute;
   color: white;
   padding: 1rem;
+}
+
+.emotes-combo-text {
+  font-family: 'Dongle', sans-serif;
+  color: #fff;
+  font-weight: bold;
+  text-shadow: 0 0 10px #000, 1px 1px 1px #000;
+  font-size: 2rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  transform: translateY(-40px);
 }
 </style>
