@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [15.0.1](https://github.com/sogebot/ui-overlay/compare/v15.0.0...v15.0.1) (2022-01-17)
+
+
+### Bug Fixes
+
+* **emotescombo:** add combo count to image ([af7948b](https://github.com/sogebot/ui-overlay/commit/af7948ba08fab4efd29280b3c482c8be163ce979))
+
 ## [15.0.0](https://github.com/sogebot/ui-overlay/compare/v14.0.4...v15.0.0) (2022-01-12)
 
 
