@@ -95,9 +95,9 @@ img {
   color: #fff;
   font-weight: bold;
   text-shadow: 0 0 10px #000, 1px 1px 1px #000;
-  font-size: 2rem;
+  font-size: 2.2rem;
   padding-left: 1rem;
   padding-right: 1rem;
-  transform: translateY(-40px);
+  transform: translateY(-5px);
 }
 </style>
