@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [15.0.2](https://github.com/sogebot/ui-overlay/compare/v15.0.1...v15.0.2) (2022-01-19)
+
+
+### Bug Fixes
+
+* **emotescombo:** update text position ([edfe22c](https://github.com/sogebot/ui-overlay/commit/edfe22c3bb9dd6c667d15a7148678909cc79dd5e))
+
 ### [15.0.1](https://github.com/sogebot/ui-overlay/compare/v15.0.0...v15.0.1) (2022-01-17)
 
 
