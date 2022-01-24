@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [15.0.6](https://github.com/sogebot/ui-overlay/compare/v15.0.5...v15.0.6) (2022-01-24)
+
+
+### Bug Fixes
+
+* **alertsRegistry:** replace recipient with correct value ([b88b40a](https://github.com/sogebot/ui-overlay/commit/b88b40ae8de726c1896b4b4bc364e4fccb98cfe9))
+
 ### [15.0.5](https://github.com/sogebot/ui-overlay/compare/v15.0.4...v15.0.5) (2022-01-24)
 
 
