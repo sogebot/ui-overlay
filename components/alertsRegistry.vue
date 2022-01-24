@@ -586,8 +586,6 @@ export default defineComponent({
                   el.style.width = `${el.clientWidth + 50}px`;
                   shouldAnimate.value = true;
                 }
-              } else {
-                shouldAnimate.value = true;
               }
             })();
 
@@ -832,10 +830,8 @@ export default defineComponent({
                     .replace(/<div.*class="(.*?)".*ref="text">|<div.*ref="text".*class="(.*?)">/gm, '<div ref="text">') // we need to replace id with class with proper id
                     .replace('ref="text"', `
                     v-if="runningAlert.isShowingText"
-                    :class="{['animate__' + runningAlert.animation]: shouldAnimate }"
-                    class=" animate__animated ${refTextClass}"
+                    class=" ${refTextClass}"
                     :style="{
-                      'visibility': shouldAnimate ? 'visible' : 'hidden',
                       'animation-duration': runningAlert.animationSpeed + 'ms',
                       'font-family': '${fontFamily}',
                       'font-size': '${fontSize} px',
@@ -848,9 +844,7 @@ export default defineComponent({
                     .replace('ref="image"', `
                     v-if="runningAlert.isShowingText && showImage"
                     @error="showImage=false"
-                    :class="{['animate__' + runningAlert.animation]: shouldAnimate}"
                     :style="{
-                      'visibility': shouldAnimate ? 'visible' : 'hidden',
                       'animation-duration': runningAlert.animationSpeed + 'ms'
                     }"
                     class="animate__animated ${refImageClass}"
