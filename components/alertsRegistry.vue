@@ -5,7 +5,7 @@
       class="debug"
     >
       <json-viewer
-        :value="{data}"
+        :value="{shouldAnimate, data}"
         boxed
         copyable
         :expand-depth="2"
@@ -588,6 +588,8 @@ export default defineComponent({
                   el.style.width = `${el.clientWidth + 50}px`;
                   shouldAnimate.value = true;
                 }
+              } else {
+                shouldAnimate.value = true;
               }
             })();
 
@@ -632,6 +634,7 @@ export default defineComponent({
                   .replace(/\{currency\}/g, runningAlert.value.currency)
                   .replace(/\{message\}/g, message);
               }
+              console.log({template: runningAlert.value.alert.ttsTemplate, ttsTemplate})
 
               if (data.value?.tts === null) {
               // use default values
@@ -874,7 +877,7 @@ export default defineComponent({
                   .replace(/\{monthName\}/g, '{monthName:highlight}')
                   .replace(/\{currency\}/g, '{currency:highlight}');
               }
-              const isAmountForTTSInRange = alert.tts.minAmountToPlay <= emitData.amount;
+              const isAmountForTTSInRange = alert.tts.minAmountToPlay === null || alert.tts.minAmountToPlay <= emitData.amount;
               runningAlert.value = {
                 id:             v4(),
                 animation:      'none',
