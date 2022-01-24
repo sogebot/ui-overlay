@@ -578,7 +578,7 @@ export default defineComponent({
             runningAlert.value.isShowingText = true;
 
             (function setTextWidth () {
-              if (!runningAlert.value.alert.advancedMode && runningAlert.value.alert.animationText === 'baffle') {
+              if (!runningAlert.value.alert.enableAdvancedMode && runningAlert.value.alert.animationText === 'baffle') {
                 const el = document.getElementById('text');
                 if (!el) {
                   setTimeout(() => setTextWidth());
