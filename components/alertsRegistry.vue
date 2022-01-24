@@ -626,6 +626,7 @@ export default defineComponent({
               if (runningAlert.value.alert.ttsTemplate) {
                 ttsTemplate = runningAlert.value.alert.ttsTemplate
                   .replace(/\{name\}/g, runningAlert.value.name)
+                  .replace(/\{recipient\}/g, runningAlert.value.recipient || '')
                   .replace(/\{amount\}/g, String(runningAlert.value.amount))
                   .replace(/\{monthsName\}/g, runningAlert.value.monthsName)
                   .replace(/\{currency\}/g, runningAlert.value.currency)
