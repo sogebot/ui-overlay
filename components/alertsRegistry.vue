@@ -213,6 +213,8 @@ let _key = '';
 let isTTSPlaying = false;
 let cleanupAlert = false;
 
+let snd: HTMLAudioElement; // to be able to parry
+
 const loadedScripts: string[] = [];
 
 const alerts: (EmitData & {isTTSMuted: boolean, isSoundMuted: boolean, TTSService: number, TTSKey: string})[] = [];
@@ -949,6 +951,10 @@ export default defineComponent({
             if (typeof window.responsiveVoice !== 'undefined') {
               window.responsiveVoice.cancel();
             }
+            if (snd) {
+              snd.pause();
+              isTTSPlaying = false;
+            }
           }, data.value.parry.delay);
         } else {
           alerts.push(data2);
@@ -1055,7 +1061,7 @@ export default defineComponent({
             isTTSPlaying = false;
             return console.error(err);
           }
-          const snd = new Audio(`data:audio/mp3;base64,` + b64mp3);
+          snd = new Audio(`data:audio/mp3;base64,` + b64mp3);
           snd.play();
           snd.onended = () => (isTTSPlaying = false);
         });
