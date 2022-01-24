@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [16.0.0](https://github.com/sogebot/ui-overlay/compare/v15.0.7...v16.0.0) (2022-01-24)
+
+
+### Bug Fixes
+
+* **alert:** add ttsTemplate to query ([34070ff](https://github.com/sogebot/ui-overlay/commit/34070ff63b646448bf10c0865d0a12e7cb90fc46))
+* **alerts:** parry Google TTS ([dbc044a](https://github.com/sogebot/ui-overlay/commit/dbc044a874c971f16adcbfbebe05698dc1b078ee))
+* **alert:** trigger animation properly ([d8b2d78](https://github.com/sogebot/ui-overlay/commit/d8b2d784c4bfec6f46aa5f61872c947b081f859e))
+
 ### [15.0.7](https://github.com/sogebot/ui-overlay/compare/v15.0.6...v15.0.7) (2022-01-24)
 
 
