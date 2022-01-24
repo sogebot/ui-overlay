@@ -105,22 +105,7 @@
               }"
               class="animate__animated"
             >
-              <span
-                :style="{
-                  'font-family': runningAlert.alert.font ? runningAlert.alert.font.family : data.font.family,
-                  'font-size': (runningAlert.alert.font ? runningAlert.alert.font.size : data.font.size) + 'px',
-                  'font-weight': runningAlert.alert.font ? runningAlert.alert.font.weight : data.font.weight,
-                  'color': runningAlert.alert.font ? runningAlert.alert.font.color : data.font.color,
-                  'text-shadow': [
-                    textStrokeGenerator(
-                      runningAlert.alert.font ? runningAlert.alert.font.borderPx : data.font.borderPx,
-                      runningAlert.alert.font ? runningAlert.alert.font.borderColor : data.font.borderColor
-                    ),
-                    shadowGenerator(runningAlert.alert.font ? runningAlert.alert.font.shadow : data.font.shadow)].filter(Boolean).join(', ')
-                }"
-              >
-                <v-runtime-template :template="prepareMessageTemplate(runningAlert.alert.messageTemplate)" />
-              </span>
+              <v-runtime-template :template="prepareMessageTemplate(runningAlert.alert.messageTemplate)" />
               <div
                 v-if="runningAlert.alert.message && (runningAlert.alert.message.minAmountToShow || 0) <= runningAlert.amount"
                 :style="{
@@ -804,7 +789,7 @@ export default defineComponent({
                 const fontColor = alert.font ? alert.font.color : data.value.font.color;
                 const shadowBorderPx = alert.font ? alert.font.borderPx : data.value.font.borderPx;
                 const shadowBorderColor = alert.font ? alert.font.borderColor : data.value.font.borderColor;
-                const shadow = (alert.font ? alert.font.shadow : data.value.font.shadow).filter(Boolean).join(', ');
+                const shadow = [textStrokeGenerator(shadowBorderPx, shadowBorderColor), shadowGenerator(alert.font ? alert.font.shadow : data.value.font.shadow)].filter(Boolean).join(', ');
 
                 const messageTemplate = get(alert, 'messageTemplate', '')
                   .replace(/\{name\}/g, '{name:highlight}')
@@ -855,13 +840,7 @@ export default defineComponent({
                       'font-size': '${fontSize} px',
                       'font-weight': '${fontWeight}',
                       'color': '${fontColor}',
-                      'text-shadow': [
-                        textStrokeGenerator(
-                          '${shadowBorderPx}',
-                          '${shadowBorderColor}',
-                        ),
-                        shadowGenerator(${shadow})
-                      ]
+                      'text-shadow': '${shadow} !important'
                     }"
                   `)
                     .replace(/<div.*class="(.*?)".*ref="image">|<div.*ref="image".*class="(.*?)">/gm, '<div ref="image">') // we need to replace id with class with proper id
@@ -1180,7 +1159,20 @@ export default defineComponent({
           .replace(/\{currency\}/g, runningAlert.value.currency)
           .replace(/\{monthsName\}/g, runningAlert.value.monthsName);
       }
-      return `<span>${msg}</span>`;
+      return `<span
+        :style="{
+          'font-family': runningAlert.alert.font ? runningAlert.alert.font.family : data.font.family,
+          'font-size': (runningAlert.alert.font ? runningAlert.alert.font.size : data.font.size) + 'px',
+          'font-weight': runningAlert.alert.font ? runningAlert.alert.font.weight : data.font.weight,
+          'color': runningAlert.alert.font ? runningAlert.alert.font.color : data.font.color,
+          'text-shadow': [
+            textStrokeGenerator(
+              runningAlert.alert.font ? runningAlert.alert.font.borderPx : data.font.borderPx,
+              runningAlert.alert.font ? runningAlert.alert.font.borderColor : data.font.borderColor
+            ),
+            shadowGenerator(runningAlert.alert.font ? runningAlert.alert.font.shadow : data.font.shadow)].filter(Boolean).join(', ')
+        }"
+      >${msg}</span>`;
     };
 
     return {
