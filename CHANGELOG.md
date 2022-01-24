@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [15.0.4](https://github.com/sogebot/ui-overlay/compare/v15.0.3...v15.0.4) (2022-01-24)
+
+
+### Bug Fixes
+
+* **alertsRegistry:** add template props ([9f1e72f](https://github.com/sogebot/ui-overlay/commit/9f1e72fbc57987dd6b473c2c842f0552e5d6ebf0))
+
 ### [15.0.3](https://github.com/sogebot/ui-overlay/compare/v15.0.2...v15.0.3) (2022-01-24)
 
 
