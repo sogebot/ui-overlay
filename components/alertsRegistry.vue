@@ -105,7 +105,7 @@
               }"
               class="animate__animated"
             >
-              <v-runtime-template :template="prepareMessageTemplate(runningAlert.alert.messageTemplate)" />
+              <v-runtime-template :template="prepareMessageTemplate(runningAlert.alert.messageTemplate)" :template-props="{runningAlert, shouldAnimate, textStrokeGenerator, shadowGenerator, prepareMessageTemplate, withEmotes, showImage, data}" />
               <div
                 v-if="runningAlert.alert.message && (runningAlert.alert.message.minAmountToShow || 0) <= runningAlert.amount"
                 :style="{
@@ -145,7 +145,7 @@
                     shadowGenerator(runningAlert.alert.font ? runningAlert.alert.font.shadow : data.font.shadow)].filter(Boolean).join(', ')
                 }"
               >
-                <v-runtime-template :template="prepareMessageTemplate(runningAlert.alert.messageTemplate)" />
+                <v-runtime-template :template="prepareMessageTemplate(runningAlert.alert.messageTemplate)" :template-props="{runningAlert, shouldAnimate, textStrokeGenerator, shadowGenerator, prepareMessageTemplate, withEmotes, showImage, data}" />
               </span>
               <div
                 v-if="runningAlert.alert.message && (runningAlert.alert.message.minAmountToShow || 0) <= runningAlert.amount"
@@ -170,7 +170,7 @@
           <v-runtime-template
             v-else
             :template="preparedAdvancedHTML"
-            :template-props="{runningAlert, shouldAnimate, textStrokeGenerator, shadowGenerator, prepareMessageTemplate, withEmotes, showImage}"
+            :template-props="{runningAlert, shouldAnimate, textStrokeGenerator, shadowGenerator, prepareMessageTemplate, withEmotes, showImage, data}"
           />
         </div>
       </div>
@@ -822,11 +822,11 @@ export default defineComponent({
                     .replace(/\{amount\}/g, String(emitData.amount))
                     .replace(/\{monthsName\}/g, emitData.monthsName)
                     .replace(/\{currency\}/g, emitData.currency)
-                    .replace(/\{name:highlight\}/g, `<v-runtime-template :template="prepareMessageTemplate('{name:highlight}')"></v-runtime-template>`)
-                    .replace(/\{recipient:highlight\}/g, `<v-runtime-template :template="prepareMessageTemplate('{recipient:highlight}')"></v-runtime-template>`)
-                    .replace(/\{amount:highlight\}/g, `<v-runtime-template :template="prepareMessageTemplate('{amount:highlight}')"></v-runtime-template>`)
-                    .replace(/\{monthsName:highlight\}/g, `<v-runtime-template :template="prepareMessageTemplate('{monthsName:highlight}')"></v-runtime-template>`)
-                    .replace(/\{currency:highlight\}/g, `<v-runtime-template :template="prepareMessageTemplate('{currency:highlight}')"></v-runtime-template>`)
+                    .replace(/\{name:highlight\}/g, `<v-runtime-template :template="prepareMessageTemplate('{name:highlight}')" :template-props="{runningAlert, shouldAnimate, textStrokeGenerator, shadowGenerator, prepareMessageTemplate, withEmotes, showImage, data}"></v-runtime-template>`)
+                    .replace(/\{recipient:highlight\}/g, `<v-runtime-template :template="prepareMessageTemplate('{recipient:highlight}')" :template-props="{runningAlert, shouldAnimate, textStrokeGenerator, shadowGenerator, prepareMessageTemplate, withEmotes, showImage, data}"></v-runtime-template>`)
+                    .replace(/\{amount:highlight\}/g, `<v-runtime-template :template="prepareMessageTemplate('{amount:highlight}')" :template-props="{runningAlert, shouldAnimate, textStrokeGenerator, shadowGenerator, prepareMessageTemplate, withEmotes, showImage, data}"></v-runtime-template>`)
+                    .replace(/\{monthsName:highlight\}/g, `<v-runtime-template :template="prepareMessageTemplate('{monthsName:highlight}')" :template-props="{runningAlert, shouldAnimate, textStrokeGenerator, shadowGenerator, prepareMessageTemplate, withEmotes, showImage, data}"></v-runtime-template>`)
+                    .replace(/\{currency:highlight\}/g, `<v-runtime-template :template="prepareMessageTemplate('{currency:highlight}')" :template-props="{runningAlert, shouldAnimate, textStrokeGenerator, shadowGenerator, prepareMessageTemplate, withEmotes, showImage, data}"></v-runtime-template>`)
                     .replace('"wrap"', '"wrap-' + alert.id + '"')
                     .replace(/<div.*class="(.*?)".*ref="text">|<div.*ref="text".*class="(.*?)">/gm, '<div ref="text">') // we need to replace id with class with proper id
                     .replace('ref="text"', `
