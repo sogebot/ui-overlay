@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [15.0.7](https://github.com/sogebot/ui-overlay/compare/v15.0.6...v15.0.7) (2022-01-24)
+
+
+### Bug Fixes
+
+* **alerts:** remove animations from advanceMode ([a50d5cf](https://github.com/sogebot/ui-overlay/commit/a50d5cff75aa4809e357f2141835c14b414128dc))
+
 ### [15.0.6](https://github.com/sogebot/ui-overlay/compare/v15.0.5...v15.0.6) (2022-01-24)
 
 
