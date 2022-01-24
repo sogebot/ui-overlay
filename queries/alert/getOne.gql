@@ -10,6 +10,7 @@ fragment commonFields on CommonSettingsObject {
     translateX translateY scale loop
   }
   soundId soundVolume
+  ttsTemplate
   tts {
     enabled skipUrls keepAlertShown minAmountToPlay
   }
