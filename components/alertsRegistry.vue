@@ -20,10 +20,10 @@
     <template v-if="state.loaded === ButtonStates.success && data">
       <div v-if="runningAlert" :key="runningAlert.id">
         <audio
-          v-if="typeOfMedia.get(runningAlert.alert.soundId) === 'audio'"
+          v-if="runningAlert.alert.soundId && typeOfMedia.get(runningAlert.alert.soundId) === 'audio'"
           id="audio"
         >
-          <source :src="'/api/v2/registry/alerts/media/' + runningAlert.alert.soundId">
+          <source :src="link(runningAlert.alert.soundId)">
         </audio>
         <div
           v-if="runningAlert.isShowing"
@@ -34,7 +34,7 @@
         >
           <template v-if="!runningAlert.alert.enableAdvancedMode">
             <div
-              v-if="typeOfMedia.get(runningAlert.alert.imageId) === 'video'"
+              v-if="runningAlert.alert.imageId && typeOfMedia.get(runningAlert.alert.imageId) === 'video'"
               :class="{
                 center: runningAlert.alert.layout === '3',
                 ['animate__' + runningAlert.animation]: shouldAnimate,
@@ -59,7 +59,7 @@
                 }"
               >
                 <source
-                  :src="'/api/v2/registry/alerts/media/' + runningAlert.alert.imageId"
+                  :src="link(runningAlert.alert.imageId)"
                   type="video/webm"
                 >
                 Your browser does not support the video tag.
@@ -79,7 +79,7 @@
               @error="showImage=false"
             >
               <img
-                :src="'/api/v2/registry/alerts/media/' + runningAlert.alert.imageId"
+                :src="link(runningAlert.alert.imageId)"
                 :style="{
                   /* center */
                   'display': 'block',
@@ -105,7 +105,7 @@
               }"
               class="animate__animated"
             >
-              <v-runtime-template :template="prepareMessageTemplate(runningAlert.alert.messageTemplate)" :template-props="{runningAlert, shouldAnimate, textStrokeGenerator, shadowGenerator, prepareMessageTemplate, withEmotes, showImage, data}" />
+              <v-runtime-template :template="prepareMessageTemplate(runningAlert.alert.messageTemplate)" :template-props="{runningAlert, shouldAnimate, textStrokeGenerator, shadowGenerator, prepareMessageTemplate, withEmotes, showImage, data, link}" />
               <div
                 v-if="runningAlert.alert.message && (runningAlert.alert.message.minAmountToShow || 0) <= runningAlert.amount"
                 :style="{
@@ -145,7 +145,7 @@
                     shadowGenerator(runningAlert.alert.font ? runningAlert.alert.font.shadow : data.font.shadow)].filter(Boolean).join(', ')
                 }"
               >
-                <v-runtime-template :template="prepareMessageTemplate(runningAlert.alert.messageTemplate)" :template-props="{runningAlert, shouldAnimate, textStrokeGenerator, shadowGenerator, prepareMessageTemplate, withEmotes, showImage, data}" />
+                <v-runtime-template :template="prepareMessageTemplate(runningAlert.alert.messageTemplate)" :template-props="{runningAlert, shouldAnimate, textStrokeGenerator, shadowGenerator, prepareMessageTemplate, withEmotes, showImage, data, link}" />
               </span>
               <div
                 v-if="runningAlert.alert.message && (runningAlert.alert.message.minAmountToShow || 0) <= runningAlert.amount"
@@ -170,7 +170,7 @@
           <v-runtime-template
             v-else
             :template="preparedAdvancedHTML"
-            :template-props="{runningAlert, shouldAnimate, textStrokeGenerator, shadowGenerator, prepareMessageTemplate, withEmotes, showImage, data}"
+            :template-props="{runningAlert, shouldAnimate, textStrokeGenerator, shadowGenerator, prepareMessageTemplate, withEmotes, showImage, data, link}"
           />
         </div>
       </div>
@@ -275,6 +275,10 @@ const haveAvailableAlert = (emitData: EmitData, data: AlertInterface | null) => 
   return false;
 };
 
+const link = (val: string) => {
+  return location.origin + '/gallery/' + val;
+};
+
 export default defineComponent({
   components: {
     JsonViewer,
@@ -356,55 +360,62 @@ export default defineComponent({
             ...data.value.cmdredeems,
             ...data.value.rewardredeems,
           ]) {
-            fetch('/api/v2/registry/alerts/media/' + event.soundId)
-              .then((response2) => {
-                if (!response2.ok) {
-                  throw new Error('Network response was not ok');
-                }
-                return response2.blob();
-              })
-              .then(() => {
-                console.log(`Audio ${event.soundId} was found on server.`);
-                typeOfMedia.set(event.soundId, 'audio');
-              })
-              .catch((error) => {
+            event.soundId = event.soundId === '_default_' ? '_default_audio' : event.soundId;
+            event.imageId = event.imageId === '_default_' ? '_default_image' : event.imageId;
+
+            if (event.soundId) {
+              fetch(link(event.soundId))
+                .then((response2) => {
+                  if (!response2.ok) {
+                    throw new Error('Network response was not ok');
+                  }
+                  return response2.blob();
+                })
+                .then(() => {
+                  console.log(`Audio ${event.soundId} was found on server.`);
+                  typeOfMedia.set(event.soundId, 'audio');
+                })
+                .catch((error) => {
                 typeOfMedia.set(event.soundId, null);
                 console.error(`Audio ${event.soundId} was not found on server.`);
                 console.error(error);
               });
-            fetch('/api/v2/registry/alerts/media/' + event.imageId)
-              .then(async (response2) => {
-                if (!response2.ok) {
-                  throw new Error('Network response was not ok');
-                }
-                const myBlob = await response2.blob();
-                console.log(`${myBlob.type.startsWith('video') ? 'Video' : 'Image'} ${event.imageId} was found on server.`);
-                typeOfMedia.set(event.imageId, myBlob.type.startsWith('video') ? 'video' : 'image');
-
-                const getMeta = (mediaId: string, type: 'Video' | 'Image') => {
-                  if (type === 'Video') {
-                    const vid = document.createElement('video');
-                    vid.addEventListener('loadedmetadata', (ev) => {
-                      const el = ev.target as HTMLVideoElement;
-                      sizeOfMedia.set(mediaId, [el.videoWidth, el.videoHeight]);
-                    });
-                    vid.src = `/api/v2/registry/alerts/media/${mediaId}`;
-                  } else {
-                    const img = new Image();
-                    img.addEventListener('load', (ev) => {
-                      const el = ev.target as HTMLImageElement;
-                      sizeOfMedia.set(mediaId, [el.naturalWidth, el.naturalHeight]);
-                    });
-                    img.src = `/api/v2/registry/alerts/media/${mediaId}`;
+            }
+            if (event.imageId) {
+              fetch(link(event.imageId))
+                .then(async (response2) => {
+                  if (!response2.ok) {
+                    throw new Error('Network response was not ok');
                   }
-                };
-                getMeta(event.imageId, myBlob.type.startsWith('video') ? 'Video' : 'Image');
-              })
-              .catch((error) => {
+                  const myBlob = await response2.blob();
+                  console.log(`${myBlob.type.startsWith('video') ? 'Video' : 'Image'} ${event.imageId} was found on server.`);
+                  typeOfMedia.set(event.imageId, myBlob.type.startsWith('video') ? 'video' : 'image');
+
+                  const getMeta = (mediaId: string, type: 'Video' | 'Image') => {
+                    if (type === 'Video') {
+                      const vid = document.createElement('video');
+                      vid.addEventListener('loadedmetadata', (ev) => {
+                        const el = ev.target as HTMLVideoElement;
+                        sizeOfMedia.set(mediaId, [el.videoWidth, el.videoHeight]);
+                      });
+                      vid.src = link(mediaId);
+                    } else {
+                      const img = new Image();
+                      img.addEventListener('load', (ev) => {
+                        const el = ev.target as HTMLImageElement;
+                        sizeOfMedia.set(mediaId, [el.naturalWidth, el.naturalHeight]);
+                      });
+                      img.src = link(mediaId);
+                    }
+                  };
+                  getMeta(event.imageId, myBlob.type.startsWith('video') ? 'Video' : 'Image');
+                })
+                .catch((error) => {
                 console.error(error);
                 typeOfMedia.set(event.imageId, null);
                 console.error(`Image/Video ${event.imageId} was not found on server.`);
               });
+            }
           }
           for (const [lang, isEnabled] of Object.entries(data.value.loadStandardProfanityList)) {
             if (lang.startsWith('_')) {
@@ -826,11 +837,11 @@ export default defineComponent({
                     .replace(/\{amount\}/g, String(emitData.amount))
                     .replace(/\{monthsName\}/g, emitData.monthsName)
                     .replace(/\{currency\}/g, emitData.currency)
-                    .replace(/\{name:highlight\}/g, `<v-runtime-template :template="prepareMessageTemplate('{name:highlight}')" :template-props="{runningAlert, shouldAnimate, textStrokeGenerator, shadowGenerator, prepareMessageTemplate, withEmotes, showImage, data}"></v-runtime-template>`)
-                    .replace(/\{recipient:highlight\}/g, `<v-runtime-template :template="prepareMessageTemplate('{recipient:highlight}')" :template-props="{runningAlert, shouldAnimate, textStrokeGenerator, shadowGenerator, prepareMessageTemplate, withEmotes, showImage, data}"></v-runtime-template>`)
-                    .replace(/\{amount:highlight\}/g, `<v-runtime-template :template="prepareMessageTemplate('{amount:highlight}')" :template-props="{runningAlert, shouldAnimate, textStrokeGenerator, shadowGenerator, prepareMessageTemplate, withEmotes, showImage, data}"></v-runtime-template>`)
-                    .replace(/\{monthsName:highlight\}/g, `<v-runtime-template :template="prepareMessageTemplate('{monthsName:highlight}')" :template-props="{runningAlert, shouldAnimate, textStrokeGenerator, shadowGenerator, prepareMessageTemplate, withEmotes, showImage, data}"></v-runtime-template>`)
-                    .replace(/\{currency:highlight\}/g, `<v-runtime-template :template="prepareMessageTemplate('{currency:highlight}')" :template-props="{runningAlert, shouldAnimate, textStrokeGenerator, shadowGenerator, prepareMessageTemplate, withEmotes, showImage, data}"></v-runtime-template>`)
+                    .replace(/\{name:highlight\}/g, `<v-runtime-template :template="prepareMessageTemplate('{name:highlight}')" :template-props="{runningAlert, shouldAnimate, textStrokeGenerator, shadowGenerator, prepareMessageTemplate, withEmotes, showImage, data, link}"></v-runtime-template>`)
+                    .replace(/\{recipient:highlight\}/g, `<v-runtime-template :template="prepareMessageTemplate('{recipient:highlight}')" :template-props="{runningAlert, shouldAnimate, textStrokeGenerator, shadowGenerator, prepareMessageTemplate, withEmotes, showImage, data, link}"></v-runtime-template>`)
+                    .replace(/\{amount:highlight\}/g, `<v-runtime-template :template="prepareMessageTemplate('{amount:highlight}')" :template-props="{runningAlert, shouldAnimate, textStrokeGenerator, shadowGenerator, prepareMessageTemplate, withEmotes, showImage, data, link}"></v-runtime-template>`)
+                    .replace(/\{monthsName:highlight\}/g, `<v-runtime-template :template="prepareMessageTemplate('{monthsName:highlight}')" :template-props="{runningAlert, shouldAnimate, textStrokeGenerator, shadowGenerator, prepareMessageTemplate, withEmotes, showImage, data, link}"></v-runtime-template>`)
+                    .replace(/\{currency:highlight\}/g, `<v-runtime-template :template="prepareMessageTemplate('{currency:highlight}')" :template-props="{runningAlert, shouldAnimate, textStrokeGenerator, shadowGenerator, prepareMessageTemplate, withEmotes, showImage, data, link}"></v-runtime-template>`)
                     .replace('"wrap"', '"wrap-' + alert.id + '"')
                     .replace(/<div.*class="(.*?)".*ref="text">|<div.*ref="text".*class="(.*?)">/gm, '<div ref="text">') // we need to replace id with class with proper id
                     .replace('ref="text"', `
@@ -853,7 +864,7 @@ export default defineComponent({
                       'animation-duration': runningAlert.animationSpeed + 'ms'
                     }"
                     class="animate__animated ${refImageClass}"
-                    :src="'/api/v2/registry/alerts/media/' + runningAlert.alert.imageId"
+                    :src="link(runningAlert.alert.imageId)"
                   `);
 
                 // load CSS
@@ -1180,6 +1191,7 @@ export default defineComponent({
     };
 
     return {
+      link,
       isDebug,
       data,
       runningAlert,
