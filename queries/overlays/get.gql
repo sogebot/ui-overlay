@@ -234,6 +234,8 @@ query OverlayGet($id: String) {
         maxEmotesPerMessage
         animation
         animationTime
+        maxRotation
+        offsetX
       }
     }
     emotescombo {

@@ -1,9 +1,21 @@
 <template>
   <div id="emotes">
-    <transition v-for="e of emotes" :key="e.id" :name="e.animation.type" :duration="e.animation.time" :css="false"
-      @leave="doAnimation">
-      <img v-if="!e.animation.finished" v-show="e.show && !e.animation.running" :id="e.id" :src="e.url"
-        style="position: absolute" :style="{ 'left': e.position.left + 'px', 'top': e.position.top + 'px' }">
+    <transition
+      v-for="e of emotes"
+      :key="e.id"
+      :name="e.animation.type"
+      :duration="e.animation.time"
+      :css="false"
+      @leave="doAnimation"
+    >
+      <img
+        v-if="!e.animation.finished"
+        v-show="e.show && !e.animation.running"
+        :id="e.id"
+        :src="e.url"
+        style="position: absolute"
+        :style="{ 'left': e.position.left + 'px', 'top': e.position.top + 'px' }"
+      >
     </transition>
   </div>
 </template>
@@ -16,21 +28,29 @@ import {
 } from '@vue/composition-api';
 import gsap from 'gsap';
 import {
-  defaults, every, random,
+  defaults, every, isNull, omitBy, pick, random,
 } from 'lodash';
 
 const maxEmoteGuard = new Map<string, number>();
+
+const defaultValues = {
+  emotesSize:          3,
+  animation:           'fadeup',
+  animationTime:       1000,
+  maxEmotesPerMessage: 5,
+  maxRotation:         2250,
+  offsetX:             200,
+};
 
 export default defineComponent({
   props: { opts: Object },
   setup (props) {
     const options = ref(
-      defaults(props.opts, {
-        emotesSize:          3,
-        animation:           'fadeup',
-        animationTime:       1000,
-        maxEmotesPerMessage: 5,
-      }));
+      pick(
+        defaults(omitBy(props.opts, isNull), defaultValues),
+        Object.keys(defaultValues),
+      ),
+    );
     const emotes = ref([] as any[]);
 
     onMounted(() => {
@@ -53,29 +73,57 @@ export default defineComponent({
       const id = el.id;
       const emote = emotes.value.find(o => o.id === id);
 
-      let animation: any = { opacity: 0 };
-
       if (emote.animation.type === 'fadeup') {
-        animation = {
-          top:     emote.position.top - 150,
-          opacity: 0,
-        };
+        gsap.to(el, {
+          top:      emote.position.top - 150,
+          opacity:  0,
+          duration: emotes.value.find(o => o.id === id).animation.time / 1000,
+        });
       } else if (emote.animation.type === 'facebook') {
-        animation = {
-          top:     emote.position.top - random(window.innerHeight / 4, window.innerHeight / 1.2),
-          left:    random(emote.position.left - 100, Math.min(emote.position.left + 100, window.innerWidth - 100)),
-          opacity: 0,
-        };
+        gsap.to(el, {
+          top:      emote.position.top - random(window.innerHeight / 4, window.innerHeight / 1.2),
+          left:     random(emote.position.left - 100, Math.min(emote.position.left + 100, window.innerWidth - 100)),
+          opacity:  0,
+          duration: emotes.value.find(o => o.id === id).animation.time / 1000,
+        });
       } else if (emote.animation.type === 'fadezoom') {
-        animation = {
-          scale:   2,
-          opacity: 0,
-        };
+        gsap.to(el, {
+          scale:    2,
+          opacity:  0,
+          duration: emotes.value.find(o => o.id === id).animation.time / 1000,
+        });
+      } else if (emote.animation.type === 'fall') {
+        el.style.opacity = '0';
+        const rotate = Math.random() * options.value.maxRotation;
+        gsap.to(el, {
+          top:      window.innerHeight - (el.offsetHeight / 1.4), // we are dipping emote little bit as they are not always 100% height
+          ease:     'bounce',
+          duration: emotes.value.find(o => o.id === id).animation.time / 1000,
+        });
+        gsap.to(el, {
+          opacity:  1,
+          duration: 1,
+        });
+        gsap.to(el, {
+          rotate:   `${Math.random() <= 0.5 ? -rotate : rotate}deg`,
+          duration: emotes.value.find(o => o.id === id).animation.time / 1000,
+        });
+        const left = options.value.offsetX - Math.random() * (options.value.offsetX * 2);
+        gsap.to(el, {
+          left:     `${emote.position.left + left}`,
+          ease:     'power3',
+          duration: emotes.value.find(o => o.id === id).animation.time / 1000,
+        });
+      } else {
+        gsap.to(el, {
+          opacity:  0,
+          duration: emotes.value.find(o => o.id === id).animation.time / 1000,
+        });
       }
-
       gsap.to(el, {
-        duration:   emotes.value.find(o => o.id === id).animation.time / 1000,
-        ...animation,
+        opacity:    0,
+        duration:   1,
+        delay:      emotes.value.find(o => o.id === id).animation.time / 1000 - 1,
         onComplete: () => {
           emotes.value.find(o => o.id === id).animation.finished = true;
           done();
@@ -96,7 +144,7 @@ export default defineComponent({
     };
 
     const setLeft = (type: string) => {
-      if (type === 'fadeup' || type === 'fadezoom') {
+      if (type === 'fadeup' || type === 'fadezoom' || type === 'fall') {
         return random(window.innerWidth - 200) + 100;
       } else if (type === 'facebook') {
         return random(200) + window.innerWidth - 350;
@@ -110,6 +158,8 @@ export default defineComponent({
         return random(window.innerHeight - 200) + 100;
       } else if (type === 'facebook') {
         return window.innerHeight - 20;
+      } else if (type === 'fall') {
+        return 0;
       } else {
         return window.innerHeight / 2;
       }
