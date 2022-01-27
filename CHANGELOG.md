@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [17.0.1](https://github.com/sogebot/ui-overlay/compare/v17.0.0...v17.0.1) (2022-01-27)
+
+
+### Bug Fixes
+
+* **alerts:** skip audio if not set ([1781470](https://github.com/sogebot/ui-overlay/commit/1781470a86a5ab299fcd6f7b4fbc252792e2ddbe))
+
 ## [17.0.0](https://github.com/sogebot/ui-overlay/compare/v16.0.0...v17.0.0) (2022-01-25)
 
 
