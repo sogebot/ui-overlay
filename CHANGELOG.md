@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [17.1.0](https://github.com/sogebot/ui-overlay/compare/v17.0.1...v17.1.0) (2022-01-27)
+
+
+### Features
+
+* **emotes:** add fall type ([c80bded](https://github.com/sogebot/ui-overlay/commit/c80bded361579dbe63ef933255c0c5b8be772d6b))
+
 ### [17.0.1](https://github.com/sogebot/ui-overlay/compare/v17.0.0...v17.0.1) (2022-01-27)
 
 
