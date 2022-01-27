@@ -627,7 +627,7 @@ export default defineComponent({
           }
 
           const audio = document.getElementById('audio') as null | HTMLMediaElement;
-          if (runningAlert.value.message && runningAlert.value.waitingForTTS && (typeOfMedia.get(runningAlert.value.alert.soundId) === null || (audio && audio.ended))) {
+          if (runningAlert.value.message && runningAlert.value.waitingForTTS && (runningAlert.value.alert.soundId === null || (audio && audio.ended))) {
             let message = runningAlert.value.message;
             if (runningAlert.value.alert.tts.skipUrls) {
               for (const match of message.match(urlRegex({ strict: false })) ?? []) {
@@ -663,21 +663,26 @@ export default defineComponent({
           }
 
           if (runningAlert.value.showAt <= Date.now() && !runningAlert.value.soundPlayed) {
-            console.debug('playing audio');
-            if (typeOfMedia.get(runningAlert.value.alert.soundId) !== null) {
-              if (!audio) {
-                console.error('Audio element not found.');
-              } else {
-                if (runningAlert.value.isSoundMuted) {
-                  audio.volume = 0;
-                  console.log('Audio is muted.');
+            if (runningAlert.value.alert.soundId) {
+              console.debug('playing audio', runningAlert.value.alert.soundId);
+              if (typeOfMedia.get(runningAlert.value.alert.soundId) !== null) {
+                if (!audio) {
+                  console.error('Audio element not found.');
                 } else {
-                  audio.volume = runningAlert.value.alert.soundVolume / 100;
+                  if (runningAlert.value.isSoundMuted) {
+                    audio.volume = 0;
+                    console.log('Audio is muted.');
+                  } else {
+                    audio.volume = runningAlert.value.alert.soundVolume / 100;
+                  }
+                  audio.play();
                 }
-                audio.play();
               }
+              runningAlert.value.soundPlayed = true;
+            } else {
+              console.debug('Audio not set - skipping');
+              runningAlert.value.soundPlayed = true;
             }
-            runningAlert.value.soundPlayed = true;
           }
         }
 
