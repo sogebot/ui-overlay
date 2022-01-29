@@ -216,6 +216,7 @@ let cleanupAlert = false;
 let snd: HTMLAudioElement; // to be able to parry
 
 const loadedScripts: string[] = [];
+const loadedMedia: string[] = [];
 
 const alerts: (EmitData & {isTTSMuted: boolean, isSoundMuted: boolean, TTSService: number, TTSKey: string})[] = [];
 
@@ -363,8 +364,9 @@ export default defineComponent({
             event.soundId = event.soundId === '_default_' ? '_default_audio' : event.soundId;
             event.imageId = event.imageId === '_default_' ? '_default_image' : event.imageId;
 
-            if (event.soundId) {
-              fetch(link(event.soundId))
+            if (event.soundId && !loadedMedia.includes(event.soundId)) {
+              loadedMedia.push(event.soundId);
+              fetch(link(event.soundId), { headers: { 'Cache-Control': 'max-age=604800' } })
                 .then((response2) => {
                   if (!response2.ok) {
                     throw new Error('Network response was not ok');
@@ -376,13 +378,14 @@ export default defineComponent({
                   typeOfMedia.set(event.soundId, 'audio');
                 })
                 .catch((error) => {
-                typeOfMedia.set(event.soundId, null);
-                console.error(`Audio ${event.soundId} was not found on server.`);
-                console.error(error);
-              });
+                  typeOfMedia.set(event.soundId, null);
+                  console.error(`Audio ${event.soundId} was not found on server.`);
+                  console.error(error);
+                });
             }
-            if (event.imageId) {
-              fetch(link(event.imageId))
+            if (event.imageId && !loadedMedia.includes(event.imageId)) {
+              loadedMedia.push(event.imageId);
+              fetch(link(event.imageId), { headers: { 'Cache-Control': 'max-age=604800' } })
                 .then(async (response2) => {
                   if (!response2.ok) {
                     throw new Error('Network response was not ok');
@@ -411,10 +414,10 @@ export default defineComponent({
                   getMeta(event.imageId, myBlob.type.startsWith('video') ? 'Video' : 'Image');
                 })
                 .catch((error) => {
-                console.error(error);
-                typeOfMedia.set(event.imageId, null);
-                console.error(`Image/Video ${event.imageId} was not found on server.`);
-              });
+                  console.error(error);
+                  typeOfMedia.set(event.imageId, null);
+                  console.error(`Image/Video ${event.imageId} was not found on server.`);
+                });
             }
           }
           for (const [lang, isEnabled] of Object.entries(data.value.loadStandardProfanityList)) {
@@ -645,7 +648,7 @@ export default defineComponent({
                   .replace(/\{currency\}/g, runningAlert.value.currency)
                   .replace(/\{message\}/g, message);
               }
-              console.log({template: runningAlert.value.alert.ttsTemplate, ttsTemplate})
+              console.log({ template: runningAlert.value.alert.ttsTemplate, ttsTemplate });
 
               if (data.value?.tts === null) {
               // use default values
