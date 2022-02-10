@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [17.1.2](https://github.com/sogebot/ui-overlay/compare/v17.1.1...v17.1.2) (2022-02-10)
+
+
+### Bug Fixes
+
+* **alerts:** properly load fonts with multiple words ([66adacd](https://github.com/sogebot/ui-overlay/commit/66adacdd0cf044619060504ce9b949f153edcbad))
+
 ### [17.1.1](https://github.com/sogebot/ui-overlay/compare/v17.1.0...v17.1.1) (2022-01-29)
 
 
