@@ -105,14 +105,14 @@
               }"
               class="animate__animated"
             >
-              <v-runtime-template :template="prepareMessageTemplate(runningAlert.alert.messageTemplate)" :template-props="{runningAlert, shouldAnimate, textStrokeGenerator, shadowGenerator, prepareMessageTemplate, withEmotes, showImage, data, link}" />
+              <v-runtime-template :template="prepareMessageTemplate(runningAlert.alert.messageTemplate)" :template-props="{runningAlert, shouldAnimate, textStrokeGenerator, shadowGenerator, prepareMessageTemplate, withEmotes, showImage, data, link, encodeFont}" />
               <div
                 v-if="runningAlert.alert.message && (runningAlert.alert.message.minAmountToShow || 0) <= runningAlert.amount"
                 :style="{
                   'width': '30rem',
                   'text-align': runningAlert.alert.message.font ? runningAlert.alert.message.font.align : data.fontMessage.align,
                   'flex': '1 0 0px',
-                  'font-family': runningAlert.alert.message.font ? runningAlert.alert.message.font.family : data.fontMessage.family,
+                  'font-family': encodeFont(runningAlert.alert.message.font ? runningAlert.alert.message.font.family : data.fontMessage.family),
                   'font-size': (runningAlert.alert.message.font ? runningAlert.alert.message.font.size : data.fontMessage.size) + 'px',
                   'font-weight': runningAlert.alert.message.font ? runningAlert.alert.message.font.weight : data.fontMessage.weight,
                   'color': runningAlert.alert.message.font ? runningAlert.alert.message.font.color : data.fontMessage.color,
@@ -133,7 +133,7 @@
             >
               <span
                 :style="{
-                  'font-family': runningAlert.alert.font ? runningAlert.alert.font.family : data.font.family,
+                  'font-family': encodeFont(runningAlert.alert.font ? runningAlert.alert.font.family : data.font.family),
                   'font-size': (runningAlert.alert.font ? runningAlert.alert.font.size : data.font.size) + 'px',
                   'font-weight': runningAlert.alert.font ? runningAlert.alert.font.weight : data.font.weight,
                   'color': runningAlert.alert.font ? runningAlert.alert.font.color : data.font.color,
@@ -145,7 +145,7 @@
                     shadowGenerator(runningAlert.alert.font ? runningAlert.alert.font.shadow : data.font.shadow)].filter(Boolean).join(', ')
                 }"
               >
-                <v-runtime-template :template="prepareMessageTemplate(runningAlert.alert.messageTemplate)" :template-props="{runningAlert, shouldAnimate, textStrokeGenerator, shadowGenerator, prepareMessageTemplate, withEmotes, showImage, data, link}" />
+                <v-runtime-template :template="prepareMessageTemplate(runningAlert.alert.messageTemplate)" :template-props="{runningAlert, shouldAnimate, textStrokeGenerator, shadowGenerator, prepareMessageTemplate, withEmotes, showImage, data, link, encodeFont}" />
               </span>
               <div
                 v-if="runningAlert.alert.message && (runningAlert.alert.message.minAmountToShow || 0) <= runningAlert.amount"
@@ -153,7 +153,7 @@
                   'width': '30rem',
                   'text-align': runningAlert.alert.message.font ? runningAlert.alert.message.font.align : data.fontMessage.align,
                   'flex': '1 0 0px',
-                  'font-family': runningAlert.alert.message.font ? runningAlert.alert.message.font.family : data.fontMessage.family,
+                  'font-family': encodeFont(runningAlert.alert.message.font ? runningAlert.alert.message.font.family : data.fontMessage.family),
                   'font-size': runningAlert.alert.message.font ? runningAlert.alert.message.font.size : data.fontMessage.size + 'px',
                   'font-weight': runningAlert.alert.message.font ? runningAlert.alert.message.font.weight : data.fontMessage.weight,
                   'color': runningAlert.alert.message.font ? runningAlert.alert.message.font.color : data.fontMessage.color,
@@ -170,7 +170,7 @@
           <v-runtime-template
             v-else
             :template="preparedAdvancedHTML"
-            :template-props="{runningAlert, shouldAnimate, textStrokeGenerator, shadowGenerator, prepareMessageTemplate, withEmotes, showImage, data, link}"
+            :template-props="{runningAlert, shouldAnimate, textStrokeGenerator, shadowGenerator, prepareMessageTemplate, withEmotes, showImage, data, link, encodeFont}"
           />
         </div>
       </div>
@@ -824,7 +824,7 @@ export default defineComponent({
                 = preparedAdvancedHTML.value
                     .replace(/\{message\}/g, `
                     <span :style="{
-                      'font-family': (runningAlert.alert.message.font ? runningAlert.alert.message.font.family : data.fontMessage.family) + ' !important',
+                      'font-family': encodeFont(runningAlert.alert.message.font ? runningAlert.alert.message.font.family : data.fontMessage.family) + ' !important',
                       'font-size': (runningAlert.alert.message.font ? runningAlert.alert.message.font.size : data.fontMessage.size) + 'px !important',
                       'font-weight': (runningAlert.alert.message.font ? runningAlert.alert.message.font.weight : data.fontMessage.weight) + ' !important',
                       'color': (runningAlert.alert.message.font ? runningAlert.alert.message.font.color : data.fontMessage.color) + ' !important',
@@ -845,11 +845,11 @@ export default defineComponent({
                     .replace(/\{amount\}/g, String(emitData.amount))
                     .replace(/\{monthsName\}/g, emitData.monthsName)
                     .replace(/\{currency\}/g, emitData.currency)
-                    .replace(/\{name:highlight\}/g, `<v-runtime-template :template="prepareMessageTemplate('{name:highlight}')" :template-props="{runningAlert, shouldAnimate, textStrokeGenerator, shadowGenerator, prepareMessageTemplate, withEmotes, showImage, data, link}"></v-runtime-template>`)
-                    .replace(/\{recipient:highlight\}/g, `<v-runtime-template :template="prepareMessageTemplate('{recipient:highlight}')" :template-props="{runningAlert, shouldAnimate, textStrokeGenerator, shadowGenerator, prepareMessageTemplate, withEmotes, showImage, data, link}"></v-runtime-template>`)
-                    .replace(/\{amount:highlight\}/g, `<v-runtime-template :template="prepareMessageTemplate('{amount:highlight}')" :template-props="{runningAlert, shouldAnimate, textStrokeGenerator, shadowGenerator, prepareMessageTemplate, withEmotes, showImage, data, link}"></v-runtime-template>`)
-                    .replace(/\{monthsName:highlight\}/g, `<v-runtime-template :template="prepareMessageTemplate('{monthsName:highlight}')" :template-props="{runningAlert, shouldAnimate, textStrokeGenerator, shadowGenerator, prepareMessageTemplate, withEmotes, showImage, data, link}"></v-runtime-template>`)
-                    .replace(/\{currency:highlight\}/g, `<v-runtime-template :template="prepareMessageTemplate('{currency:highlight}')" :template-props="{runningAlert, shouldAnimate, textStrokeGenerator, shadowGenerator, prepareMessageTemplate, withEmotes, showImage, data, link}"></v-runtime-template>`)
+                    .replace(/\{name:highlight\}/g, `<v-runtime-template :template="prepareMessageTemplate('{name:highlight}')" :template-props="{runningAlert, shouldAnimate, textStrokeGenerator, shadowGenerator, prepareMessageTemplate, withEmotes, showImage, data, link, encodeFont}"></v-runtime-template>`)
+                    .replace(/\{recipient:highlight\}/g, `<v-runtime-template :template="prepareMessageTemplate('{recipient:highlight}')" :template-props="{runningAlert, shouldAnimate, textStrokeGenerator, shadowGenerator, prepareMessageTemplate, withEmotes, showImage, data, link, encodeFont}"></v-runtime-template>`)
+                    .replace(/\{amount:highlight\}/g, `<v-runtime-template :template="prepareMessageTemplate('{amount:highlight}')" :template-props="{runningAlert, shouldAnimate, textStrokeGenerator, shadowGenerator, prepareMessageTemplate, withEmotes, showImage, data, link, encodeFont}"></v-runtime-template>`)
+                    .replace(/\{monthsName:highlight\}/g, `<v-runtime-template :template="prepareMessageTemplate('{monthsName:highlight}')" :template-props="{runningAlert, shouldAnimate, textStrokeGenerator, shadowGenerator, prepareMessageTemplate, withEmotes, showImage, data, link, encodeFont}"></v-runtime-template>`)
+                    .replace(/\{currency:highlight\}/g, `<v-runtime-template :template="prepareMessageTemplate('{currency:highlight}')" :template-props="{runningAlert, shouldAnimate, textStrokeGenerator, shadowGenerator, prepareMessageTemplate, withEmotes, showImage, data, link, encodeFont}"></v-runtime-template>`)
                     .replace('"wrap"', '"wrap-' + alert.id + '"')
                     .replace(/<div.*class="(.*?)".*ref="text">|<div.*ref="text".*class="(.*?)">/gm, '<div ref="text">') // we need to replace id with class with proper id
                     .replace('ref="text"', `
@@ -857,7 +857,7 @@ export default defineComponent({
                     class=" ${refTextClass}"
                     :style="{
                       'animation-duration': runningAlert.animationSpeed + 'ms',
-                      'font-family': '${fontFamily}',
+                      'font-family': encodeFont('${fontFamily}'),
                       'font-size': '${fontSize} px',
                       'font-weight': '${fontWeight}',
                       'color': '${fontColor}',
@@ -1184,7 +1184,7 @@ export default defineComponent({
       }
       return `<span
         :style="{
-          'font-family': runningAlert.alert.font ? runningAlert.alert.font.family : data.font.family,
+          'font-family': encodeFont(runningAlert.alert.font ? runningAlert.alert.font.family : data.font.family),
           'font-size': (runningAlert.alert.font ? runningAlert.alert.font.size : data.font.size) + 'px',
           'font-weight': runningAlert.alert.font ? runningAlert.alert.font.weight : data.font.weight,
           'color': runningAlert.alert.font ? runningAlert.alert.font.color : data.font.color,
@@ -1197,6 +1197,10 @@ export default defineComponent({
         }"
       >${msg}</span>`;
     };
+
+    const encodeFont = (font: string) => {
+      return `'${font}'`
+    }
 
     return {
       link,
@@ -1214,6 +1218,7 @@ export default defineComponent({
       textStrokeGenerator,
       shadowGenerator,
       withEmotes,
+      encodeFont,
 
       ButtonStates,
     };
