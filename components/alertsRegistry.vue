@@ -377,10 +377,10 @@ export default defineComponent({
                 })
                 .then(() => {
                   console.log(`Audio ${event.soundId} was found on server.`);
-                  typeOfMedia.set(event.soundId, 'audio');
+                  typeOfMedia.set(event.soundId || '', 'audio');
                 })
                 .catch((error) => {
-                  typeOfMedia.set(event.soundId, null);
+                  typeOfMedia.set(event.soundId || '', null);
                   console.error(`Audio ${event.soundId} was not found on server.`);
                   console.error(error);
                 });
@@ -389,7 +389,7 @@ export default defineComponent({
               loadedMedia.push(event.imageId);
               fetch(link(event.imageId), { headers: { 'Cache-Control': 'max-age=604800' } })
                 .then(async (response2) => {
-                  if (!response2.ok) {
+                  if (!response2.ok || !event.imageId) {
                     throw new Error('Network response was not ok');
                   }
                   const myBlob = await response2.blob();
@@ -413,11 +413,13 @@ export default defineComponent({
                       img.src = link(mediaId);
                     }
                   };
-                  getMeta(event.imageId, myBlob.type.startsWith('video') ? 'Video' : 'Image');
+                  if (event.imageId) {
+                    getMeta(event.imageId, myBlob.type.startsWith('video') ? 'Video' : 'Image');
+                  }
                 })
                 .catch((error) => {
                   console.error(error);
-                  typeOfMedia.set(event.imageId, null);
+                  typeOfMedia.set(event.imageId || '', null);
                   console.error(`Image/Video ${event.imageId} was not found on server.`);
                 });
             }
@@ -762,21 +764,21 @@ export default defineComponent({
                 const scriptRegex = /<script.*src="(.*)"\/?>/gm;
                 let scriptMatch = scriptRegex.exec(preparedAdvancedHTML.value);
                 while (scriptMatch !== null) {
-                  const link = scriptMatch[1];
-                  if (loadedScripts.includes(link)) {
+                  const scriptLink = scriptMatch[1];
+                  if (loadedScripts.includes(scriptLink)) {
                     scriptMatch = scriptRegex.exec(preparedAdvancedHTML.value);
                     continue;
                   }
                   const script = document.createElement('script');
-                  script.src = link;
+                  script.src = scriptLink;
                   document.getElementsByTagName('head')[0].appendChild(script);
                   scriptMatch = scriptRegex.exec(preparedAdvancedHTML.value);
 
                   // wait for load
                   await new Promise((resolve) => {
                     script.onload = () => {
-                      console.log(`Custom script loaded: ${link}`);
-                      loadedScripts.push(link);
+                      console.log(`Custom script loaded: ${scriptLink}`);
+                      loadedScripts.push(scriptLink);
                       resolve(true);
                     };
                   });
@@ -1209,8 +1211,8 @@ export default defineComponent({
     };
 
     const encodeFont = (font: string) => {
-      return `'${font}'`
-    }
+      return `'${font}'`;
+    };
 
     return {
       link,

@@ -24,6 +24,12 @@
       ],
       "@/*": [
         "./*"
+      ],
+      "@entity/*": [
+        "./.bot/src/database/entity/*"
+      ],
+      "~/helpers/*": [
+        "./.bot/src/helpers/*"
       ]
     },
     "types": [
