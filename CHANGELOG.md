@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [17.2.0](https://github.com/sogebot/ui-overlay/compare/v17.1.2...v17.2.0) (2022-02-14)
+
+
+### Features
+
+* **alerts:** add typewriter animation ([f4f91cf](https://github.com/sogebot/ui-overlay/commit/f4f91cf6d3decde25dffc88c33f6c2bc42e38d71))
+
 ### [17.1.2](https://github.com/sogebot/ui-overlay/compare/v17.1.1...v17.1.2) (2022-02-10)
 
 
