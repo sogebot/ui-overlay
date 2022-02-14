@@ -285,7 +285,9 @@ export default defineComponent({
     JsonViewer,
     VRuntimeTemplate,
     // eslint-disable-next-line vue/no-unused-components
-    baffle: () => import('~/components/baffle.vue'), // this is used in VRuntimeTemplate
+    baffle:     () => import('~/components/baffle.vue'), // this is used in VRuntimeTemplate
+    // eslint-disable-next-line vue/no-unused-components
+    typewriter: () => import('~/components/textAnimation/typewriter.vue'), // this is used in VRuntimeTemplate
   },
   middleware: ['isBotStarted'], // enable useMeta
   props:      { opts: Object },
@@ -1151,12 +1153,14 @@ export default defineComponent({
           }
         });
 
+        const isFadingOut = runningAlert.value.hideAt - Date.now() <= 0
+          && !isTTSPlaying
+          && !runningAlert.value.waitingForTTS;
+
         if (runningAlert.value.alert.animationText === 'baffle') {
           let maxTimeToDecrypt = runningAlert.value.alert.animationTextOptions.maxTimeToDecrypt;
           // set maxTimeToDecrypt 0 if fading out to not reset decryption
-          if (runningAlert.value.hideAt - Date.now() <= 0
-          && !isTTSPlaying
-          && !runningAlert.value.waitingForTTS) {
+          if (isFadingOut) {
             maxTimeToDecrypt = 0;
           }
           name = `<baffle :key="'name-' + runningAlert.name" :text="runningAlert.name" :options="{...runningAlert.alert.animationTextOptions, maxTimeToDecrypt: ${maxTimeToDecrypt}}" style="color: ${runningAlert.value.alert.font ? runningAlert.value.alert.font.highlightcolor : data.value?.font.highlightcolor}"/>`;
@@ -1164,6 +1168,12 @@ export default defineComponent({
           amount = `<baffle :key="'amount-' + runningAlert.amount" :text="String(runningAlert.amount)" :options="{...runningAlert.alert.animationTextOptions, maxTimeToDecrypt: ${maxTimeToDecrypt}}" style="color: ${runningAlert.value.alert.font ? runningAlert.value.alert.font.highlightcolor : data.value?.font.highlightcolor}"/>`;
           currency = `<baffle :key="'currency-' + runningAlert.currency" :text="runningAlert.currency" :options="{...runningAlert.alert.animationTextOptions, maxTimeToDecrypt: ${maxTimeToDecrypt}}" style="color: ${runningAlert.value.alert.font ? runningAlert.value.alert.font.highlightcolor : data.value?.font.highlightcolor}"/>`;
           monthsName = `<baffle :key="'monthsName-' + runningAlert.monthsName" :text="runningAlert.monthsName" :options="{...runningAlert.alert.animationTextOptions, maxTimeToDecrypt: ${maxTimeToDecrypt}}" style="color: ${runningAlert.value.alert.font ? runningAlert.value.alert.font.highlightcolor : data.value?.font.highlightcolor}"/>`;
+        } else if (!isFadingOut && runningAlert.value.alert.animationText === 'typewriter') {
+          name = `<typewriter :key="'name-' + runningAlert.name" :text="runningAlert.name" :options="{...runningAlert.alert.animationTextOptions}" style="color: ${runningAlert.value.alert.font ? runningAlert.value.alert.font.highlightcolor : data.value?.font.highlightcolor}"/>`;
+          recipient = `<typewriter :key="'recipient-' + runningAlert.recipient" :text="runningAlert.recipient" :options="{...runningAlert.alert.animationTextOptions}" style="color: ${runningAlert.value.alert.font ? runningAlert.value.alert.font.highlightcolor : data.value?.font.highlightcolor}"/>`;
+          amount = `<typewriter :key="'amount-' + runningAlert.amount" :text="String(runningAlert.amount)" :options="{...runningAlert.alert.animationTextOptions}" style="color: ${runningAlert.value.alert.font ? runningAlert.value.alert.font.highlightcolor : data.value?.font.highlightcolor}"/>`;
+          currency = `<typewriter :key="'currency-' + runningAlert.currency" :text="runningAlert.currency" :options="{...runningAlert.alert.animationTextOptions}" style="color: ${runningAlert.value.alert.font ? runningAlert.value.alert.font.highlightcolor : data.value?.font.highlightcolor}"/>`;
+          monthsName = `<typewriter :key="'monthsName-' + runningAlert.monthsName" :text="runningAlert.monthsName" :options="{...runningAlert.alert.animationTextOptions}" style="color: ${runningAlert.value.alert.font ? runningAlert.value.alert.font.highlightcolor : data.value?.font.highlightcolor}"/>`;
         } else {
           name = name.join('');
           recipient = recipient.join('');
