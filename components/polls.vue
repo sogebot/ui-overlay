@@ -51,7 +51,7 @@
             <div
               class="bar"
               :style="{
-                'width': getPercentage(index) === 0 ? '5px' : getPercentage(index) + '%'
+                'width': getPercentage(index) === '0' ? '5px' : getPercentage(index) + '%'
               }"
             />
           </div>
@@ -75,6 +75,7 @@
 </template>
 
 <script lang="ts">
+import { PollInterface } from '@entity/poll';
 import {
   computed, defineComponent, onMounted, ref, watch,
 } from '@nuxtjs/composition-api';
@@ -82,8 +83,6 @@ import { dayjs } from '@sogebot/ui-helpers/dayjsHelper';
 import { getSocket } from '@sogebot/ui-helpers/socket';
 import translate from '@sogebot/ui-helpers/translate';
 import JsonViewer from 'vue-json-viewer';
-
-import { PollInterface } from '.bot/src/database/entity/poll';
 
 export default defineComponent({
   components: { JsonViewer },
@@ -154,7 +153,7 @@ export default defineComponent({
       return theme.replace(/ /g, '_').toLowerCase().replace(/\W/g, '');
     };
 
-    const getPercentage = (index: number, toFixed: number) => {
+    const getPercentage = (index: number, toFixed?: number) => {
       let _votes = 0;
       for (let i = 0, length = votes.value.length; i < length; i++) {
         if (votes.value[i].option === index) {

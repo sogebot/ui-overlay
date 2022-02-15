@@ -47,7 +47,7 @@ import {
 } from '@nuxtjs/composition-api';
 import { getSocket } from '@sogebot/ui-helpers/socket';
 
-import { BetsInterface } from '~/.bot/src/database/entity/bets';
+import { BetsInterface } from '@entity/bets';
 
 export default defineComponent({
   setup () {

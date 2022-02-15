@@ -11,15 +11,15 @@
 </template>
 
 <script lang="ts">
+import type {
+  OverlayMapperInterface, OverlayMapperOBSWebsocket, OverlayMappers,
+} from '@entity/overlay';
 import {
   defineComponent, ref, useRoute, watch,
 } from '@nuxtjs/composition-api';
 import { useQuery, useResult } from '@vue/apollo-composable';
 import { cloneDeep } from 'lodash';
 
-import type {
-  OverlayMapperInterface, OverlayMapperOBSWebsocket, OverlayMappers,
-} from '~/.bot/src/database/entity/overlay';
 import GET from '~/queries/overlays/get.gql';
 
 export default defineComponent({

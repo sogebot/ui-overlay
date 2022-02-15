@@ -181,6 +181,10 @@
 <script lang="ts">
 
 import {
+  AlertInterface, AlertResubInterface, AlertRewardRedeemInterface, AlertTipInterface, CommonSettingsInterface, EmitData,
+} from '@entity/alert';
+import { CacheEmotesInterface } from '@entity/cacheEmotes';
+import {
   defineComponent, nextTick, onMounted, ref, useMeta, watch,
 } from '@nuxtjs/composition-api';
 import { ButtonStates } from '@sogebot/ui-helpers/buttonStates';
@@ -195,10 +199,6 @@ import { v4 } from 'uuid';
 import VRuntimeTemplate from 'v-runtime-template';
 import JsonViewer from 'vue-json-viewer';
 
-import {
-  AlertInterface, AlertResubInterface, AlertRewardRedeemInterface, AlertTipInterface, CommonSettingsInterface, EmitData,
-} from '.bot/src/database/entity/alert';
-import { CacheEmotesInterface } from '.bot/src/database/entity/cacheEmotes';
 import GET_ONE from '~/queries/alert/getOne.gql';
 
 require('animate.css');

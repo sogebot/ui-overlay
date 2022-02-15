@@ -26,10 +26,7 @@
         "./*"
       ],
       "@entity/*": [
-        "./.bot/src/database/entity/*"
-      ],
-      "~/helpers/*": [
-        "./.bot/src/helpers/*"
+        "./node_modules/@sogebot/backend/src/database/entity/*"
       ]
     },
     "types": [

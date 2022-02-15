@@ -120,7 +120,7 @@ import {
 } from 'lodash';
 import JsonViewer from 'vue-json-viewer';
 
-import type { RandomizerInterface, RandomizerItemInterface } from '~/.bot/src/database/entity/randomizer';
+import type { RandomizerInterface, RandomizerItemInterface } from '@entity/randomizer';
 
 declare global {
   interface Window {

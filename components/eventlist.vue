@@ -32,7 +32,7 @@ import { getSocket } from '@sogebot/ui-helpers/socket';
 import translate from '@sogebot/ui-helpers/translate';
 import { defaults, orderBy } from 'lodash';
 
-import { EventListInterface } from '~/.bot/src/database/entity/eventList';
+import { EventListInterface } from '@entity/eventList';
 
 export default defineComponent({
   props: { opts: Object },

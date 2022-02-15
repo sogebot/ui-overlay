@@ -37,7 +37,7 @@ import { shadowGenerator, textStrokeGenerator } from '@sogebot/ui-helpers/text';
 import gsap from 'gsap';
 import { defaultsDeep } from 'lodash';
 
-import { OverlayMapperGroup, OverlayMapperMarathon } from '../.bot/src/database/entity/overlay.js';
+import { OverlayMapperGroup, OverlayMapperMarathon } from '@entity/overlay.js';
 
 export default defineComponent({
   props: { opts: Object, id: [String, Object] },

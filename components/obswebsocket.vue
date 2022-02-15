@@ -3,17 +3,16 @@
 </template>
 
 <script lang="ts">
+import type { Events } from '@entity/event';
+import type { OBSWebsocketInterface } from '@entity/obswebsocket';
+import { switchScenes } from '@sogebot/backend/src/helpers/obswebsocket/listeners';
+import { listScenes } from '@sogebot/backend/src/helpers/obswebsocket/scenes';
+import { getSourcesList, getSourceTypesList } from '@sogebot/backend/src/helpers/obswebsocket/sources';
+import { taskRunner } from '@sogebot/backend/src/helpers/obswebsocket/taskrunner';
 import { getCurrentIP } from '@sogebot/ui-helpers/getCurrentIP';
 import { getSocket } from '@sogebot/ui-helpers/socket';
 import { defineComponent, onMounted } from '@vue/composition-api';
 import OBSWebSocket from 'obs-websocket-js';
-
-import type { Events } from '~/.bot/src/database/entity/event';
-import type { OBSWebsocketInterface } from '~/.bot/src/database/entity/obswebsocket';
-import { switchScenes } from '~/.bot/src/helpers/obswebsocket/listeners';
-import { listScenes } from '~/.bot/src/helpers/obswebsocket/scenes';
-import { getSourcesList, getSourceTypesList } from '~/.bot/src/helpers/obswebsocket/sources';
-import { taskRunner } from '~/.bot/src/helpers/obswebsocket/taskrunner';
 
 type Props = {
   opts: {
@@ -108,7 +107,7 @@ export default defineComponent({
       });
 
       // add listeners
-      switchScenes(obs, getSocket('/integrations/obswebsocket', true));
+      switchScenes(obs, getSocket('/integrations/obswebsocket', true) as any);
     });
   },
 });

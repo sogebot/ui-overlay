@@ -11,7 +11,7 @@ import {
 import { useQuery, useResult } from '@vue/apollo-composable';
 import gsap from 'gsap';
 
-import type { CarouselInterface } from '.bot/src/database/entity/carousel';
+import type { CarouselInterface } from '@entity/carousel';
 import GET_ALL from '~/queries/carousel/getAll.gql';
 
 export default defineComponent({
