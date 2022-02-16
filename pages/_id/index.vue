@@ -3,19 +3,18 @@
     <v-main style="padding: 0; margin: 0;">
       <component
         :is="type.value"
-        v-if="$store.state.isUILoaded && type"
+        v-if="$store.state.isUILoaded && isLoaded && type"
         :opts="type.opts"
+        :children="children"
       />
     </v-main>
   </v-app>
 </template>
 
 <script lang="ts">
-import type {
-  OverlayMapperInterface, OverlayMapperOBSWebsocket, OverlayMappers,
-} from '@entity/overlay';
+import type { OverlayMapperInterface } from '@entity/overlay';
 import {
-  defineComponent, ref, useRoute, watch,
+  defineComponent, onMounted, ref, useRoute, watch,
 } from '@nuxtjs/composition-api';
 import { useQuery, useResult } from '@vue/apollo-composable';
 import { cloneDeep } from 'lodash';
@@ -28,11 +27,35 @@ export default defineComponent({
   setup () {
     const route = useRoute();
 
+    const isLoaded = ref(false);
+
     const { result } = useQuery(GET, { id: route.value.params.id });
-    const cache = useResult<{ overlays: any[] }, OverlayMappers[]>(result, []);
-    const type = ref(null as null | OverlayMapperInterface | OverlayMapperOBSWebsocket);
+    const { result: resultChildren } = useQuery(GET, { groupId: route.value.params.id });
+
+    const cache = useResult<{ overlays: any }, any | null>(result, null);
+    const cacheChildren = useResult<{ overlays: any }, any | null>(resultChildren, null);
+
+    const type = ref(null as null | OverlayMapperInterface);
+    const children = ref([] as any);
+
+    const process = () => {
+      if (!cache.value || !cacheChildren.value) {
+        console.log('Not all data are loaded');
+        setTimeout(() => process(), 1000);
+        return;
+      }
+
+      isLoaded.value = true;
+    };
+
+    onMounted(() => {
+      process();
+    });
 
     watch(cache, (value) => {
+      if (!value) {
+        return;
+      }
       for (const key of Object.keys(value)) {
         if (key.startsWith('__')) {
           continue;
@@ -44,7 +67,28 @@ export default defineComponent({
       }
     }, { immediate: true, deep: true });
 
-    return { type };
+    watch(cacheChildren, (value) => {
+      if (!value) {
+        return;
+      }
+      for (const key of Object.keys(value)) {
+        if (key.startsWith('__')) {
+          continue;
+        }
+        if (value[key as any].length > 0) {
+          for (const item of value[key as any]) {
+            children.value = [
+              ...children.value,
+              item,
+            ];
+          }
+        }
+      }
+    }, { immediate: true, deep: true });
+
+    return {
+      type, isLoaded, children,
+    };
   },
 });
 </script>

@@ -1,5 +1,15 @@
-query OverlayGet($id: String) {
-  overlays(id: $id) {
+query OverlayGet($id: String, $groupId: String) {
+  overlays(id: $id, groupId: $groupId) {
+    textRegistry {
+      id
+      value
+      opts { id }
+    }
+    alertsRegistry {
+      id
+      value
+      opts { id }
+    }
     wordcloud {
       id
       value
@@ -8,8 +18,8 @@ query OverlayGet($id: String) {
         fadeOutIntervalType
         wordFont {
           family
-          color
           weight
+          color
         }
       }
     }
@@ -273,10 +283,10 @@ query OverlayGet($id: String) {
       id
       value
       opts {
+        animation
         customPeriod
         numOfClips
         volume
-        animation
       }
     }
     tts {
@@ -321,8 +331,6 @@ query OverlayGet($id: String) {
           height
           alignX
           alignY
-          type
-          opts
         }
       }
     }

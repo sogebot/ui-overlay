@@ -10,7 +10,8 @@
         'font-size': font.size + 'px',
         'text-shadow': [textStrokeGenerator(font.borderPx, font.borderColor), shadowGenerator(font.shadow)].filter(Boolean).join(', ')
       }"
-      v-html="time"/>
+      v-html="time"
+    />
     <v-sparkline
       v-if="options.showProgressGraph"
       :smooth="25"
@@ -25,6 +26,7 @@
 </template>
 
 <script lang="ts">
+import { OverlayMapperMarathon } from '@entity/overlay.js';
 import {
   computed,
   defineComponent, onMounted, ref, useRoute,
@@ -36,8 +38,6 @@ import { getSocket } from '@sogebot/ui-helpers/socket';
 import { shadowGenerator, textStrokeGenerator } from '@sogebot/ui-helpers/text';
 import gsap from 'gsap';
 import { defaultsDeep } from 'lodash';
-
-import { OverlayMapperGroup, OverlayMapperMarathon } from '@entity/overlay.js';
 
 export default defineComponent({
   props: { opts: Object, id: [String, Object] },
@@ -125,12 +125,12 @@ export default defineComponent({
 
     const update = () => {
       getSocket('/overlays/marathon', true)
-        .emit('marathon::public', props.id ? String(props.id) : route.value.params.id, (_err: null, data?: Required<OverlayMapperGroup['opts']['items'][number] | OverlayMapperMarathon>) => {
+        .emit('marathon::public', props.id ? String(props.id) : route.value.params.id, (_err: null, data?: Required<OverlayMapperMarathon>) => {
           if (animation) {
             animation.kill();
           }
           if (data) {
-            options.value = typeof data.opts === 'string' ? JSON.parse(data.opts) : data.opts;
+            options.value = data.opts;
             animation = gsap.to(currentTime.value, {
               duration:   1,
               value:      Math.max(options.value.endTime - Date.now(), 0),

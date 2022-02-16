@@ -1,11 +1,12 @@
 <template>
   <div>
     <component
-      :is="item.type"
+      v-if="getChildItem(item.id)"
+      :is="getChildItem(item.id).value"
       v-for="item of options.items"
       :key="item.id"
       :id="item.id"
-      :opts="JSON.parse(item.opts)"
+      :opts="getChildItem(item.id).opts"
       :style="{
         border: isDebug ? '2px solid orange' : 'inherit',
         position: 'absolute',
@@ -26,7 +27,7 @@ import {
 import { defaultsDeep } from 'lodash';
 
 export default defineComponent({
-  props: { opts: [Object, Array] },
+  props: { opts: [Object, Array], children: Array },
   setup (props) {
     const url = new URL(location.href);
     const isDebug = !!url.searchParams.get('groupDebug');
@@ -43,7 +44,11 @@ export default defineComponent({
       console.log('====== GROUP OF OVERLAYS ======');
     });
 
-    return { options, isDebug };
+    const getChildItem = (id: string) => {
+      return props.children?.find((o: any) => o.id === id);
+    };
+
+    return { options, isDebug, getChildItem };
   },
 });
 </script>
