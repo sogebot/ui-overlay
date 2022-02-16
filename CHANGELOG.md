@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [18.0.0](https://github.com/sogebot/sogebot.dev/compare/v17.2.3...v18.0.0) (2022-02-16)
+
+
+### Features
+
+* **clipscarousel:** add fade animation support ([4b252aa](https://github.com/sogebot/sogebot.dev/commit/4b252aa7ce79ccb4a3176d7480e7202b2c517fe5))
+
 ### [17.2.3](https://github.com/sogebot/sogebot.main/compare/v17.2.2...v17.2.3) (2022-02-15)
 
 
