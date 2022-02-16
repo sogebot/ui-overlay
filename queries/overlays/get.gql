@@ -276,6 +276,7 @@ query OverlayGet($id: String) {
         customPeriod
         numOfClips
         volume
+        animation
       }
     }
     tts {

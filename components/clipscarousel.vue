@@ -1,36 +1,29 @@
 <template>
   <div>
-    <pre v-if="isDebug" class="debug" style="overflow: scroll; resize: both;">
-<v-row>
-  <v-col>
-<v-btn @click="currentClip--">-</v-btn>
-  </v-col>
-  <v-col>
-<v-btn @click="currentClip++">+</v-btn>
-  </v-col>
-</v-row>
-opts: {{ opts }}
-clips: {{ clips.map(o => o.id) }},
-currentClip: {{ currentClip }},
-offset: {{ offset }},
-clipWidth: {{ clipWidth }}
-moveToNextClipInProgress: {{ moveToNextClipInProgress }}
-isReady: {{ isReady }}
-isVideoSupported: {{ isVideoSupported }}
-  </pre>
+    <pre v-if="isDebug" class="debug">
+      <v-btn @click="currentClip--">-</v-btn>
+      <v-btn @click="currentClip++">+</v-btn>
+      <json-viewer
+        :value="{opts, currentClip, offset, clipWidth, moveToNextClipInProgress, isReady, isVideoSupported, clips: clips.map(o => o.mp4)}"
+        boxed
+        copyable
+        :expand-depth="2"
+      />
+    </pre>
     <v-alert v-if="!isVideoSupported" color="error" width="auto">
       We are sorry, but this browser doesn't support video mp4/h264
     </v-alert>
     <div
       id="carousel"
       :style="{
-        width: '99999999999%',
+        width: opts.animation === 'slide' ? '99999999999%' : '100%',
         position: 'absolute',
         opacity: isReady ? '1' : '0',
-        transition: 'opacity 1s'
+        transition: opts.animation === 'slide' ? 'all 1s' : 'all 2s',
       }"
     >
       <div
+        v-if="opts.animation === 'slide'"
         v-for="(clip, index) of clips"
         :key="clip.id"
         class="clips"
@@ -43,10 +36,28 @@ isVideoSupported: {{ isVideoSupported }}
           filter: 'grayscale(' + (index === currentClip ? '0' : '1') + ')'}
         "
       >
-        <v-overlay v-if="isDebug" :key="clip.id+'-overlay'" absolute>
+        <v-overlay v-if="isDebugOverlay" :key="clip.id+'-overlay'" absolute>
           {{ index }}
         </v-overlay>
         <video preload="auto" playsinline>
+          <source :src="clip.mp4" type="video/mp4">
+        </video>
+      </div>
+      <div
+        v-if="opts.animation === 'fade'"
+        v-for="(clip, index) of clips"
+        :key="clip.id"
+        class="clips"
+        style="position: absolute; margin-left: auto; margin-right: auto; left: 0; right: 0; text-align: center;"
+      >
+        <v-overlay v-if="isDebugOverlay && index === currentClip" :key="clip.id+'-overlay'" absolute>
+          {{ index }}
+        </v-overlay>
+        <video preload="auto" playsinline class="wide"
+          :style="{
+            transition: `all 2s`,
+            opacity: index === currentClip ? '1': '0',
+          }">
           <source :src="clip.mp4" type="video/mp4">
         </video>
       </div>
@@ -60,14 +71,19 @@ import {
   defineComponent, nextTick, onMounted, ref, watch,
 } from '@nuxtjs/composition-api';
 import { getSocket } from '@sogebot/ui-helpers/socket';
+import JsonViewer from 'vue-json-viewer';
 
 import { isVideoSupported } from '~/functions/isVideoSupported';
 
 export default defineComponent({
+  components: {
+    JsonViewer,
+  },
   props: { opts: Object },
   setup (props) {
     const url = new URL(location.href);
     const isDebug = !!url.searchParams.get('debug');
+    const isDebugOverlay = !!url.searchParams.get('overlay');
 
     const clips = ref([] as any[]);
     const currentClip = ref(0);
@@ -89,18 +105,29 @@ export default defineComponent({
       // we are in loop, reset
         currentClip.value = 0;
       } else {
-        Array.from(videoEls.value).forEach((video, idx) => {
-          if (idx === value) {
-            video.currentTime = 0;
-            video.volume = (props.opts?.volume ?? 0) / 100;
-            video.play();
-          } else {
-            video.volume = 0;
-            video.pause();
-          }
-        });
+        play();
       }
     });
+
+    function play() {
+      if (videoEls.value.length === 0) {
+        setTimeout(() => play(), 1000);
+      }
+
+      Array.from(videoEls.value).forEach((video, idx) => {
+        if (idx === currentClip.value) {
+          video.currentTime = 0;
+          video.volume = (props.opts?.volume ?? 0) / 100;
+          video.play().catch((reason) => {
+            console.error(`Video cannot be started: ${reason}. Trying again in 1s.`);
+            setTimeout(() => play(), 1000);
+          });
+        } else {
+          video.volume = 0;
+          video.pause();
+        }
+      });
+    }
 
     function getVisibilityOfClip (idx: number) {
       if (currentClip.value === clips.value.length - 1 && idx === 0) {
@@ -199,6 +226,7 @@ export default defineComponent({
 
     return {
       isDebug,
+      isDebugOverlay,
       clips,
       currentClip,
       offset,
@@ -220,6 +248,10 @@ export default defineComponent({
     transition: all 1s;
   }
 
+  video.wide {
+    width: 90vw;
+  }
+
   video {
     width: 40vw;
     padding: 5vw;
@@ -227,10 +259,6 @@ export default defineComponent({
   }
 
   .debug {
-    z-index: 9999;
-    background-color: rgba(0, 0, 0, 0.5);
     position: absolute;
-    color: white;
-    padding: 1rem;
   }
 </style>
