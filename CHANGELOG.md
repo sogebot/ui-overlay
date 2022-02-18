@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [20.0.0](https://github.com/sogebot/sogebot.dev/compare/v19.0.0...v20.0.0) (2022-02-18)
+
+
+### Features
+
+* **alerts:** add caster, user and recipient info into alert advanced mode JS ([a2c01e4](https://github.com/sogebot/sogebot.dev/commit/a2c01e45972e4efcc0abdaaef3c3dc4f4e94f9e6))
+
 ## [19.0.0](https://github.com/sogebot/sogebot.dev/compare/v18.0.0...v19.0.0) (2022-02-16)
 
 ## [18.0.0](https://github.com/sogebot/sogebot.dev/compare/v17.2.3...v18.0.0) (2022-02-16)
