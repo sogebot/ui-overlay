@@ -180,10 +180,11 @@
 
 <script lang="ts">
 
-import {
+import type {
   AlertInterface, AlertResubInterface, AlertRewardRedeemInterface, AlertTipInterface, CommonSettingsInterface, EmitData,
 } from '@entity/alert';
 import { CacheEmotesInterface } from '@entity/cacheEmotes';
+import type { UserInterface } from '@entity/user';
 import {
   defineComponent, nextTick, onMounted, ref, useMeta, watch,
 } from '@nuxtjs/composition-api';
@@ -218,7 +219,12 @@ let snd: HTMLAudioElement; // to be able to parry
 const loadedScripts: string[] = [];
 const loadedMedia: string[] = [];
 
-const alerts: (EmitData & {isTTSMuted: boolean, isSoundMuted: boolean, TTSService: number, TTSKey: string})[] = [];
+const alerts: (EmitData & {
+  isTTSMuted: boolean, isSoundMuted: boolean, TTSService: number, TTSKey: string,
+  caster: null | UserInterface,
+  user: null | UserInterface,
+  recipientUser: null | UserInterface,
+})[] = [];
 
 const haveAvailableAlert = (emitData: EmitData, data: AlertInterface | null) => {
   if (emitData && data) {
@@ -331,7 +337,10 @@ export default defineComponent({
       isTTSMuted: boolean;
       isSoundMuted: boolean;
       TTSService: number,
-      TTSKey: string
+      TTSKey: string,
+      caster: null | UserInterface,
+      user: null | UserInterface,
+      recipientUser: null | UserInterface,
     } | null);
 
     const { result, refetch } = useQuery(GET_ONE, { id: id.value }, { pollInterval: 5000 });
@@ -559,7 +568,15 @@ export default defineComponent({
               nextTick(() => {
                 if (runningAlert.value && runningAlert.value.alert.enableAdvancedMode) {
                   // eslint-disable-next-line no-eval
-                  eval(`${runningAlert.value.alert.advancedMode.js}; if (typeof onEnded === 'function') { onEnded() } else { console.log('no onEnded() function found'); }`);
+                  const onEnded = eval(`(function () { ${runningAlert.value.alert.advancedMode.js}; return onEnded; })`);
+                  safeEval(
+                    `(function() { if (typeof onEnded === 'function') { onEnded() } else { console.log('no onEnded() function found'); } })()`, {
+                      caster:    runningAlert.value.caster,
+                      user:      runningAlert.value.user,
+                      recipient: runningAlert.value.recipientUser,
+                      onEnded,
+                    },
+                  );
                 }
               });
 
@@ -626,7 +643,15 @@ export default defineComponent({
                     evaluated = true;
                     console.log('Wrap element found, triggering onStarted.');
                     // eslint-disable-next-line no-eval
-                    eval(`${runningAlert.value.alert.advancedMode.js}; if (typeof onStarted === 'function') { onStarted() } else { console.log('no onStarted() function found'); }`);
+                    const onStarted = eval(`(function () { ${runningAlert.value.alert.advancedMode.js}; return onStarted; })`);
+                    safeEval(
+                      `(function() { if (typeof onStarted === 'function') { onStarted() } else { console.log('no onStarted() function found'); } })()`, {
+                        caster:    runningAlert.value.caster,
+                        user:      runningAlert.value.user,
+                        recipient: runningAlert.value.recipientUser,
+                        onStarted,
+                      },
+                    );
                   }
                 }
               }, 10);
@@ -940,7 +965,7 @@ export default defineComponent({
         }
       });
 
-      getSocket('/registries/alerts', true).on('alert', (data2: (EmitData & {isTTSMuted: boolean, isSoundMuted: boolean, TTSKey: string, TTSService: number; })) => {
+      getSocket('/registries/alerts', true).on('alert', (data2: typeof alerts[number]) => {
         console.debug('Incoming alert', data2);
 
         if (data2.TTSService === 0) {
