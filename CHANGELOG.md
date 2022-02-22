@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [20.0.1](https://github.com/sogebot/sogebot.dev/compare/v20.0.0...v20.0.1) (2022-02-22)
+
+
+### Bug Fixes
+
+* **alertsRegistry:** trigger onStarted + onEnded ([4694282](https://github.com/sogebot/sogebot.dev/commit/46942821e03d00d4b1d69138a7adf090fe85c867))
+
 ## [20.0.0](https://github.com/sogebot/sogebot.dev/compare/v19.0.0...v20.0.0) (2022-02-18)
 
 
