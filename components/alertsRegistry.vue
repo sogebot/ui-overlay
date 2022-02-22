@@ -567,14 +567,11 @@ export default defineComponent({
               // eval onEnded
               nextTick(() => {
                 if (runningAlert.value && runningAlert.value.alert.enableAdvancedMode) {
-                  // eslint-disable-next-line no-eval
-                  const onEnded = eval(`(function () { ${runningAlert.value.alert.advancedMode.js}; return onEnded; })`);
                   safeEval(
-                    `(function() { if (typeof onEnded === 'function') { onEnded() } else { console.log('no onEnded() function found'); } })()`, {
+                    `(function() { ${runningAlert.value.alert.advancedMode.js}; if (typeof onEnded === 'function') { console.log('executing onEnded()'); onEnded() } else { console.log('no onEnded() function found'); } })()`, {
                       caster:    runningAlert.value.caster,
                       user:      runningAlert.value.user,
                       recipient: runningAlert.value.recipientUser,
-                      onEnded,
                     },
                   );
                 }
@@ -642,14 +639,11 @@ export default defineComponent({
                   } else {
                     evaluated = true;
                     console.log('Wrap element found, triggering onStarted.');
-                    // eslint-disable-next-line no-eval
-                    const onStarted = eval(`(function () { ${runningAlert.value.alert.advancedMode.js}; return onStarted; })`);
                     safeEval(
-                      `(function() { if (typeof onStarted === 'function') { onStarted() } else { console.log('no onStarted() function found'); } })()`, {
+                      `(function() { ${runningAlert.value.alert.advancedMode.js}; if (typeof onStarted === 'function') { console.log('executing onStarted()'); onStarted() } else { console.log('no onStarted() function found'); } })()`, {
                         caster:    runningAlert.value.caster,
                         user:      runningAlert.value.user,
                         recipient: runningAlert.value.recipientUser,
-                        onStarted,
                       },
                     );
                   }
