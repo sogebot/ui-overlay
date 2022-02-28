@@ -502,7 +502,7 @@ export default defineComponent({
           // load emotes
           // eslint-disable-next-line promise/param-names
           await new Promise((done) => {
-            getSocket('/services/twitch', true).emit('getCache', (err3: string | null, data3: any) => {
+            getSocket('/core/emotes', true).emit('getCache', (err3: string | null, data3: any) => {
               if (err3) {
                 return console.error(err3);
               }
