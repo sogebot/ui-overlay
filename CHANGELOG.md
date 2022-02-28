@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [21.0.0](https://github.com/sogebot/sogebot.dev/compare/v20.0.1...v21.0.0) (2022-02-28)
+
+
+### Bug Fixes
+
+* **alerts:** update socket namespace ([477511a](https://github.com/sogebot/sogebot.dev/commit/477511a207c5d7a1dbe9b054abb00df7f19461f2))
+
 ### [20.0.1](https://github.com/sogebot/sogebot.dev/compare/v20.0.0...v20.0.1) (2022-02-22)
 
 
