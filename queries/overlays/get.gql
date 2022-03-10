@@ -1,5 +1,12 @@
 query OverlayGet($id: String, $groupId: String) {
   overlays(id: $id, groupId: $groupId) {
+    reference {
+      id
+      value
+      groupId
+      name
+      opts { overlayId }
+    }
     textRegistry {
       id
       value

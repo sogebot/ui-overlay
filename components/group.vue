@@ -1,12 +1,11 @@
 <template>
   <div>
     <component
-      v-if="getChildItem(item.id)"
-      :is="getChildItem(item.id).value"
-      v-for="item of options.items"
-      :key="item.id"
+      :is="item.value"
+      v-for="item of items"
       :id="item.id"
-      :opts="getChildItem(item.id).opts"
+      :key="item.id"
+      :opts="item.opts"
       :style="{
         border: isDebug ? '2px solid orange' : 'inherit',
         position: 'absolute',
@@ -21,16 +20,29 @@
 </template>
 
 <script lang="ts">
+import type { OverlayMappers } from '@entity/overlay';
 import {
   defineComponent, onMounted, ref,
 } from '@nuxtjs/composition-api';
+import axios from 'axios';
+import { print } from 'graphql';
 import { defaultsDeep } from 'lodash';
+
+import GET from '~/queries/overlays/get.gql';
+
+type Props = {
+  children: OverlayMappers[],
+  opts: any,
+};
 
 export default defineComponent({
   props: { opts: [Object, Array], children: Array },
-  setup (props) {
+  setup (props: Props) {
     const url = new URL(location.href);
     const isDebug = !!url.searchParams.get('groupDebug');
+    const items = ref([] as (OverlayMappers & {
+      width: number; height: number; alignX: number; alignY: number;
+    })[]);
     const options = ref(
       defaultsDeep(props.opts, {
         canvas: {
@@ -42,13 +54,58 @@ export default defineComponent({
 
     onMounted(() => {
       console.log('====== GROUP OF OVERLAYS ======');
+      for (const child of options.value.items) {
+        console.log({ child });
+        getChildItem(child);
+      }
     });
 
-    const getChildItem = (id: string) => {
-      return props.children?.find((o: any) => o.id === id);
+    const getChildItem = async (child: any) => {
+      const originalChild = props.children?.find((o: any) => o.id === child.id);
+      if (originalChild) {
+        if (originalChild.value !== 'reference') {
+          items.value = [...items.value, { ...child, ...originalChild }];
+          return;
+        }
+
+        // we have reference and need to find original
+        console.log({ GET: print(GET) });
+        const result = await axios({
+          url:    '/graphql',
+          method: 'post',
+          data:   { query: print(GET), variables: { id: originalChild.opts?.overlayId } },
+
+        });
+        if (result.status === 200) {
+          const data = result.data.data.overlays;
+          for (const item of Object.values<OverlayMappers[]>(data)) {
+            if (item.length > 0) {
+              const refChild = item[0];
+              items.value = [...items.value, { ...child, ...refChild }];
+              return;
+            }
+          }
+        }
+        /*
+        { id: route.value.params.id });
+
+      for (const key of Object.keys(result.overlays)) {
+        if (result.overlays[key].length > 0) {
+          item.value = cloneDeep(result.overlays[key][0]);
+          break;
+        }
+      }
+
+        const refChild = props.children?.find((o: any) => o.id === originalChild.opts?.overlayId)
+        console.log({originalChild, refChild})
+        return refChild;
+        */
+      }
     };
 
-    return { options, isDebug, getChildItem };
+    return {
+      options, isDebug, items,
+    };
   },
 });
 </script>
