@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [21.1.0](https://github.com/sogebot/sogebot.dev/compare/v21.0.0...v21.1.0) (2022-03-10)
+
+
+### Features
+
+* **group:** add referenced overlays ([980ce67](https://github.com/sogebot/sogebot.dev/commit/980ce67a7f7d323a39c7e9244339a85f2c56849c))
+
 ## [21.0.0](https://github.com/sogebot/sogebot.dev/compare/v20.0.1...v21.0.0) (2022-02-28)
 
 
