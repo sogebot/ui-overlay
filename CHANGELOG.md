@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [21.1.1](https://github.com/sogebot/sogebot.dev/compare/v21.1.0...v21.1.1) (2022-03-14)
+
+
+### Bug Fixes
+
+* share data between stopwatches and countdowns ([81b8e68](https://github.com/sogebot/sogebot.dev/commit/81b8e680ef3adccdd5d6859956813f598222891a))
+
 ## [21.1.0](https://github.com/sogebot/sogebot.dev/compare/v21.0.0...v21.1.0) (2022-03-10)
 
 
