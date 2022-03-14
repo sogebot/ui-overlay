@@ -71,6 +71,7 @@
     "v-runtime-template": "^1.10.0",
     "vue-json-viewer": "^2.2.19",
     "vuetify": "^2.5.10",
-    "vuewordcloud": "^18.7.12"
+    "vuewordcloud": "^18.7.12",
+    "worker-timers": "^7.0.45"
   }
 }

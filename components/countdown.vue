@@ -10,7 +10,8 @@
       'font-size': font.size + 'px',
       'text-shadow': [textStrokeGenerator(font.borderPx, font.borderColor), shadowGenerator(font.shadow)].filter(Boolean).join(', ')
     }"
-    v-html="time"/>
+    v-html="time"
+  />
 </template>
 
 <script lang="ts">
@@ -23,17 +24,21 @@ import {
 } from '@sogebot/ui-helpers/constants';
 import { getSocket } from '@sogebot/ui-helpers/socket';
 import { shadowGenerator, textStrokeGenerator } from '@sogebot/ui-helpers/text';
-import gsap from 'gsap';
-import { defaultsDeep } from 'lodash';
 import { useMutation } from '@vue/apollo-composable';
+import { defaultsDeep } from 'lodash';
+import { v4 } from 'uuid';
+import * as workerTimers from 'worker-timers';
+
+import { toBoolean } from '~/../backend/src/helpers/toBoolean';
 import TICK from '~/queries/overlays/tick.gql';
 
 export default defineComponent({ // enable useMeta
   props: { opts: Object, id: [String, Object] },
   setup (props) {
-    let animation: null | gsap.core.Tween = null;
     const enabled = ref(true);
     const route = useRoute();
+    const threadId = ref('');
+    const id = computed(() => props.id ? props.id : route.value.params.id);
 
     const { mutate: tickMutation } = useMutation(TICK);
 
@@ -97,7 +102,34 @@ export default defineComponent({ // enable useMeta
       return output;
     });
 
+    let lastTimeSync = Date.now();
     const update = () => {
+      if (localStorage.getItem(`countdown-controller-${id.value}`) !== threadId.value) {
+        console.debug('Secondary');
+        console.debug(localStorage.getItem(`countdown-controller-${id.value}-enabled`));
+
+        const origEnabled = enabled.value;
+        enabled.value = toBoolean(localStorage.getItem(`countdown-controller-${id.value}-enabled`) || false);
+        if (enabled.value && !origEnabled) {
+          tick();
+        }
+
+        if (Date.now() - lastTimeSync > 1000 || !enabled.value) {
+          // get when it was set to get offset
+          const currentTimeAt = enabled.value
+            ? new Date(localStorage.getItem(`countdown-controller-${id.value}-currentTimeAt`) || Date.now()).getTime()
+            : Date.now();
+          if (lastTimeSync === currentTimeAt) {
+            console.debug('No update, setting as controller');
+            localStorage.setItem(`countdown-controller-${id.value}`, threadId.value);
+          }
+          lastTimeSync = currentTimeAt;
+          options.value.currentTime = Date.now() - currentTimeAt + Number(localStorage.getItem(`countdown-controller-${id.value}-currentTime`));
+        }
+
+        return;
+      }
+      console.debug('Primary');
       getSocket('/overlays/countdown', true)
         .emit('countdown::update', {
           id:        props.id ? String(props.id) : route.value.params.id,
@@ -109,58 +141,59 @@ export default defineComponent({ // enable useMeta
             if (data.isEnabled !== null) {
               enabled.value = data.isEnabled;
             }
+
+            localStorage.setItem(`countdown-controller-${id.value}-currentTime`, String(options.value.currentTime));
+            localStorage.setItem(`countdown-controller-${id.value}-currentTimeAt`, new Date().toISOString());
+            localStorage.setItem(`countdown-controller-${id.value}-enabled`, String(enabled.value));
+
             if (data.time !== null) {
-              if (animation) {
-                animation.kill();
-              }
               options.value.currentTime = data.time;
-              if (animation) {
-                tick() // restart tick
-              }
+              tick(); // restart tick
             }
             if (enabled.value && !origEnabled) {
               tick();
-            }
-            if (!enabled.value && animation) {
-              animation.kill();
             }
           }
         });
     };
 
+    let updateAt = Date.now();
     function tick () {
-      if (enabled.value && options.value.currentTime > 0) {
-        let newTime = options.value.currentTime - 1000;
+      if (toBoolean(localStorage.getItem(`countdown-controller-${id.value}-enabled`) || false) && options.value.currentTime > 0) {
+        let newTime = options.value.currentTime - (Date.now() - updateAt);
         if (newTime < 0) {
           newTime = 0;
         }
-        animation = gsap.to(options.value, {
-          duration:    1,
-          currentTime: newTime,
-          roundProps:  'value',
-          ease:        'linear',
-          onInterrupt: () => {
-            saveState();
-          },
-          onComplete: () => {
-            saveState();
-            tick();
-          },
-        });
+        options.value.currentTime = newTime;
+        updateAt = Date.now();
+        workerTimers.setTimeout(() => {
+          tick();
+        }, 10);
       }
     }
 
+    let lastSave = Date.now();
     function saveState () {
-      if (options.value.isPersistent) {
-        tickMutation({
-          id:     props.id ? props.id : route.value.params.id,
-          millis: options.value.currentTime,
-        });
+      if (localStorage.getItem(`countdown-controller-${id.value}`) === threadId.value) {
+        localStorage.setItem(`countdown-controller-${id.value}-currentTime`, String(options.value.currentTime));
+        localStorage.setItem(`countdown-controller-${id.value}-currentTimeAt`, new Date().toISOString());
+        localStorage.setItem(`countdown-controller-${id.value}-enabled`, String(enabled.value));
+        if (options.value.isPersistent && Date.now() - lastSave > 10) {
+          lastSave = Date.now();
+          tickMutation({
+            id:     props.id ? props.id : route.value.params.id,
+            millis: options.value.currentTime,
+          });
+        }
       }
     }
 
     onMounted(() => {
-      console.log('====== COUNTDOWN ======');
+      threadId.value = v4();
+      console.log(`====== COUNTDOWN (${threadId.value}) ======`);
+
+      // setting as controller (we don't care which one will control, it will be last one to load)
+      localStorage.setItem(`countdown-controller-${id.value}`, threadId.value);
 
       enabled.value = options.value.isStartedOnSourceLoad;
       options.value.time = options.value.isPersistent ? options.value.currentTime : options.value.time;
@@ -169,8 +202,12 @@ export default defineComponent({ // enable useMeta
         tick();
       }
 
-      setInterval(() => {
+      workerTimers.setInterval(() => {
         update();
+      }, 100);
+
+      workerTimers.setInterval(() => {
+        saveState();
       }, 500);
 
       // add fonts import

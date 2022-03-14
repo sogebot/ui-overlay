@@ -10,7 +10,8 @@
       'font-size': font.size + 'px',
       'text-shadow': [textStrokeGenerator(font.borderPx, font.borderColor), shadowGenerator(font.shadow)].filter(Boolean).join(', ')
     }"
-    v-html="time"/>
+    v-html="time"
+  />
 </template>
 
 <script lang="ts">
@@ -18,23 +19,25 @@ import {
   computed,
   defineComponent, onMounted, ref, useRoute,
 } from '@nuxtjs/composition-api';
+import { toBoolean } from '@sogebot/backend/src/helpers/toBoolean';
 import {
   DAY, HOUR, MINUTE, SECOND,
 } from '@sogebot/ui-helpers/constants';
 import { getSocket } from '@sogebot/ui-helpers/socket';
 import { shadowGenerator, textStrokeGenerator } from '@sogebot/ui-helpers/text';
 import { useMutation } from '@vue/apollo-composable';
-import gsap from 'gsap';
 import { defaultsDeep } from 'lodash';
+import { v4 } from 'uuid';
+import * as workerTimers from 'worker-timers';
 
 import TICK from '~/queries/overlays/tick.gql';
 
 export default defineComponent({
   props: { opts: Object, id: [String, Object] },
   setup (props) {
-    let animation: null | gsap.core.Tween = null;
     const enabled = ref(true);
     const route = useRoute();
+    const threadId = ref('');
     const options = ref(
       defaultsDeep(props.opts, {
         currentTime:           0,
@@ -81,10 +84,37 @@ export default defineComponent({
       return output;
     });
 
+    let lastTimeSync = Date.now();
     const update = () => {
+      if (localStorage.getItem(`stopwatch-controller-${id.value}`) !== threadId.value) {
+        console.debug('Secondary');
+        console.debug(localStorage.getItem(`stopwatch-controller-${id.value}-enabled`));
+
+        const origEnabled = enabled.value;
+        enabled.value = toBoolean(localStorage.getItem(`stopwatch-controller-${id.value}-enabled`) || false);
+        if (enabled.value && !origEnabled) {
+          tick();
+        }
+
+        if (Date.now() - lastTimeSync > 1000 || !enabled.value) {
+          lastTimeSync = Date.now();
+          // get when it was set to get offset
+          const currentTimeAt = enabled.value
+            ? new Date(localStorage.getItem(`stopwatch-controller-${id.value}-currentTimeAt`) || Date.now()).getTime()
+            : Date.now();
+          if (lastTimeSync === currentTimeAt) {
+            console.debug('No update, setting as controller');
+            localStorage.setItem(`countdown-controller-${id.value}`, threadId.value);
+          }
+          options.value.currentTime = Date.now() - currentTimeAt + Number(localStorage.getItem(`stopwatch-controller-${id.value}-currentTime`));
+        }
+
+        return;
+      }
+      console.debug('Primary');
       getSocket('/overlays/stopwatch', true)
         .emit('stopwatch::update', {
-          id:        props.id ? String(props.id) : route.value.params.id,
+          id:        id.value,
           isEnabled: enabled.value,
           time:      options.value.currentTime,
         }, (_err: null, data?: { isEnabled: boolean | null, time :string | null }) => {
@@ -93,54 +123,58 @@ export default defineComponent({
             if (data.isEnabled !== null) {
               enabled.value = data.isEnabled;
             }
+
+            localStorage.setItem(`stopwatch-controller-${id.value}-currentTime`, String(options.value.currentTime));
+            localStorage.setItem(`stopwatch-controller-${id.value}-currentTimeAt`, new Date().toISOString());
+            localStorage.setItem(`stopwatch-controller-${id.value}-enabled`, String(enabled.value));
+
             if (data.time !== null) {
-              if (animation) {
-                animation.kill();
-              }
               options.value.currentTime = data.time;
-              if (animation) {
-                tick() // restart tick
-              }
+              tick(); // restart tick
             }
             if (enabled.value && !origEnabled) {
               tick();
-            }
-            if (!enabled.value && animation) {
-              animation.kill();
             }
           }
         });
     };
 
+    let updateAt = Date.now();
     function tick () {
-      if (enabled.value) {
-        animation = gsap.to(options.value, {
-          duration:    1,
-          currentTime: Number(options.value.currentTime) + 1000,
-          roundProps:  'value',
-          ease:        'linear',
-          onInterrupt: () => {
-            saveState();
-          },
-          onComplete: () => {
-            saveState();
-            tick();
-          },
-        });
+      if (toBoolean(localStorage.getItem(`stopwatch-controller-${id.value}-enabled`) || false)) {
+        options.value.currentTime = Number(options.value.currentTime) + (Date.now() - updateAt);
+        updateAt = Date.now();
+        workerTimers.setTimeout(() => {
+          tick();
+        }, 10);
       }
     }
 
+    let lastSave = Date.now();
     function saveState () {
-      if (options.value.isPersistent) {
-        tickMutation({
-          id:     props.id ? props.id : route.value.params.id,
-          millis: options.value.currentTime,
-        });
+      if (localStorage.getItem(`stopwatch-controller-${id.value}`) === threadId.value) {
+        localStorage.setItem(`stopwatch-controller-${id.value}-currentTime`, String(options.value.currentTime));
+        localStorage.setItem(`stopwatch-controller-${id.value}-currentTimeAt`, new Date().toISOString());
+        localStorage.setItem(`stopwatch-controller-${id.value}-enabled`, String(enabled.value));
+
+        if (options.value.isPersistent && Date.now() - lastSave > 10) {
+          lastSave = Date.now();
+          tickMutation({
+            id:     id.value,
+            millis: Number(options.value.currentTime),
+          });
+        }
       }
     }
+
+    const id = computed(() => props.id ? props.id : route.value.params.id);
 
     onMounted(() => {
-      console.log('====== STOPWATCH ======');
+      threadId.value = v4();
+      console.log(`====== STOPWATCH (${threadId.value}) ======`);
+
+      // setting as controller (we don't care which one will control, it will be last one to load)
+      localStorage.setItem(`stopwatch-controller-${id.value}`, threadId.value);
 
       enabled.value = options.value.isStartedOnSourceLoad;
       options.value.currentTime = options.value.isPersistent ? options.value.currentTime : options.value.currentTime;
@@ -149,9 +183,13 @@ export default defineComponent({
         tick();
       }
 
-      setInterval(() => {
+      workerTimers.setInterval(() => {
         update();
       }, 100);
+
+      workerTimers.setInterval(() => {
+        saveState();
+      }, 500);
 
       // add fonts import
       const head = document.getElementsByTagName('head')[0];

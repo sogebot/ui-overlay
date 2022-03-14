@@ -2,9 +2,9 @@
   <div>
     <component
       :is="item.value"
-      v-for="item of items"
+      v-for="(item, idx) of items"
       :id="item.id"
-      :key="item.id"
+      :key="item.id + '-' + idx"
       :opts="item.opts"
       :style="{
         border: isDebug ? '2px solid orange' : 'inherit',
@@ -55,7 +55,6 @@ export default defineComponent({
     onMounted(() => {
       console.log('====== GROUP OF OVERLAYS ======');
       for (const child of options.value.items) {
-        console.log({ child });
         getChildItem(child);
       }
     });
@@ -69,7 +68,6 @@ export default defineComponent({
         }
 
         // we have reference and need to find original
-        console.log({ GET: print(GET) });
         const result = await axios({
           url:    '/graphql',
           method: 'post',
@@ -86,20 +84,6 @@ export default defineComponent({
             }
           }
         }
-        /*
-        { id: route.value.params.id });
-
-      for (const key of Object.keys(result.overlays)) {
-        if (result.overlays[key].length > 0) {
-          item.value = cloneDeep(result.overlays[key][0]);
-          break;
-        }
-      }
-
-        const refChild = props.children?.find((o: any) => o.id === originalChild.opts?.overlayId)
-        console.log({originalChild, refChild})
-        return refChild;
-        */
       }
     };
 
