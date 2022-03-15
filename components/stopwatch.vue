@@ -90,12 +90,6 @@ export default defineComponent({
         console.debug('Secondary');
         console.debug(localStorage.getItem(`stopwatch-controller-${id.value}-enabled`));
 
-        const origEnabled = enabled.value;
-        enabled.value = toBoolean(localStorage.getItem(`stopwatch-controller-${id.value}-enabled`) || false);
-        if (enabled.value && !origEnabled) {
-          tick();
-        }
-
         if (Date.now() - lastTimeSync > 1000 || !enabled.value) {
           lastTimeSync = Date.now();
           // get when it was set to get offset
@@ -119,7 +113,6 @@ export default defineComponent({
           time:      options.value.currentTime,
         }, (_err: null, data?: { isEnabled: boolean | null, time :string | null }) => {
           if (data) {
-            const origEnabled = enabled.value;
             if (data.isEnabled !== null) {
               enabled.value = data.isEnabled;
             }
@@ -130,10 +123,6 @@ export default defineComponent({
 
             if (data.time !== null) {
               options.value.currentTime = data.time;
-              tick(); // restart tick
-            }
-            if (enabled.value && !origEnabled) {
-              tick();
             }
           }
         });
@@ -143,11 +132,11 @@ export default defineComponent({
     function tick () {
       if (toBoolean(localStorage.getItem(`stopwatch-controller-${id.value}-enabled`) || false)) {
         options.value.currentTime = Number(options.value.currentTime) + (Date.now() - updateAt);
-        updateAt = Date.now();
-        workerTimers.setTimeout(() => {
-          tick();
-        }, 10);
       }
+      updateAt = Date.now();
+      workerTimers.setTimeout(() => {
+        tick();
+      }, 10);
     }
 
     let lastSave = Date.now();
@@ -179,9 +168,7 @@ export default defineComponent({
       enabled.value = options.value.isStartedOnSourceLoad;
       options.value.currentTime = options.value.isPersistent ? options.value.currentTime : options.value.currentTime;
 
-      if (enabled.value) {
-        tick();
-      }
+      tick();
 
       workerTimers.setInterval(() => {
         update();
