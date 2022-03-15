@@ -108,12 +108,6 @@ export default defineComponent({ // enable useMeta
         console.debug('Secondary');
         console.debug(localStorage.getItem(`countdown-controller-${id.value}-enabled`));
 
-        const origEnabled = enabled.value;
-        enabled.value = toBoolean(localStorage.getItem(`countdown-controller-${id.value}-enabled`) || false);
-        if (enabled.value && !origEnabled) {
-          tick();
-        }
-
         if (Date.now() - lastTimeSync > 1000 || !enabled.value) {
           // get when it was set to get offset
           const currentTimeAt = enabled.value
@@ -137,7 +131,6 @@ export default defineComponent({ // enable useMeta
           time:      options.value.currentTime,
         }, (_err: null, data?: { isEnabled: boolean | null, time :string | null }) => {
           if (data) {
-            const origEnabled = enabled.value;
             if (data.isEnabled !== null) {
               enabled.value = data.isEnabled;
             }
@@ -148,10 +141,6 @@ export default defineComponent({ // enable useMeta
 
             if (data.time !== null) {
               options.value.currentTime = data.time;
-              tick(); // restart tick
-            }
-            if (enabled.value && !origEnabled) {
-              tick();
             }
           }
         });
@@ -165,11 +154,11 @@ export default defineComponent({ // enable useMeta
           newTime = 0;
         }
         options.value.currentTime = newTime;
-        updateAt = Date.now();
-        workerTimers.setTimeout(() => {
-          tick();
-        }, 10);
       }
+      updateAt = Date.now();
+      workerTimers.setTimeout(() => {
+        tick();
+      }, 10);
     }
 
     let lastSave = Date.now();
@@ -198,9 +187,7 @@ export default defineComponent({ // enable useMeta
       enabled.value = options.value.isStartedOnSourceLoad;
       options.value.time = options.value.isPersistent ? options.value.currentTime : options.value.time;
 
-      if (enabled.value) {
-        tick();
-      }
+      tick();
 
       workerTimers.setInterval(() => {
         update();
