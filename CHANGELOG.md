@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [21.1.2](https://github.com/sogebot/sogebot.dev/compare/v21.1.1...v21.1.2) (2022-03-15)
+
+
+### Bug Fixes
+
+* **countdown:** paused timer should not count in background ([02b53ce](https://github.com/sogebot/sogebot.dev/commit/02b53ceea6e66839407267f749063c755d587520))
+* **stopwatch:** paused timer should not count in background ([ab429a0](https://github.com/sogebot/sogebot.dev/commit/ab429a059ec03b1945a58bd8620864aa178f452f))
+
 ### [21.1.1](https://github.com/sogebot/sogebot.dev/compare/v21.1.0...v21.1.1) (2022-03-14)
 
 
