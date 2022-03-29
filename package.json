@@ -63,7 +63,7 @@
     "safe-eval": "^0.4.1",
     "standard-version": "^9.3.2",
     "stylelint": "^13.13.1",
-    "stylelint-config-prettier": "^8.0.2",
+    "stylelint-config-prettier": "^9.0.3",
     "stylelint-config-standard": "^22.0.0",
     "tiny-typed-emitter": "^2.1.0",
     "typeorm": "^0.2.45",
