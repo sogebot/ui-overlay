@@ -125,7 +125,7 @@ export default defineComponent({
 
     const update = () => {
       getSocket('/overlays/marathon', true)
-        .emit('marathon::public', props.id ? String(props.id) : route.value.params.id, (_err: null, data?: Required<OverlayMapperMarathon>) => {
+        .emit('marathon::public', props.id ? String(props.id) : route.value.params.id, (_err, data) => {
           if (animation) {
             animation.kill();
           }

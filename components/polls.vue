@@ -164,7 +164,7 @@ export default defineComponent({
     };
 
     const refresh = () => {
-      getSocket('/overlays/polls', true).emit('data', (cb: PollInterface, _votes: any[]) => {
+      getSocket('/overlays/polls', true).emit('data', (cb, _votes) => {
         // force show if new vote
         if (currentVote.value === null) {
           lastUpdatedAt.value = Date.now();

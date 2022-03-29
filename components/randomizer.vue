@@ -107,6 +107,7 @@
 </template>
 
 <script lang="ts">
+import type { RandomizerInterface, RandomizerItemInterface } from '@entity/randomizer';
 import {
   defineComponent, nextTick, onMounted, ref, useMeta,
 } from '@nuxtjs/composition-api';
@@ -119,8 +120,6 @@ import {
   cloneDeep, isEqual, orderBy,
 } from 'lodash';
 import JsonViewer from 'vue-json-viewer';
-
-import type { RandomizerInterface, RandomizerItemInterface } from '@entity/randomizer';
 
 declare global {
   interface Window {
@@ -211,7 +210,7 @@ export default defineComponent({ // enable useMeta
         isSpeaking.value = true;
         getSocket('/core/tts', true).emit('speak', {
           voice, rate, pitch, volume, key: _key, text,
-        }, (err: Error | null, b64mp3: string) => {
+        }, (err, b64mp3) => {
           if (err) {
             isSpeaking.value = false;
             return console.error(err);
@@ -245,7 +244,7 @@ export default defineComponent({ // enable useMeta
     onMounted(() => {
       console.log('====== RANDOMIZER ======');
       setInterval(() => {
-        getSocket('/registries/randomizer', true).emit('randomizer::getVisible', async (err: string | null, _data: Required<RandomizerInterface>) => {
+        getSocket('/registries/randomizer', true).emit('randomizer::getVisible', (err, _data) => {
           if (err) {
             return console.error(err);
           }

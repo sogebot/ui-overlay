@@ -23,8 +23,8 @@
       }"
     >
       <div
-        v-if="opts.animation === 'slide'"
         v-for="(clip, index) of clips"
+        v-if="opts.animation === 'slide'"
         :key="clip.id"
         class="clips"
         :style="{
@@ -44,8 +44,8 @@
         </video>
       </div>
       <div
-        v-if="opts.animation === 'fade'"
         v-for="(clip, index) of clips"
+        v-if="opts.animation === 'fade'"
         :key="clip.id"
         class="clips"
         style="position: absolute; margin-left: auto; margin-right: auto; left: 0; right: 0; text-align: center;"
@@ -53,11 +53,15 @@
         <v-overlay v-if="isDebugOverlay && index === currentClip" :key="clip.id+'-overlay'" absolute>
           {{ index }}
         </v-overlay>
-        <video preload="auto" playsinline class="wide"
+        <video
+          preload="auto"
+          playsinline
+          class="wide"
           :style="{
             transition: `all 2s`,
             opacity: index === currentClip ? '1': '0',
-          }">
+          }"
+        >
           <source :src="clip.mp4" type="video/mp4">
         </video>
       </div>
@@ -76,10 +80,8 @@ import JsonViewer from 'vue-json-viewer';
 import { isVideoSupported } from '~/functions/isVideoSupported';
 
 export default defineComponent({
-  components: {
-    JsonViewer,
-  },
-  props: { opts: Object },
+  components: { JsonViewer },
+  props:      { opts: Object },
   setup (props) {
     const url = new URL(location.href);
     const isDebug = !!url.searchParams.get('debug');
@@ -109,7 +111,7 @@ export default defineComponent({
       }
     });
 
-    function play() {
+    function play () {
       if (videoEls.value.length === 0) {
         setTimeout(() => play(), 1000);
       }
@@ -188,7 +190,7 @@ export default defineComponent({
 
     onMounted(() => {
       console.log('====== CLIPS CAROUSEL ======');
-      getSocket('/overlays/clipscarousel', true).emit('clips', { customPeriod: props.opts?.customPeriod ?? 31, numOfClips: props.opts?.numOfClips ?? 20 }, (err: string | null, data: { clips: any, settings: any }) => {
+      getSocket('/overlays/clipscarousel', true).emit('clips', { customPeriod: props.opts?.customPeriod ?? 31, numOfClips: props.opts?.numOfClips ?? 20 }, (err, data) => {
         if (err) {
           console.error(err);
           return;

@@ -502,7 +502,7 @@ export default defineComponent({
           // load emotes
           // eslint-disable-next-line promise/param-names
           await new Promise((done) => {
-            getSocket('/core/emotes', true).emit('getCache', (err3: string | null, data3: any) => {
+            getSocket('/core/emotes', true).emit('getCache', (err3, data3) => {
               if (err3) {
                 return console.error(err3);
               }
@@ -959,7 +959,7 @@ export default defineComponent({
         }
       });
 
-      getSocket('/registries/alerts', true).on('alert', (data2: typeof alerts[number]) => {
+      getSocket('/registries/alerts', true).on('alert', (data2) => {
         console.debug('Incoming alert', data2);
 
         if (data2.TTSService === 0) {
@@ -1101,7 +1101,7 @@ export default defineComponent({
         console.log('Using Google TTS as TTS Service.');
         getSocket('/registries/alerts', true).emit('speak', {
           volume, pitch, rate, voice, text, key: runningAlert.value.TTSKey,
-        }, (err: Error | null, b64mp3: string) => {
+        }, (err, b64mp3) => {
           if (err) {
             isTTSPlaying = false;
             return console.error(err);
@@ -1116,6 +1116,9 @@ export default defineComponent({
     };
 
     const refreshAlert = () => {
+      if (!id.value) {
+        return;
+      }
       getSocket('/registries/alerts', true).emit('isAlertUpdated', { updatedAt: updatedAt.value, id: id.value }, (err: Error | null, isUpdated: boolean, updatedAt2: number) => {
         if (err) {
           return console.error(err);

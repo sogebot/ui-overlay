@@ -32,8 +32,6 @@ import { getSocket } from '@sogebot/ui-helpers/socket';
 import translate from '@sogebot/ui-helpers/translate';
 import { defaults, orderBy } from 'lodash';
 
-import { EventListInterface } from '@entity/eventList';
-
 export default defineComponent({
   props: { opts: Object },
   setup (props) {
@@ -56,7 +54,7 @@ export default defineComponent({
       getSocket('/overlays/eventlist', true).emit('getEvents', {
         ignore: options.value.ignore,
         limit:  options.value.count,
-      }, (err: string | null, data: EventListInterface[]) => {
+      }, (err, data) => {
         if (err) {
           return console.error(err);
         }

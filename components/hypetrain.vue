@@ -99,7 +99,7 @@ export default defineComponent({
         subs.value = [];
       });
 
-      getSocket('/services/twitch', true).on('hypetrain-update', (data: { level: number, goal: number, total: number, subs: Record<string, string>}) => {
+      getSocket('/services/twitch', true).on('hypetrain-update', (data) => {
         // process subs first
         for (const username of Object.keys(data.subs)) {
           if (!subs.value.find(o => o.username === username)) {

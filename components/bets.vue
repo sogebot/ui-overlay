@@ -41,13 +41,12 @@
 </template>
 
 <script lang="ts">
+import { BetsInterface } from '@entity/bets';
 import {
   computed,
   defineComponent, onMounted, ref,
 } from '@nuxtjs/composition-api';
 import { getSocket } from '@sogebot/ui-helpers/socket';
-
-import { BetsInterface } from '@entity/bets';
 
 export default defineComponent({
   setup () {
@@ -85,7 +84,7 @@ export default defineComponent({
     };
 
     const refresh = () => {
-      getSocket('/overlays/bets', true).emit('data', (data: Required<BetsInterface>) => {
+      getSocket('/overlays/bets', true).emit('data', (data) => {
         currentBet.value = data ?? null;
         console.log({ data });
         setTimeout(() => refresh(), 5000);

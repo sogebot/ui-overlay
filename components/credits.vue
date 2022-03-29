@@ -36,7 +36,9 @@ current: {{ current }}
           class="text4"
           style="text-align: left; padding-left:5vw; padding-top: 0;"
         >
-          <v-icon color="white" x-large left>{{ icons[el.class] }}</v-icon>
+          <v-icon color="white" x-large left>
+            {{ icons[el.class] }}
+          </v-icon>
           {{ el.text }}
         </div>
         <img
@@ -84,7 +86,8 @@ import {
 } from '@vue/composition-api';
 import gsap from 'gsap';
 import { defaultsDeep, groupBy } from 'lodash';
-import { isVideoSupported } from '~/functions/isVideoSupported'
+
+import { isVideoSupported } from '~/functions/isVideoSupported';
 
 export default defineComponent({
   props: { opts: Object },
@@ -92,7 +95,7 @@ export default defineComponent({
     const options = ref(
       defaultsDeep(props.opts, {
         speed:       'medium',
-        social: [],
+        social:      [],
         customTexts: [],
         clips:       {
           play:        true,
@@ -145,7 +148,7 @@ export default defineComponent({
     const speed = ref(50);
 
     onMounted(() => {
-      getSocket('/overlays/credits', true).emit('load', async (err: string | null, opts: any) => {
+      getSocket('/overlays/credits', true).emit('load', async (err, opts: any) => {
         if (err) {
           console.error(err);
           return;
@@ -222,12 +225,12 @@ export default defineComponent({
         });
 
         await new Promise((resolve) => {
-          getSocket('/overlays/credits', true).emit('getClips', { show: options.value.show.clips, ...options.value.clips }, (data: []) => {
+          getSocket('/overlays/credits', true).emit('getClips', { show: options.value.show.clips, ...options.value.clips }, (data) => {
             clips.value = data;
             console.log('Clips loaded', data);
             resolve(true);
           });
-        })
+        });
 
         let currentKey = '';
         let page: any = [];

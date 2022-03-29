@@ -42,7 +42,7 @@ export default defineComponent({
       return new Promise((resolve) => {
         console.debug(`${Date().toLocaleString()} - refresh()`);
         if (props.opts?.id) {
-          socket.emit('generic::getOne', { id: props.opts.id, parseText: true }, (err: string | null, cb: { external: string, text: string, js: string, css: string, parsedText: string }) => {
+          socket.emit('generic::getOne', { id: props.opts.id, parseText: true }, (err, cb) => {
             if (err) {
               return console.error(err);
             }

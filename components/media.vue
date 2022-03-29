@@ -105,7 +105,7 @@ export default defineComponent({
       console.log('====== MEDIA ======');
       if (options.value.galleryCache) {
         console.log(`Gallery cache enabled (${options.value.galleryCacheLimitInMb}Mb)`);
-        getSocket('/overlays/media', true).emit('cache', options.value.galleryCacheLimitInMb, async (err: string | null, data: any) => {
+        getSocket('/overlays/media', true).emit('cache', options.value.galleryCacheLimitInMb, async (err, data) => {
           if (err) {
             return console.error(err);
           }

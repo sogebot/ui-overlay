@@ -156,7 +156,7 @@ export default defineComponent({
       }
     }
 
-    const id = computed(() => props.id ? props.id : route.value.params.id);
+    const id = computed(() => props.id ? props.id as string : route.value.params.id);
 
     onMounted(() => {
       threadId.value = v4();

@@ -81,7 +81,7 @@ export default defineComponent({ // enable useMeta
         isSpeaking.value = true;
         getSocket('/core/tts', true).emit('speak', {
           ...options.value, key: data.key, text: data.text,
-        }, (err: Error | null, b64mp3: string) => {
+        }, (err, b64mp3) => {
           if (err) {
             isSpeaking.value = false;
             return console.error(err);
@@ -105,7 +105,7 @@ export default defineComponent({ // enable useMeta
 
     onMounted(() => {
       console.log('====== TTS ======');
-      getSocket('/overlays/texttospeech', true).on('speak', (data: { text: string; highlight: boolean, service: 0 | 1, key: string }) => {
+      getSocket('/overlays/texttospeech', true).on('speak', (data) => {
         console.debug('Incoming speak', data);
         if (data.service === 0) {
           responsiveAPIKey.value = data.key;

@@ -3,8 +3,6 @@
 </template>
 
 <script lang="ts">
-import type { Events } from '@entity/event';
-import type { OBSWebsocketInterface } from '@entity/obswebsocket';
 import { switchScenes } from '@sogebot/backend/src/helpers/obswebsocket/listeners';
 import { listScenes } from '@sogebot/backend/src/helpers/obswebsocket/scenes';
 import { getSourcesList, getSourceTypesList } from '@sogebot/backend/src/helpers/obswebsocket/sources';
@@ -61,7 +59,7 @@ export default defineComponent({
       }
 
       address = await new Promise((resolve, reject) => {
-        getSocket('/integrations/obswebsocket', true).emit('get.value', 'address', (err: null | Error, val: string) => {
+        getSocket('/integrations/obswebsocket', true).emit('get.value', 'address', (err, val: string) => {
           if (err) {
             reject(err);
           } else {
@@ -70,7 +68,7 @@ export default defineComponent({
         });
       });
       password = await new Promise((resolve, reject) => {
-        getSocket('/integrations/obswebsocket', true).emit('get.value', 'password', (err: null | Error, val: string) => {
+        getSocket('/integrations/obswebsocket', true).emit('get.value', 'password', (err, val: string) => {
           if (err) {
             reject(err);
           } else {
@@ -80,7 +78,7 @@ export default defineComponent({
       });
       connect();
 
-      getSocket('/integrations/obswebsocket', true).on('integration::obswebsocket::trigger', async (opts: { tasks: OBSWebsocketInterface['simpleModeTasks'] | string, attributes?: Events.Attributes }, cb: any) => {
+      getSocket('/integrations/obswebsocket', true).on('integration::obswebsocket::trigger', async (opts, cb) => {
         console.log('integration::obswebsocket::trigger', opts);
         cb(); // resolve first so connection is OK
         try {
