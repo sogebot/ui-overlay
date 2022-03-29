@@ -52,7 +52,7 @@
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-nuxt": "^2.0.0",
     "eslint-plugin-unused-imports": "^1.1.5",
-    "eslint-plugin-vue": "^7.20.0",
+    "eslint-plugin-vue": "^8.5.0",
     "gsap": "^3.9.1",
     "npm-check-updates": "^12.5.4",
     "lint-staged": "^11.2.3",
