@@ -7,7 +7,8 @@
   },
   "description": "Nuxt.js version of ui-overlay",
   "scripts": {
-    "postinstall": "(patch-package || true) && (npm link ../backend || true)",
+    "postinstall": "(patch-package || (exit 0)) && (npm link ../backend || (exit 0))",
+    "prepare": "",
     "release": "standard-version && git push --follow-tags origin main",
     "release:major": "standard-version -r major && git push --follow-tags origin main",
     "prepublishOnly": "npm run generate",
