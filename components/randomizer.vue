@@ -140,7 +140,7 @@ export default defineComponent({ // enable useMeta
     const TTSservice = ref(0 as 0 | 1);
     const TTSenabled = ref(false);
     const isSpeaking = ref(false);
-    const data = ref(null as Required<RandomizerInterface> | null);
+    const data = ref(null as RandomizerInterface | null);
 
     const showSimpleValueIndex = ref(0);
     const showSimpleSpeed = ref(1); // lower = faster
