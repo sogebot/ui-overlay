@@ -13,7 +13,7 @@
         v-show="e.show && !e.animation.running"
         :id="e.id"
         :src="e.url"
-        style="position: absolute"
+        style="position: absolute;"
         :style="{ 'left': e.position.left + 'px', 'top': e.position.top + 'px' }"
       >
     </transition>

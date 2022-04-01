@@ -368,7 +368,7 @@ export default defineComponent({
 <style scoped>
   .debug {
     z-index: 9999;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgb(0 0 0 / 50%);
     position: absolute;
     color: white;
     padding: 1rem;
@@ -381,7 +381,11 @@ export default defineComponent({
     display: table;
   }
 
-  iframe, audio, video, .text, img {
+  iframe,
+  audio,
+  video,
+  .text,
+  img {
     opacity: 0;
     position: relative;
   }
@@ -390,15 +394,20 @@ export default defineComponent({
     background: transparent;
   }
 
-  iframe, video {
+  iframe,
+  video {
     border: 0;
     width: 100%;
     height: 100%;
   }
-  .fade-enter-active, .fade-leave-active {
+
+  .fade-enter-active,
+  .fade-leave-active {
     transition: opacity 2s;
   }
-  .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+
+  .fade-enter,
+  .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
     opacity: 0;
   }
 </style>

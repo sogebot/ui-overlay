@@ -11,7 +11,7 @@
       <div
         v-for="(couple, idx) of chunk(subs, 2)"
         :key="idx"
-        style="display: inline-block; width: 210px; animation-delay: 0.2s"
+        style="display: inline-block; width: 210px; animation-delay: 0.2s;"
         class="shake"
         :style="{
           'animation-delay': `${idx* 0.2}s`
@@ -24,7 +24,7 @@
           :style="{
             left: `${subIdx ? 130 : 10}px`
           }"
-          style="display: inline-block; position: absolute; top: 10px"
+          style="display: inline-block; position: absolute; top: 10px;"
           class="wiggle"
         >
           <strong class="shadow" style="position: absolute; top: -20px; transform: translateX(-50%); margin-left: 50%;">{{ sub.username }}</strong>
@@ -137,13 +137,14 @@ export default defineComponent({
 
 .shadow {
   color: white;
-  text-shadow: 2px 2px 4px #000, 0 0 3px #000;;
+  text-shadow: 2px 2px 4px #000, 0 0 3px #000;
 }
 
 @keyframes wiggle {
   0% {
     transform: rotate(-10deg);
   }
+
   100% {
     transform: rotate(10deg);
   }
@@ -151,10 +152,11 @@ export default defineComponent({
 
 @keyframes shake {
   0% {
-    transform: translate(5px,0);
+    transform: translate(5px, 0);
   }
+
   100% {
-    transform: translate(-5px,0);
+    transform: translate(-5px, 0);
   }
 }
 </style>

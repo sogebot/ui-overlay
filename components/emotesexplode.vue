@@ -3,7 +3,7 @@
     <transition v-for="e of emotes" :key="e.id" :name="e.animation.type" :duration="e.animation.time" :css="false"
       @leave="doAnimation">
       <img v-if="!e.animation.finished" v-show="e.show && !e.animation.running" :id="e.id" :src="e.url"
-        style="position: absolute" :style="{ 'left': e.position.left + 'px', 'top': e.position.top + 'px' }">
+        style="position: absolute;" :style="{ 'left': e.position.left + 'px', 'top': e.position.top + 'px' }">
     </transition>
   </div>
 </template>

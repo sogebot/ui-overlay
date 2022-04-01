@@ -1,7 +1,7 @@
 <template>
   <v-app
     v-if="group && $store.state.isUILoaded"
-    style="width: 100%; height: 100%"
+    style="width: 100%; height: 100%;"
   >
     <v-main>
       <template v-for="(goal, index) of group.goals">
@@ -65,7 +65,7 @@
           <div
             v-else-if="goal.display === 'full' && (group.goals.length === 1 || group.display.type === 'multi' || show === index)"
             :class="{ disabled: isDisabled(index), 'position-absolute': group.display.type !== 'multi' }"
-            style="width: 100%"
+            style="width: 100%;"
             :style="{
               'padding-top': index !== 0 && group.goals.length > 0 && group.display.type === 'multi' ? group.display.spaceBetweenGoalsInPx + 'px' : '0px',
               'font-family': goal.customizationFont.family,

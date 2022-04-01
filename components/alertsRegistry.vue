@@ -1264,7 +1264,7 @@ export default defineComponent({
 <style>
   .debug {
     z-index: 9999;
-    background-color: rgba(255, 255, 255, 0.5);
+    background-color: rgb(255 255 255 / 50%);
     position: absolute;
     color: white;
     padding: 1rem;
@@ -1282,18 +1282,22 @@ export default defineComponent({
     display: flex !important;
     flex-direction: column !important;
   }
+
   .layout-2 {
     display: flex !important;
     flex-direction: column-reverse !important;
   }
+
   .layout-3 {
     display: flex !important;
   }
+
   .layout-4 {
     display: flex !important;
     align-items: center !important;
     flex-direction: row-reverse !important;
   }
+
   .layout-5 {
     display: flex !important;
     align-items: center !important;

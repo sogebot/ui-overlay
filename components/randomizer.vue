@@ -14,7 +14,7 @@
     <div id="positionAnchor">
       <div
         v-if="data && data.type === 'tape'"
-        style="width: max-content"
+        style="width: max-content;"
         :style="{
           transform: positionGenerator()
         }"
@@ -60,7 +60,7 @@
         <div
           v-for="(item, index) in generateItems(data.items)"
           :key="'simple-' + index"
-          style="position: absolute"
+          style="position: absolute;"
           :style="{
             visibility: showSimpleBlink && index === showSimpleValueIndex ? 'visible' : 'hidden',
             color: item.color,
@@ -80,7 +80,7 @@
         id="canvas"
         width="1920"
         height="1080"
-        style="width: 100%; height: 100%"
+        style="width: 100%; height: 100%;"
         data-responsiveMinWidth="180"
         data-responsiveScaleHeight="true"
         data-responsiveMargin="1"
@@ -585,9 +585,10 @@ export default defineComponent({ // enable useMeta
 
 <style scoped>
   #canvas { opacity: 0; }
+
   #winbox {
-    text-align:center;
-    position:absolute;
+    text-align: center;
+    position: absolute;
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);

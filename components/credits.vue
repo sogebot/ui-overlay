@@ -34,7 +34,7 @@ current: {{ current }}
           v-else-if="el.type ==='with-icon'"
           :key="el.index"
           class="text4"
-          style="text-align: left; padding-left:5vw; padding-top: 0;"
+          style="text-align: left; padding-left: 5vw; padding-top: 0;"
         >
           <v-icon color="white" x-large left>
             {{ icons[el.class] }}
@@ -512,22 +512,22 @@ export default defineComponent({
 </script>
 
 <style>
-  @import url('https://fonts.googleapis.com/css?family=Cabin+Condensed');
+  @import url("https://fonts.googleapis.com/css?family=Cabin+Condensed");
 
   .debug {
     z-index: 9999;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgb(0 0 0 / 50%);
     position: absolute;
     color: white;
     padding: 1rem;
   }
 
   svg {
-    filter: drop-shadow( 0 0 .2rem #000 );
+    filter: drop-shadow(0 0 0.2rem #000);
   }
 
   div.page {
-    font-family: 'Cabin Condensed', sans-serif;
+    font-family: "Cabin Condensed", sans-serif;
     text-align: center;
     text-transform: uppercase;
     color: #fff;
@@ -538,15 +538,15 @@ export default defineComponent({
   }
 
   .streamer {
-    font-size: 2vw
+    font-size: 2vw;
   }
 
   .game {
-    font-size: 4vw
+    font-size: 4vw;
   }
 
   .title {
-    font-size: 2.5vw
+    font-size: 2.5vw;
   }
 
   .column {
@@ -604,22 +604,28 @@ export default defineComponent({
     font-weight: bold;
   }
 
-  .clip_title, .clip_game, .clip_createdBy {
+  .clip_title,
+  .clip_game,
+  .clip_createdBy {
     text-align: left;
     font-size: 3vw;
   }
+
   .clip_createdBy {
-    font-size: 2.5vw
+    font-size: 2.5vw;
   }
+
   .clip_game {
     font-weight: bold;
   }
+
   .clip_index {
     font-size: 10vw;
     position: absolute;
     right: 2.5vw;
     top: 0;
   }
+
   .video {
     width: 100%;
     padding-top: 8vh;

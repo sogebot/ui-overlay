@@ -101,10 +101,13 @@ export default defineComponent({
 </script>
 
 <style>
-  .fade-enter-active, .fade-leave-active {
+  .fade-enter-active,
+  .fade-leave-active {
     transition: opacity 2s;
   }
-  .fade-enter, .fade-leave-to {
+
+  .fade-enter,
+  .fade-leave-to {
     opacity: 0;
   }
   video { width: 100%; }
@@ -113,7 +116,8 @@ export default defineComponent({
     z-index: 9999999999;
     color: red;
     position: absolute;
-    right: -5px; top: -5px;
+    right: -5px;
+    top: -5px;
     font-weight: bold;
     text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
   }
@@ -123,16 +127,19 @@ export default defineComponent({
     -webkit-filter: grayscale(1);
     filter: grayscale(1);
   }
+
   .filter-sepia {
     -webkit-filter: sepia(1);
     filter: sepia(1);
   }
+
   .filter-tint {
     -webkit-filter: sepia(1) hue-rotate(200deg);
     filter: sepia(1) hue-rotate(200deg);
   }
+
   .filter-washed {
-    -webkit-filter: contrast(1.4) saturate(1.8) sepia(.6);
-    filter: contrast(1.4) saturate(1.8) sepia(.6);
+    -webkit-filter: contrast(1.4) saturate(1.8) sepia(0.6);
+    filter: contrast(1.4) saturate(1.8) sepia(0.6);
   }
 </style>

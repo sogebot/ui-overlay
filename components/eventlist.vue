@@ -85,11 +85,12 @@ export default defineComponent({
 </script>
 
 <style>
-  @import url('https://fonts.googleapis.com/css?family=BenchNine');
+  @import url("https://fonts.googleapis.com/css?family=BenchNine");
+
   .eventlist-main {
     padding: 2px !important;
     padding-top: 10px !important;
-    font-family: 'BenchNine', sans-serif !important;
+    font-family: BenchNine, sans-serif !important;
     color: white !important;
   }
 
@@ -134,10 +135,10 @@ export default defineComponent({
   }
 
   .event {
-    padding: 0 .2rem;
+    padding: 0 0.2rem;
   }
 
   .username {
-    padding: 0 .2rem;
+    padding: 0 0.2rem;
   }
 </style>

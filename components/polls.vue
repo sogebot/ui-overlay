@@ -45,7 +45,7 @@
           <div class="numbers">
             {{ index+1 }}
           </div>
-          <div style="width:100%">
+          <div style="width: 100%;">
             <div>{{ option }}</div>
             <div class="background-bar" />
             <div
@@ -60,12 +60,12 @@
           </div>
         </div>
         <div id="footer">
-          <div style="width: 100%">
+          <div style="width: 100%;">
             {{ translate('systems.polls.totalVotes') }}
             <strong v-if="currentVote.type !== 'tips'">{{ totalVotes }}</strong>
             <strong v-else>{{ Number(totalVotes).toFixed(1) }}</strong>
           </div>
-          <div style="width: 100%">
+          <div style="width: 100%;">
             {{ translate('systems.polls.activeFor') }} <strong>{{ dayjs().from(dayjs(activeTime), true) }}</strong>
           </div>
         </div>
@@ -204,18 +204,17 @@ export default defineComponent({
 </style>
 
 <style scoped>
-  @import url('https://fonts.googleapis.com/css?family=Barlow');
-  @import url('https://fonts.googleapis.com/css?family=Barlow+Condensed');
+  @import url("https://fonts.googleapis.com/css?family=Barlow");
+  @import url("https://fonts.googleapis.com/css?family=Barlow+Condensed");
 
   .hide {
     display: none;
   }
 
   #box {
-    font-family: 'Barlow', sans-serif;
+    font-family: Barlow, sans-serif;
     padding: 0.5rem 1rem;
     margin: 1.5rem;
-
   }
 
   .title {
@@ -227,7 +226,8 @@ export default defineComponent({
     padding-top: 0.5rem;
   }
 
-  .options, #footer {
+  .options,
+  #footer {
     width: 100%;
     display: flex;
     padding: 0.5rem 0;
@@ -256,7 +256,8 @@ export default defineComponent({
     text-align: right;
   }
 
-  .background-bar, .bar {
+  .background-bar,
+  .bar {
     position: relative;
     top: 0.5rem;
     height: 0.5rem;
@@ -266,56 +267,59 @@ export default defineComponent({
   .bar {
     position: relative;
     top: 0;
-    background-color: rgb(207, 207, 207);
+    background-color: rgb(207 207 207);
   }
 
-  .fade-enter-active, .fade-leave-active {
+  .fade-enter-active,
+  .fade-leave-active {
     transition: opacity 1s;
   }
-  .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+
+  .fade-enter,
+  .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
     opacity: 0;
   }
 
   /* LIGHT THEME */
   #box.light {
     background-color: #f0f1f4;
-    color: rgb(32, 32, 32);
+    color: rgb(32 32 32);
     box-shadow: 0 0 2rem black;
   }
 
   #box.light .background-bar {
-    background-color: rgb(207, 207, 207);
+    background-color: rgb(207 207 207);
   }
 
   #box.light .bar {
-    background-color: rgb(138, 138, 138);
+    background-color: rgb(138 138 138);
   }
 
   /* DARK THEME */
   #box.dark {
-    background-color: rgb(32, 32, 32);
+    background-color: rgb(32 32 32);
     color: #f0f1f4;
     box-shadow: 0 0 2rem black;
   }
 
   #box.dark .background-bar {
-    background-color: rgb(138, 138, 138);
+    background-color: rgb(138 138 138);
   }
 
   #box.dark .bar {
-    background-color: rgb(207, 207, 207);
+    background-color: rgb(207 207 207);
   }
 
   /* SOGE'S GREEN THEME */
   #box.soges_green {
-    background-color: rgba(0, 0, 0, 0.8);
+    background-color: rgb(0 0 0 / 80%);
     color: #f0f1f4;
     border-top: 5px solid #acd301;
     border-bottom: 5px solid #acd301;
   }
 
   #box.soges_green .bar {
-    background-color: #acd301
+    background-color: #acd301;
   }
 
   #box.soges_green .numbers {

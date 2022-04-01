@@ -95,7 +95,8 @@ export default defineComponent({
 </script>
 
 <style>
-.v-application ul, .v-application ol {
+.v-application ul,
+.v-application ol {
   padding: 0;
 }
 </style>

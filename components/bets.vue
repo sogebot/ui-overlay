@@ -10,7 +10,7 @@
         <strong class="timer">
           <span
             v-if="timeToEnd < 1"
-            style="color: red"
+            style="color: red;"
           >&lt;1min</span>
           <span v-else>{{ timeToEnd }}min</span>
         </strong>
@@ -31,7 +31,7 @@
                 'background-color': getColor(index),
                 'width': getPercentage(index) === 0 ? '5px' : getPercentage(index) + '%'
               }"
-              style="height: 1.4em; ;"
+              style="height: 1.4em;"
             />
           </div>
         </div>
@@ -102,14 +102,14 @@ export default defineComponent({
 </script>
 
 <style scoped>
-  @import url('https://fonts.googleapis.com/css?family=Cabin');
-  @import url('https://fonts.googleapis.com/css?family=Cabin+Condensed');
+  @import url("https://fonts.googleapis.com/css?family=Cabin");
+  @import url("https://fonts.googleapis.com/css?family=Cabin+Condensed");
 
   #bet {
-    font-family: 'Cabin', sans-serif;
+    font-family: Cabin, sans-serif;
     padding: 0.5em 1em;
-    border: 3px solid rgba(40, 40, 40, 0.5);
-    background-color: rgba(40, 40, 40, 0.5);
+    border: 3px solid rgb(40 40 40 / 50%);
+    background-color: rgb(40 40 40 / 50%);
     color: white;
     text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
     text-transform: uppercase;
@@ -141,13 +141,16 @@ export default defineComponent({
     padding-top: 0.25em;
     z-index: 1;
     font-size: 0.8em;
-    font-family: 'Cabin Condensed', sans-serif;
+    font-family: "Cabin Condensed", sans-serif;
   }
 
-  .fade-enter-active, .fade-leave-active {
+  .fade-enter-active,
+  .fade-leave-active {
     transition: opacity 2s;
   }
-  .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+
+  .fade-enter,
+  .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
     opacity: 0;
   }
 </style>

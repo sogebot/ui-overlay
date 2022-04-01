@@ -74,7 +74,7 @@ export default defineComponent({
 
 <style>
   #stats {
-    background-color: rgba(50,50,50,0.4);
+    background-color: rgb(50 50 50 / 40%);
     padding: 3px;
     width: auto;
     text-shadow: 0 0 2px #000, 0 0 4px #888, 0 0 8px #888;
