@@ -12,7 +12,7 @@
     "prepare": "",
     "release": "standard-version && git push --follow-tags origin main",
     "release:major": "standard-version -r major && git push --follow-tags origin main",
-    "prepublishOnly": "npm run generate",
+    "prepublishOnly": "npm run build",
     "dev": "npm run link-backend && cross-env PORT=3002 nuxi dev",
     "build": "npm run link-backend && nuxi generate",
     "start": "npm run link-backend && nuxi preview",
