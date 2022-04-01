@@ -14,6 +14,13 @@ module.exports = {
   plugins: ['unused-imports'],
   // add your custom rules here
   rules:   {
+    "vue/first-attribute-linebreak": ["error", {
+      "singleline": "ignore",
+      "multiline": "below"
+    }],
+    "vue/multi-word-component-names": ["warning", {
+      "ignores": []
+    }],
     'unused-imports/no-unused-imports': 'error',
     'key-spacing':                      ['error', {
       beforeColon: false, afterColon: true, align: 'value',
