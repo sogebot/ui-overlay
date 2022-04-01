@@ -56,8 +56,6 @@ export default defineNuxtConfig({
   ],
 
   vuetify: { icons: { iconfont: 'mdiSvg' } },
-
   graphql: { clients: { default: { endpoint: '/graphql' } } },
-
   alias: { tslib: 'tslib/tslib.es6.js' },
 });
