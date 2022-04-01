@@ -8,7 +8,6 @@ const version = JSON.parse(packageJson).version || 0;
 export default defineNuxtConfig({
   // Target: https://go.nuxtjs.dev/config-target
   target: 'static',
-  ssr:    false,
 
   env: {
     isNuxtDev: process.env.NODE_ENV === 'development', BUILD: 'web', version,
