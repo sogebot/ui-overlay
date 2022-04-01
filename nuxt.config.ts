@@ -2,17 +2,13 @@ import fs from 'fs';
 
 import { defineNuxtConfig } from '@nuxt/bridge';
 
-const packageJson = fs.readFileSync('./package.json');
+const packageJson = String(fs.readFileSync('./package.json'));
 const version = JSON.parse(packageJson).version || 0;
 
 export default defineNuxtConfig({
   // Target: https://go.nuxtjs.dev/config-target
   target: 'static',
   ssr:    false,
-
-  // Remove loading bar
-  loading:          false,
-  loadingIndicator: false,
 
   env: {
     isNuxtDev: process.env.NODE_ENV === 'development', BUILD: 'web', version,
@@ -59,23 +55,7 @@ export default defineNuxtConfig({
 
   vuetify: { icons: { iconfont: 'mdiSvg' } },
 
-  // Axios module configuration: https://go.nuxtjs.dev/config-axios
-  axios: {},
-
-  // Build Configuration: https://go.nuxtjs.dev/config-build
-  build: {
-    extend (config) {
-      config.resolve.alias.vue = 'vue/dist/vue.common';
-    },
-  },
-
-  graphql: {
-    clients: {
-      default: {
-        endpoint: '/graphql',
-      },
-    },
-  },
+  graphql: { clients: { default: { endpoint: '/graphql' } } },
 
   alias: { tslib: 'tslib/tslib.es6.js' },
 });
