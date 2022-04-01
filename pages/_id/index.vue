@@ -14,9 +14,8 @@
 <script lang="ts">
 import type { OverlayMapperInterface } from '@entity/overlay';
 import {
-  defineComponent, onMounted, ref, useRoute, watch,
+  defineComponent, onMounted, ref, useContext, useRoute, watch,
 } from '@nuxtjs/composition-api';
-import { useQuery, useResult } from '@vue/apollo-composable';
 import { cloneDeep } from 'lodash';
 
 import GET from '~/queries/overlays/get.gql';
@@ -26,14 +25,12 @@ export default defineComponent({
   middleware: ['isBotStarted'],
   setup () {
     const route = useRoute();
+    const context = useContext();
 
     const isLoaded = ref(false);
 
-    const { result } = useQuery(GET, { id: route.value.params.id });
-    const { result: resultChildren } = useQuery(GET, { groupId: route.value.params.id });
-
-    const cache = useResult<{ overlays: any }, any | null>(result, null);
-    const cacheChildren = useResult<{ overlays: any }, any | null>(resultChildren, null);
+    const cache = ref({} as Record<string, any>);
+    const cacheChildren = ref({} as Record<string, any>);
 
     const type = ref(null as null | OverlayMapperInterface);
     const children = ref([] as any);
@@ -44,11 +41,16 @@ export default defineComponent({
         setTimeout(() => process(), 1000);
         return;
       }
-
+      console.log('Data loaded.');
       isLoaded.value = true;
     };
 
     onMounted(() => {
+      (context as any).$graphql.default.request(GET, { id: route.value.params.id })
+        .then((data: any) => (cache.value = data.overlays));
+      (context as any).$graphql.default.request(GET, { groupId: route.value.params.id })
+        .then((data2: any) => (cacheChildren.value = data2.overlays));
+
       process();
     });
 

@@ -186,13 +186,12 @@ import type {
 import { CacheEmotesInterface } from '@entity/cacheEmotes';
 import type { UserInterface } from '@entity/user';
 import {
-  defineComponent, nextTick, onMounted, ref, useMeta, watch,
+  defineComponent, nextTick, onMounted, ref, useContext, useMeta, watch,
 } from '@nuxtjs/composition-api';
 import { ButtonStates } from '@sogebot/ui-helpers/buttonStates';
 import { itemsToEvalPart } from '@sogebot/ui-helpers/queryFilter';
 import { getSocket } from '@sogebot/ui-helpers/socket';
 import { shadowGenerator, textStrokeGenerator } from '@sogebot/ui-helpers/text';
-import { useQuery, useResult } from '@vue/apollo-composable';
 import { get, isEqual } from 'lodash';
 import safeEval from 'safe-eval';
 import urlRegex from 'url-regex';
@@ -298,6 +297,7 @@ export default defineComponent({
   middleware: ['isBotStarted'], // enable useMeta
   props:      { opts: Object },
   setup (props) {
+    const context = useContext();
     const url = new URL(location.href);
     const isDebug = !!url.searchParams.get('debug');
 
@@ -343,8 +343,12 @@ export default defineComponent({
       recipientUser: null | UserInterface,
     } | null);
 
-    const { result, refetch } = useQuery(GET_ONE, { id: id.value }, { pollInterval: 5000 });
-    const cache = useResult<{ alerts: AlertInterface[] }, null, AlertInterface[]>(result, null, r => r.alerts);
+    const cache = ref(null as null | AlertInterface[]);
+
+    const refresh = async () => {
+      cache.value = (await (context as any).$graphql.default.request(GET_ONE, { id: id.value })).alerts;
+      setTimeout(() => refresh(), 5000);
+    };
 
     watch(cache, async (value) => {
       if (!value || value.length === 0) {
@@ -550,6 +554,7 @@ export default defineComponent({
 
     onMounted(() => {
       console.log('====== ALERTS REGISTRY ======');
+      refresh();
       window.setInterval(async () => {
         if (runningAlert.value) {
           runningAlert.value.animation = animationClass();

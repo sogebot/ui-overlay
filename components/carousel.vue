@@ -5,25 +5,30 @@
 </template>
 
 <script lang="ts">
+import type { CarouselInterface } from '@entity/carousel';
 import {
-  defineComponent, onMounted, ref,
+  defineComponent, onMounted, ref, useContext,
 } from '@nuxtjs/composition-api';
-import { useQuery, useResult } from '@vue/apollo-composable';
 import gsap from 'gsap';
 
-import type { CarouselInterface } from '@entity/carousel';
 import GET_ALL from '~/queries/carousel/getAll.gql';
 
 export default defineComponent({
   setup () {
+    const context = useContext();
     const currentImage = ref(null as null | number);
     const ready = ref(true);
 
-    const { result } = useQuery(GET_ALL, null, { pollInterval: 5000 });
-    const images = useResult<{ carousels: CarouselInterface[] }, CarouselInterface[], CarouselInterface[]>(result, [], data => data.carousels);
+    const images = ref([] as CarouselInterface[]);
+
+    const refresh = async () => {
+      images.value = (await (context as any).$graphql.default.request(GET_ALL)).carousels;
+      setTimeout(() => refresh(), 5000);
+    };
 
     onMounted(() => {
       console.log('====== CAROUSEL ======');
+      refresh();
       setInterval(() => {
         triggerAnimation();
       }, 100);

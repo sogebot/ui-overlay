@@ -167,18 +167,17 @@
 </template>
 
 <script lang="ts">
+import { GoalGroupInterface, GoalInterface } from '@entity/goal';
 import {
   defineComponent, nextTick,
-  onMounted, ref, watch,
+  onMounted, ref, useContext, watch,
 } from '@nuxtjs/composition-api';
 import { dayjs } from '@sogebot/ui-helpers/dayjsHelper';
 import { shadowGenerator, textStrokeGenerator } from '@sogebot/ui-helpers/text';
-import { useQuery, useResult } from '@vue/apollo-composable';
 import gsap from 'gsap';
 import { find } from 'lodash';
 import safeEval from 'safe-eval';
 
-import { GoalGroupInterface, GoalInterface } from '@entity/goal';
 import GET_ONE from '~/queries/goals/getOne.gql';
 
 const bgColors = [] as string[];
@@ -187,6 +186,7 @@ export default defineComponent({
   middleware: ['isBotStarted'],
   props:      { opts: Object },
   setup (props) {
+    const context = useContext();
     const show = ref(-1);
 
     const group = ref(null as GoalGroupInterface | null);
@@ -198,8 +198,12 @@ export default defineComponent({
     const triggerUpdate = ref([] as string[]);
     const cssLoaded = ref([] as string[]);
 
-    const query = useQuery(GET_ONE, { id: props.opts?.id }, { pollInterval: 5000 });
-    const cache = useResult<{ goals: GoalGroupInterface[], goalsCurrent: typeof current.value }, null>(query.result, null);
+    const cache = ref(null as null | { goals: GoalGroupInterface[], goalsCurrent: typeof current.value });
+
+    const refresh = async () => {
+      cache.value = (await (context as any).$graphql.default.request(GET_ONE, { id: props.opts?.id }));
+      setTimeout(() => refresh(), 5000);
+    };
 
     watch(cache, (value) => {
       if (!value) {
@@ -286,7 +290,7 @@ export default defineComponent({
 
         // if custom html update all variables
         for (const goal of group.value.goals) {
-          console.debug({goal})
+          console.debug({ goal });
           if (goal.display === 'custom') {
             goal.customizationHtml = goal.customizationHtml
               .replace(/\$name/g, goal.name)
@@ -320,6 +324,7 @@ export default defineComponent({
 
     onMounted(() => {
       console.log('====== GOAL REGISTRY ======');
+      refresh();
       window.setInterval(() => {
         if (group.value === null) {
           return;

@@ -17,7 +17,7 @@
 <script lang="ts">
 import {
   computed,
-  defineComponent, onMounted, ref, useRoute,
+  defineComponent, onMounted, ref, useContext, useRoute,
 } from '@nuxtjs/composition-api';
 import { toBoolean } from '@sogebot/backend/src/helpers/toBoolean';
 import {
@@ -25,7 +25,6 @@ import {
 } from '@sogebot/ui-helpers/constants';
 import { getSocket } from '@sogebot/ui-helpers/socket';
 import { shadowGenerator, textStrokeGenerator } from '@sogebot/ui-helpers/text';
-import { useMutation } from '@vue/apollo-composable';
 import { defaultsDeep } from 'lodash';
 import { v4 } from 'uuid';
 import * as workerTimers from 'worker-timers';
@@ -35,6 +34,7 @@ import TICK from '~/queries/overlays/tick.gql';
 export default defineComponent({
   props: { opts: Object, id: [String, Object] },
   setup (props) {
+    const context = useContext();
     const enabled = ref(true);
     const route = useRoute();
     const threadId = ref('');
@@ -58,8 +58,6 @@ export default defineComponent({
     const font = computed(() => {
       return options.value.stopwatchFont;
     });
-
-    const { mutate: tickMutation } = useMutation(TICK);
 
     const time = computed(() => {
       const days = Math.floor(options.value.currentTime / DAY);
@@ -148,7 +146,7 @@ export default defineComponent({
 
         if (options.value.isPersistent && Date.now() - lastSave > 10) {
           lastSave = Date.now();
-          tickMutation({
+          (context as any).$graphql.default.request(TICK, {
             id:     id.value,
             millis: Number(options.value.currentTime),
           });
