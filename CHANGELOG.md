@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [23.0.2](https://github.com/sogebot/sogebot.dev/compare/v23.0.1...v23.0.2) (2022-04-02)
+
+
+### Bug Fixes
+
+* **alerts:** include compiler vue build ([e687669](https://github.com/sogebot/sogebot.dev/commit/e687669870c23c10fa7c39b7c5777ee1b0bf48a5))
+
 ### [23.0.1](https://github.com/sogebot/sogebot.dev/compare/v22.0.2...v23.0.1) (2022-04-01)
 
 ## [23.0.0](https://github.com/sogebot/sogebot.dev/compare/v22.0.2...v23.0.0) (2022-04-01)
