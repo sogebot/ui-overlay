@@ -346,7 +346,10 @@ export default defineComponent({
     const cache = ref(null as null | AlertInterface[]);
 
     const refresh = async () => {
-      cache.value = (await (context as any).$graphql.default.request(GET_ONE, { id: id.value })).alerts;
+      const refreshedAlerts = (await (context as any).$graphql.default.request(GET_ONE, { id: id.value })).alerts;
+      if (isEqual(cache.value, refreshedAlerts)) {
+        cache.value = refreshedAlerts;
+      }
       setTimeout(() => refresh(), 5000);
     };
 
