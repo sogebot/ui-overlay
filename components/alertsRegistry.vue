@@ -1136,7 +1136,7 @@ export default defineComponent({
         if (isUpdated && updatedAt.value === -1) {
           console.debug('Alert is loading...');
           updatedAt.value = updatedAt2;
-          refetch();
+          refresh();
         }
       });
     };
