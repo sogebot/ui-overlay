@@ -347,7 +347,7 @@ export default defineComponent({
 
     const refresh = async () => {
       const refreshedAlerts = (await (context as any).$graphql.default.request(GET_ONE, { id: id.value })).alerts;
-      if (isEqual(cache.value, refreshedAlerts)) {
+      if (!isEqual(cache.value, refreshedAlerts)) {
         cache.value = refreshedAlerts;
       }
       setTimeout(() => refresh(), 5000);
