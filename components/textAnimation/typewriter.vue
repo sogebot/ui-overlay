@@ -14,13 +14,9 @@
   </span>
 </template>
 
-<script lang="ts">
-import { defineComponent } from '@nuxtjs/composition-api';
-
-export default defineComponent({
-  props: {
-    text:    String,
-    options: Object,
-  },
+<script setup lang="ts">
+defineProps({
+  text:    String,
+  options: Object,
 });
 </script>
