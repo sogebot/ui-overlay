@@ -14,7 +14,7 @@ export default defineNuxtConfig({
     isNuxtDev: process.env.NODE_ENV === 'development', BUILD: 'web', version,
   },
 
-  bridge: { nitro: process.env.NODE_ENV === 'development' },
+  bridge: { nitro: process.env.NODE_ENV === 'development', meta: true },
 
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {

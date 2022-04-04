@@ -23,79 +23,63 @@
   </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import { mdiCircleMedium } from '@mdi/js';
-import {
-  computed, defineComponent, nextTick, onMounted, ref, watch,
-} from '@nuxtjs/composition-api';
 import { getSocket } from '@sogebot/ui-helpers/socket';
 import gsap from 'gsap';
 import { defaults } from 'lodash';
 
 import { isVideoSupported } from '~/functions/isVideoSupported';
 
-export default defineComponent({
-  props: { opts: Object },
-  setup (props) {
-    const isPlaying = ref(false);
-    const clips = ref([] as any[]);
+const props = defineProps({ opts: Object });
+const isPlaying = ref(false);
+const clips = ref([] as any[]);
 
-    const options = ref(
-      defaults(props.opts, {
-        volume:    0,
-        filter:    'none',
-        showLabel: true,
-      }));
+const options = ref(
+  defaults(props.opts, {
+    volume:    0,
+    filter:    'none',
+    showLabel: true,
+  }));
 
-    onMounted(() => {
-      getSocket('/overlays/clips', true).on('clips', (data: any) => {
-        for (let i = 0, len = data.clips.length; i < len; i++) {
-          clips.value.push(data.clips[i]);
-        }
-      });
+onMounted(() => {
+  getSocket('/overlays/clips', true).on('clips', (data: any) => {
+    for (let i = 0, len = data.clips.length; i < len; i++) {
+      clips.value.push(data.clips[i]);
+    }
+  });
 
-      setInterval(() => {
-        const video = document.getElementById('video') as HTMLMediaElement;
-        if (video !== null && video.ended) {
-          isPlaying.value = false;
-          clips.value.shift();
-        }
+  setInterval(() => {
+    const video = document.getElementById('video') as HTMLMediaElement;
+    if (video !== null && video.ended) {
+      isPlaying.value = false;
+      clips.value.shift();
+    }
 
-        if (!isPlaying.value) {
-          isPlaying.value = playingClip.value !== null;
-        }
-      }, 100);
-    });
+    if (!isPlaying.value) {
+      isPlaying.value = playingClip.value !== null;
+    }
+  }, 100);
+});
 
-    watch(isPlaying, (val) => {
-      if (val) {
-        const video = document.getElementById('video') as HTMLMediaElement;
-        video.volume = options.value.volume / 100;
-        video.play();
+watch(isPlaying, (val) => {
+  if (val) {
+    const video = document.getElementById('video') as HTMLMediaElement;
+    video.volume = options.value.volume / 100;
+    video.play();
 
-        nextTick(function () {
-          if (options.value.showLabel && document.getElementById('label')) {
-            gsap.fromTo(document.getElementById('label'), { duration: 1, opacity: 0 }, {
-              opacity: 1, yoyo: true, repeat: -1,
-            });
-          }
+    nextTick(function () {
+      if (options.value.showLabel && document.getElementById('label')) {
+        gsap.fromTo(document.getElementById('label'), { duration: 1, opacity: 0 }, {
+          opacity: 1, yoyo: true, repeat: -1,
         });
       }
     });
+  }
+});
 
-    const playingClip = computed(() => {
-      return clips.value.length > 0 ? clips.value[0] : null;
-    });
-
-    return {
-      isPlaying,
-      clips,
-      options,
-      playingClip,
-      mdiCircleMedium,
-      isVideoSupported,
-    };
-  },
+const playingClip = computed(() => {
+  return clips.value.length > 0 ? clips.value[0] : null;
 });
 
 </script>

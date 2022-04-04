@@ -40,65 +40,50 @@
   </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import { BetsInterface } from '@entity/bets';
-import {
-  computed,
-  defineComponent, onMounted, ref,
-} from '@nuxtjs/composition-api';
 import { getSocket } from '@sogebot/ui-helpers/socket';
 
-export default defineComponent({
-  setup () {
-    const colors = ['blue', 'red', 'orange', 'green', 'purple', 'yellow', 'pink', 'cyan'];
-    const currentBet = ref(null as Required<BetsInterface> | null);
+const colors = ['blue', 'red', 'orange', 'green', 'purple', 'yellow', 'pink', 'cyan'];
+const currentBet = ref(null as Required<BetsInterface> | null);
 
-    const timeToEnd = computed(() => {
-      if (currentBet.value && !currentBet.value.isLocked) {
-        return Math.floor(Math.floor((currentBet.value.endedAt - Date.now()) / 1000) / 60);
-      } else {
-        return 0;
-      }
-    });
-
-    onMounted(() => {
-      console.log('====== BETS ======');
-      refresh();
-    });
-
-    const getPercentage = (index: number) => {
-      if (currentBet.value && currentBet.value.participations.length > 0) {
-        return currentBet.value.participations
-          .filter(o => Number(o.optionIdx) === Number(index)).length / (currentBet.value.participations.length / 100);
-      } else {
-        return 0;
-      }
-    };
-
-    const getColor = (index: number): string => {
-      if (typeof colors[index] === 'undefined') {
-        return getColor(index - colors.length);
-      } else {
-        return colors[index];
-      }
-    };
-
-    const refresh = () => {
-      getSocket('/overlays/bets', true).emit('data', (data) => {
-        currentBet.value = data ?? null;
-        console.log({ data });
-        setTimeout(() => refresh(), 5000);
-      });
-    };
-
-    return {
-      timeToEnd,
-      currentBet,
-      getColor,
-      getPercentage,
-    };
-  },
+const timeToEnd = computed(() => {
+  if (currentBet.value && !currentBet.value.isLocked) {
+    return Math.floor(Math.floor((currentBet.value.endedAt - Date.now()) / 1000) / 60);
+  } else {
+    return 0;
+  }
 });
+
+onMounted(() => {
+  console.log('====== BETS ======');
+  refresh();
+});
+
+const getPercentage = (index: number) => {
+  if (currentBet.value && currentBet.value.participations.length > 0) {
+    return currentBet.value.participations
+      .filter(o => Number(o.optionIdx) === Number(index)).length / (currentBet.value.participations.length / 100);
+  } else {
+    return 0;
+  }
+};
+
+const getColor = (index: number): string => {
+  if (typeof colors[index] === 'undefined') {
+    return getColor(index - colors.length);
+  } else {
+    return colors[index];
+  }
+};
+
+const refresh = () => {
+  getSocket('/overlays/bets', true).emit('data', (data) => {
+    currentBet.value = data ?? null;
+    console.log({ data });
+    setTimeout(() => refresh(), 5000);
+  });
+};
 </script>
 
 <style scoped>

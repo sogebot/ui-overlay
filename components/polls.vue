@@ -74,127 +74,99 @@
   </div>
 </template>
 
-<script lang="ts">
-import { PollInterface } from '@entity/poll';
-import {
-  computed, defineComponent, onMounted, ref, watch,
-} from '@nuxtjs/composition-api';
+<script setup lang="ts">
 import { dayjs } from '@sogebot/ui-helpers/dayjsHelper';
 import { getSocket } from '@sogebot/ui-helpers/socket';
 import translate from '@sogebot/ui-helpers/translate';
 import JsonViewer from 'vue-json-viewer';
 
-export default defineComponent({
-  components: { JsonViewer },
-  props:      { opts: Object },
-  setup (props) {
-    const url = new URL(location.href);
-    const isDebug = !!url.searchParams.get('debug');
+const props = defineProps({ opts: Object });
+const url = new URL(location.href);
+const isDebug = !!url.searchParams.get('debug');
 
-    const currentVote = ref(null as any);
-    const votes = ref([] as any[]);
-    const cachedVotes = ref([] as any[]);
-    const lastUpdatedAt = ref(0);
-    const currentTime = ref(0);
-    const voteCommand = ref('!vote');
-    const settings = ref(props.opts ?? {
-      theme:               'light',
-      hideAfterInactivity: false,
-      inactivityTime:      5000,
-      pitch:               1,
-      align:               'top',
-    });
-
-    onMounted(() => {
-      console.log('====== POLLS ======');
-      refresh();
-      setInterval(() => (currentTime.value = Date.now()), 100);
-      getSocket('/overlays/polls', true).emit('getVoteCommand', (cmd: string) => (voteCommand.value = cmd));
-    });
-
-    const inactivityTime = computed(() => {
-      return currentTime.value - lastUpdatedAt.value;
-    });
-
-    const activeTime = computed(() => {
-      return new Date(currentVote.value.openedAt).getTime();
-    });
-
-    const totalVotes = computed(() => {
-      let _votes = 0;
-      for (let i = 0, length = votes.value.length; i < length; i++) {
-        _votes += votes.value[i].votes;
-      }
-      return _votes;
-    });
-
-    watch(votes, (val) => {
-      if (currentVote.value && currentVote.value.options !== 'undefined') {
-        for (const idx of Object.keys(currentVote.value.options)) {
-          let count = 0;
-          let cachedCount = 0;
-          for (const v of val.filter(o => String(o.option) === idx)) {
-            count += v.votes;
-          }
-          for (const v of cachedVotes.value.filter(o => String(o.option) === idx)) {
-            cachedCount += v.votes;
-          }
-          if (cachedCount !== count) {
-            lastUpdatedAt.value = Date.now();
-          } // there is some change
-        }
-        cachedVotes.value = val; // update cached votes
-      } else {
-        cachedVotes.value = [];
-      }
-    });
-
-    const getTheme = (theme: string) => {
-      return theme.replace(/ /g, '_').toLowerCase().replace(/\W/g, '');
-    };
-
-    const getPercentage = (index: number, toFixed?: number) => {
-      let _votes = 0;
-      for (let i = 0, length = votes.value.length; i < length; i++) {
-        if (votes.value[i].option === index) {
-          _votes += votes.value[i].votes;
-        }
-      }
-      return Number((100 / totalVotes.value) * _votes || 0).toFixed(toFixed || 0);
-    };
-
-    const refresh = () => {
-      getSocket('/overlays/polls', true).emit('data', (cb, _votes) => {
-        // force show if new vote
-        if (currentVote.value === null) {
-          lastUpdatedAt.value = Date.now();
-        }
-        votes.value = _votes;
-        currentVote.value = cb;
-        setTimeout(() => refresh(), 5000);
-      });
-    };
-
-    return {
-      currentVote,
-      voteCommand,
-      settings,
-      votes,
-      cachedVotes,
-      lastUpdatedAt,
-      currentTime,
-      inactivityTime,
-      activeTime,
-      totalVotes,
-      getTheme,
-      getPercentage,
-      refresh,
-      dayjs,
-      isDebug,
-      translate,
-    };
-  },
+const currentVote = ref(null as any);
+const votes = ref([] as any[]);
+const cachedVotes = ref([] as any[]);
+const lastUpdatedAt = ref(0);
+const currentTime = ref(0);
+const voteCommand = ref('!vote');
+const settings = ref(props.opts ?? {
+  theme:               'light',
+  hideAfterInactivity: false,
+  inactivityTime:      5000,
+  pitch:               1,
+  align:               'top',
 });
+
+onMounted(() => {
+  console.log('====== POLLS ======');
+  refresh();
+  setInterval(() => (currentTime.value = Date.now()), 100);
+  getSocket('/overlays/polls', true).emit('getVoteCommand', (cmd: string) => (voteCommand.value = cmd));
+});
+
+const inactivityTime = computed(() => {
+  return currentTime.value - lastUpdatedAt.value;
+});
+
+const activeTime = computed(() => {
+  return new Date(currentVote.value.openedAt).getTime();
+});
+
+const totalVotes = computed(() => {
+  let _votes = 0;
+  for (let i = 0, length = votes.value.length; i < length; i++) {
+    _votes += votes.value[i].votes;
+  }
+  return _votes;
+});
+
+watch(votes, (val) => {
+  if (currentVote.value && currentVote.value.options !== 'undefined') {
+    for (const idx of Object.keys(currentVote.value.options)) {
+      let count = 0;
+      let cachedCount = 0;
+      for (const v of val.filter(o => String(o.option) === idx)) {
+        count += v.votes;
+      }
+      for (const v of cachedVotes.value.filter(o => String(o.option) === idx)) {
+        cachedCount += v.votes;
+      }
+      if (cachedCount !== count) {
+        lastUpdatedAt.value = Date.now();
+      } // there is some change
+    }
+    cachedVotes.value = val; // update cached votes
+  } else {
+    cachedVotes.value = [];
+  }
+});
+
+const getTheme = (theme: string) => {
+  return theme.replace(/ /g, '_').toLowerCase().replace(/\W/g, '');
+};
+
+const getPercentage = (index: number, toFixed?: number) => {
+  let _votes = 0;
+  for (let i = 0, length = votes.value.length; i < length; i++) {
+    if (votes.value[i].option === index) {
+      _votes += votes.value[i].votes;
+    }
+  }
+  return Number((100 / totalVotes.value) * _votes || 0).toFixed(toFixed || 0);
+};
+
+const refresh = () => {
+  getSocket('/overlays/polls', true).emit('data', (cb, _votes) => {
+    // force show if new vote
+    if (currentVote.value === null) {
+      lastUpdatedAt.value = Date.now();
+    }
+    votes.value = _votes;
+    currentVote.value = cb;
+    setTimeout(() => refresh(), 5000);
+  });
+};
 </script>
 
 <style>

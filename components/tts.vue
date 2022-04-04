@@ -40,7 +40,7 @@ useMeta(() => {
 });
 
 const isTTSPlaying = {
-  0: () => typeof window.responsiveVoice !== 'undefined' && window.responsiveVoice.isPlaying(),
+  0: () => typeof (window as any).responsiveVoice !== 'undefined' && (window as any).responsiveVoice.isPlaying(),
   1: () => isSpeaking.value,
 };
 
@@ -61,7 +61,7 @@ const speak = (data: { text: string; highlight: boolean, key: string, service: 0
 
   if (data.service === 0) {
     // RESPONSIVE VOICE
-    window.responsiveVoice.speak(data.text, options.value.voice, {
+    (window as any).responsiveVoice.speak(data.text, options.value.voice, {
       rate: options.value.rate, pitch: options.value.pitch, volume: options.value.volume,
     });
   } else {
@@ -82,11 +82,11 @@ const speak = (data: { text: string; highlight: boolean, key: string, service: 0
 };
 
 const initResponsiveVoice = () => {
-  if (typeof window.responsiveVoice === 'undefined') {
+  if (typeof (window as any).responsiveVoice === 'undefined') {
     setTimeout(() => initResponsiveVoice(), 200);
     return;
   }
-  window.responsiveVoice.init();
+  (window as any).responsiveVoice.init();
   console.debug('= ResponsiveVoice init OK');
   enabled.value = true;
 };

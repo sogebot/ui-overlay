@@ -7,15 +7,15 @@
         class="event"
         :class="[event.type]"
       >
-        <template v-for="type of options.display">
+        <template v-for="obj of options.display">
           <strong
-            v-if="type === 'username'"
-            :key="type"
+            v-if="obj === 'username'"
+            :key="obj"
             class="username"
           >{{ event.username }}</strong>
           <span
             v-else
-            :key="type"
+            :key="obj"
             class="event"
           >{{ event.summary }}</span>
         </template>
@@ -24,64 +24,55 @@
   </div>
 </template>
 
-<script lang="ts">
-import {
-  defineComponent, onMounted, ref, useStore,
-} from '@nuxtjs/composition-api';
+<script setup lang="ts">
 import { getSocket } from '@sogebot/ui-helpers/socket';
 import translate from '@sogebot/ui-helpers/translate';
 import { defaults, orderBy } from 'lodash';
 
-export default defineComponent({
-  props: { opts: Object },
-  setup (props) {
-    const events = ref([] as any[]);
-    const store = useStore<any>();
-    const options = ref(
-      defaults(props.opts, {
-        display: ['username', 'event'],
-        ignore:  [],
-        count:   5,
-        order:   'desc' as 'asc' | 'desc',
-      }));
+const props = defineProps({ opts: Object });
+const { $store } = useNuxtApp();
 
-    onMounted(() => {
-      console.log('====== EVENTLIST ======');
-      setTimeout(() => refresh(), 1000);
-    });
+const events = ref([] as any[]);
 
-    const refresh = () => {
-      getSocket('/overlays/eventlist', true).emit('getEvents', {
-        ignore: options.value.ignore,
-        limit:  options.value.count,
-      }, (err, data) => {
-        if (err) {
-          return console.error(err);
-        }
+const options = ref(
+  defaults(props.opts, {
+    display: ['username', 'event'],
+    ignore:  [],
+    count:   5,
+    order:   'desc' as 'asc' | 'desc',
+  }));
 
-        events.value = orderBy(data, 'timestamp', options.value.order).map((o) => {
-          const values = JSON.parse(o.values_json);
-          if (o.event === 'resub') {
-            return { ...o, summary: values.subCumulativeMonths + 'x ' + translate('overlays-eventlist-resub') };
-          } else if (o.event === 'cheer') {
-            return { ...o, summary: values.bits + ' ' + translate('overlays-eventlist-cheer') };
-          } else if (o.event === 'tip') {
-            return { ...o, summary: Intl.NumberFormat(store.state.configuration.lang, { style: 'currency', currency: values.currency }).format(values.amount) };
-          } else if (o.event === 'rewardredeem') {
-            return { ...o, summary: values.titleOfReward };
-          } else {
-            return { ...o, summary: translate('overlays-eventlist-' + o.event) };
-          }
-        });
-        setTimeout(() => refresh(), 5000);
-      });
-    };
-
-    return {
-      events, translate, options,
-    };
-  },
+onMounted(() => {
+  console.log('====== EVENTLIST ======');
+  setTimeout(() => refresh(), 1000);
 });
+
+const refresh = () => {
+  getSocket('/overlays/eventlist', true).emit('getEvents', {
+    ignore: options.value.ignore,
+    limit:  options.value.count,
+  }, (err, data) => {
+    if (err) {
+      return console.error(err);
+    }
+
+    events.value = orderBy(data, 'timestamp', options.value.order).map((o) => {
+      const values = JSON.parse(o.values_json);
+      if (o.event === 'resub') {
+        return { ...o, summary: values.subCumulativeMonths + 'x ' + translate('overlays-eventlist-resub') };
+      } else if (o.event === 'cheer') {
+        return { ...o, summary: values.bits + ' ' + translate('overlays-eventlist-cheer') };
+      } else if (o.event === 'tip') {
+        return { ...o, summary: Intl.NumberFormat($store.state.configuration.lang, { style: 'currency', currency: values.currency }).format(values.amount) };
+      } else if (o.event === 'rewardredeem') {
+        return { ...o, summary: values.titleOfReward };
+      } else {
+        return { ...o, summary: translate('overlays-eventlist-' + o.event) };
+      }
+    });
+    setTimeout(() => refresh(), 5000);
+  });
+};
 </script>
 
 <style>

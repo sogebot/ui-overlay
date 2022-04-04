@@ -166,12 +166,8 @@
   </v-app>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import { GoalGroupInterface, GoalInterface } from '@entity/goal';
-import {
-  defineComponent, nextTick,
-  onMounted, ref, useContext, watch,
-} from '@nuxtjs/composition-api';
 import { dayjs } from '@sogebot/ui-helpers/dayjsHelper';
 import { shadowGenerator, textStrokeGenerator } from '@sogebot/ui-helpers/text';
 import gsap from 'gsap';
@@ -180,240 +176,211 @@ import safeEval from 'safe-eval';
 
 import GET_ONE from '~/queries/goals/getOne.gql';
 
+const props = defineProps({ opts: Object });
+const { $graphql } = useNuxtApp();
 const bgColors = [] as string[];
+const show = ref(-1);
 
-export default defineComponent({
-  middleware: ['isBotStarted'],
-  props:      { opts: Object },
-  setup (props) {
-    const context = useContext();
-    const show = ref(-1);
+const group = ref(null as GoalGroupInterface | null);
+const current = ref({ subscribers: 0, followers: 0 });
 
-    const group = ref(null as GoalGroupInterface | null);
-    const current = ref({ subscribers: 0, followers: 0 });
+const loadedFonts = ref([] as string[]);
+const loadedCSS = ref([] as string[]);
+const lastSwapTime = ref(Date.now());
+const triggerUpdate = ref([] as string[]);
+const cssLoaded = ref([] as string[]);
 
-    const loadedFonts = ref([] as string[]);
-    const loadedCSS = ref([] as string[]);
-    const lastSwapTime = ref(Date.now());
-    const triggerUpdate = ref([] as string[]);
-    const cssLoaded = ref([] as string[]);
+const cache = ref(null as null | { goals: GoalGroupInterface[], goalsCurrent: typeof current.value });
 
-    const cache = ref(null as null | { goals: GoalGroupInterface[], goalsCurrent: typeof current.value });
+const refresh = async () => {
+  cache.value = await $graphql.default.request(GET_ONE, { id: props.opts?.id });
+  setTimeout(() => refresh(), 5000);
+};
 
-    const refresh = async () => {
-      cache.value = (await (context as any).$graphql.default.request(GET_ONE, { id: props.opts?.id }));
-      setTimeout(() => refresh(), 5000);
-    };
+watch(cache, (value) => {
+  if (!value) {
+    return;
+  }
+  current.value = value.goalsCurrent;
+  group.value = value.goals[0] || null;
 
-    watch(cache, (value) => {
-      if (!value) {
-        return;
+  if (group.value) {
+    for (const goal of group.value.goals) {
+      if (!bgColors.includes(goal.customizationBar.backgroundColor)) {
+        bgColors.push(goal.customizationBar.backgroundColor);
+        // create css background colors
+        document.head.insertAdjacentHTML(
+          'beforeend',
+          `<style type="text/css">.color-${goal.customizationBar.backgroundColor.replace('#', '')} .v-progress-linear__background {
+                  opacity: 1 !important;
+                  background-color: ${goal.customizationBar.backgroundColor} !important;
+                }</style>`,
+        );
       }
-      current.value = value.goalsCurrent;
-      group.value = value.goals[0] || null;
+    }
 
-      if (group.value) {
-        for (const goal of group.value.goals) {
-          if (!bgColors.includes(goal.customizationBar.backgroundColor)) {
-            bgColors.push(goal.customizationBar.backgroundColor);
-            // create css background colors
-            document.head.insertAdjacentHTML(
-              'beforeend',
-              `<style type="text/css">.color-${goal.customizationBar.backgroundColor.replace('#', '')} .v-progress-linear__background {
-                      opacity: 1 !important;
-                      background-color: ${goal.customizationBar.backgroundColor} !important;
-                    }</style>`,
-            );
+    if (group.value.goals.length > 0) {
+      for (const goal of group.value.goals) {
+        const _goal = find(group.value.goals, o => o.id === goal.id);
+        if (typeof _goal !== 'undefined') {
+          if (Number(_goal.currentAmount) !== Number(goal.currentAmount)) {
+            console.debug(_goal.currentAmount + ' => ' + goal.currentAmount);
+            triggerUpdate.value.push((goal as Required<GoalInterface>).id);
           }
         }
+      }
+    }
 
-        if (group.value.goals.length > 0) {
-          for (const goal of group.value.goals) {
-            const _goal = find(group.value.goals, o => o.id === goal.id);
-            if (typeof _goal !== 'undefined') {
-              if (Number(_goal.currentAmount) !== Number(goal.currentAmount)) {
-                console.debug(_goal.currentAmount + ' => ' + goal.currentAmount);
-                triggerUpdate.value.push((goal as Required<GoalInterface>).id);
-              }
-            }
-          }
+    // update currentAmount for current types
+    for (const goal of group.value.goals) {
+      if (goal.type === 'currentFollowers') {
+        if (goal.currentAmount !== current.value.followers) {
+          triggerUpdate.value.push((goal as Required<GoalInterface>).id);
         }
-
-        // update currentAmount for current types
-        for (const goal of group.value.goals) {
-          if (goal.type === 'currentFollowers') {
-            if (goal.currentAmount !== current.value.followers) {
-              triggerUpdate.value.push((goal as Required<GoalInterface>).id);
-            }
-            goal.currentAmount = current.value.followers;
-          }
-          if (goal.type === 'currentSubscribers') {
-            if (goal.currentAmount !== current.value.subscribers) {
-              triggerUpdate.value.push((goal as Required<GoalInterface>).id);
-            }
-            goal.currentAmount = current.value.subscribers;
-          }
+        goal.currentAmount = current.value.followers;
+      }
+      if (goal.type === 'currentSubscribers') {
+        if (goal.currentAmount !== current.value.subscribers) {
+          triggerUpdate.value.push((goal as Required<GoalInterface>).id);
         }
+        goal.currentAmount = current.value.subscribers;
+      }
+    }
 
-        // add css import
-        for (const goal of group.value.goals) {
-          if (!cssLoaded.value.includes((goal as Required<GoalInterface>).id)) {
-            cssLoaded.value.push((goal as Required<GoalInterface>).id);
-            const head = document.getElementsByTagName('head')[0];
-            const style = document.createElement('style');
-            style.type = 'text/css';
-            if (!loadedCSS.value.includes(goal.customizationCss)) {
-              loadedCSS.value.push(goal.customizationCss);
-              const css = goal.customizationCss
-                .replace(/#wrap/g, '#wrap-' + goal.id); // replace .wrap with only this goal wrap
-              style.appendChild(document.createTextNode(css));
-            }
-            head.appendChild(style);
-          }
-        }
-
-        // add fonts import
+    // add css import
+    for (const goal of group.value.goals) {
+      if (!cssLoaded.value.includes((goal as Required<GoalInterface>).id)) {
+        cssLoaded.value.push((goal as Required<GoalInterface>).id);
         const head = document.getElementsByTagName('head')[0];
         const style = document.createElement('style');
         style.type = 'text/css';
-
-        for (const goal of group.value.goals) {
-          if (!loadedFonts.value.includes(goal.customizationFont.family)) {
-            console.debug('Loading font', goal.customizationFont.family);
-            loadedFonts.value.push(goal.customizationFont.family);
-            const font = goal.customizationFont.family.replace(/ /g, '+');
-            const css = '@import url(\'https://fonts.googleapis.com/css?family=' + font + '\');';
-            style.appendChild(document.createTextNode(css));
-          }
+        if (!loadedCSS.value.includes(goal.customizationCss)) {
+          loadedCSS.value.push(goal.customizationCss);
+          const css = goal.customizationCss
+            .replace(/#wrap/g, '#wrap-' + goal.id); // replace .wrap with only this goal wrap
+          style.appendChild(document.createTextNode(css));
         }
         head.appendChild(style);
+      }
+    }
 
-        // if custom html update all variables
-        for (const goal of group.value.goals) {
-          console.debug({ goal });
-          if (goal.display === 'custom') {
-            goal.customizationHtml = goal.customizationHtml
-              .replace(/\$name/g, goal.name)
-              .replace(/\$type/g, goal.type)
-              .replace(/\$goalAmount/g, String(goal.goalAmount))
-              .replace(/\$currentAmount/g, String(goal.currentAmount))
-              .replace(/\$percentageAmount/g, Number((100 / (goal.goalAmount ?? 0)) * (goal.currentAmount ?? 0)).toFixed())
-              .replace(/\$endAfter/g, new Date(Number(goal.endAfter)).toISOString());
-          }
+    // add fonts import
+    const head = document.getElementsByTagName('head')[0];
+    const style = document.createElement('style');
+    style.type = 'text/css';
 
-          // trigger onUpdate on nextTick
-          nextTick(() => {
-            if (triggerUpdate.value.includes((goal as Required<GoalInterface>).id)) {
-              const idx = triggerUpdate.value.indexOf((goal as Required<GoalInterface>).id);
-              triggerUpdate.value.splice(idx, 1);
+    for (const goal of group.value.goals) {
+      if (!loadedFonts.value.includes(goal.customizationFont.family)) {
+        console.debug('Loading font', goal.customizationFont.family);
+        loadedFonts.value.push(goal.customizationFont.family);
+        const font = goal.customizationFont.family.replace(/ /g, '+');
+        const css = '@import url(\'https://fonts.googleapis.com/css?family=' + font + '\');';
+        style.appendChild(document.createTextNode(css));
+      }
+    }
+    head.appendChild(style);
 
-              console.debug('onUpdate : ' + goal.id);
-              const toEval = `(function evaluation () { ${goal.customizationJs}; onChange(${goal.currentAmount}) })()`;
-              safeEval(toEval);
-            }
-          });
+    // if custom html update all variables
+    for (const goal of group.value.goals) {
+      console.debug({ goal });
+      if (goal.display === 'custom') {
+        goal.customizationHtml = goal.customizationHtml
+          .replace(/\$name/g, goal.name)
+          .replace(/\$type/g, goal.type)
+          .replace(/\$goalAmount/g, String(goal.goalAmount))
+          .replace(/\$currentAmount/g, String(goal.currentAmount))
+          .replace(/\$percentageAmount/g, Number((100 / (goal.goalAmount ?? 0)) * (goal.currentAmount ?? 0)).toFixed())
+          .replace(/\$endAfter/g, new Date(Number(goal.endAfter)).toISOString());
+      }
+
+      // trigger onUpdate on nextTick
+      nextTick(() => {
+        if (triggerUpdate.value.includes((goal as Required<GoalInterface>).id)) {
+          const idx = triggerUpdate.value.indexOf((goal as Required<GoalInterface>).id);
+          triggerUpdate.value.splice(idx, 1);
+
+          console.debug('onUpdate : ' + goal.id);
+          const toEval = `(function evaluation () { ${goal.customizationJs}; onChange(${goal.currentAmount}) })()`;
+          safeEval(toEval);
         }
+      });
+    }
 
-        nextTick(() => {
-          if (show.value === -1) {
-            show.value = 0;
-          }
-        });
+    nextTick(() => {
+      if (show.value === -1) {
+        show.value = 0;
       }
     });
-
-    onMounted(() => {
-      console.log('====== GOAL REGISTRY ======');
-      refresh();
-      window.setInterval(() => {
-        if (group.value === null) {
-          return;
-        }
-
-        if (show.value === -1) {
-          return (lastSwapTime.value = Date.now());
-        }
-
-        if (group.value.display.type === 'fade') {
-          if (lastSwapTime.value + Number(group.value.display.durationMs) < Date.now()) {
-            lastSwapTime.value = Date.now() + Number(group.value.display.animationInMs) + Number(group.value.display.animationOutMs);
-            if (typeof group.value.goals[show.value + 1] === 'undefined') {
-              show.value = 0;
-            } else {
-              show.value = show.value + 1;
-            }
-          }
-        }
-      }, 100);
-    });
-
-    const beforeEnter = (el: HTMLElement) => {
-      el.style.opacity = '0';
-    };
-
-    const doEnterAnimation = (el: HTMLElement, done: () => void) => {
-      if (group.value === null) {
-        return;
-      }
-      if (group.value.display.type === 'fade') {
-        gsap.to(el, {
-          duration:   (group.value.display.animationInMs || 1000) / 1000,
-          opacity:    1,
-          onComplete: () => {
-            done();
-          },
-        });
-      }
-    };
-
-    const doLeaveAnimation = (el: HTMLElement, done: () => void) => {
-      if (group.value === null) {
-        return;
-      }
-      if (group.value.display.type === 'fade') {
-        gsap.to(el, {
-          duration:   (group.value.display.animationOutMs || 1000) / 1000,
-          opacity:    0,
-          onComplete: () => {
-            done();
-          },
-        });
-      }
-    };
-
-    const isDisabled = (idx: number) => {
-      if (group.value === null) {
-        return false;
-      }
-
-      const goal = group.value.goals[idx];
-      return new Date(goal.endAfter).getTime() <= new Date().getTime() && !goal.endAfterIgnore;
-    };
-
-    const getFontFamilyCSS = (family: string) => {
-      return `"${family}" !important`;
-    };
-
-    return {
-      show,
-      group,
-      loadedFonts,
-      lastSwapTime,
-      triggerUpdate,
-      cssLoaded,
-      current,
-
-      beforeEnter,
-      doEnterAnimation,
-      doLeaveAnimation,
-      textStrokeGenerator,
-      shadowGenerator,
-      isDisabled,
-      getFontFamilyCSS,
-      dayjs,
-    };
-  },
+  }
 });
+
+onMounted(() => {
+  console.log('====== GOAL REGISTRY ======');
+  refresh();
+  window.setInterval(() => {
+    if (group.value === null) {
+      return;
+    }
+
+    if (show.value === -1) {
+      return (lastSwapTime.value = Date.now());
+    }
+
+    if (group.value.display.type === 'fade') {
+      if (lastSwapTime.value + Number(group.value.display.durationMs) < Date.now()) {
+        lastSwapTime.value = Date.now() + Number(group.value.display.animationInMs) + Number(group.value.display.animationOutMs);
+        if (typeof group.value.goals[show.value + 1] === 'undefined') {
+          show.value = 0;
+        } else {
+          show.value = show.value + 1;
+        }
+      }
+    }
+  }, 100);
+});
+
+const beforeEnter = (el: HTMLElement) => {
+  el.style.opacity = '0';
+};
+
+const doEnterAnimation = (el: HTMLElement, done: () => void) => {
+  if (group.value === null) {
+    return;
+  }
+  if (group.value.display.type === 'fade') {
+    gsap.to(el, {
+      duration:   (group.value.display.animationInMs || 1000) / 1000,
+      opacity:    1,
+      onComplete: () => {
+        done();
+      },
+    });
+  }
+};
+
+const doLeaveAnimation = (el: HTMLElement, done: () => void) => {
+  if (group.value === null) {
+    return;
+  }
+  if (group.value.display.type === 'fade') {
+    gsap.to(el, {
+      duration:   (group.value.display.animationOutMs || 1000) / 1000,
+      opacity:    0,
+      onComplete: () => {
+        done();
+      },
+    });
+  }
+};
+
+const isDisabled = (idx: number) => {
+  if (group.value === null) {
+    return false;
+  }
+
+  const goal = group.value.goals[idx];
+  return new Date(goal.endAfter).getTime() <= new Date().getTime() && !goal.endAfterIgnore;
+};
 </script>
 
 <style>

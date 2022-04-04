@@ -21,44 +21,33 @@
   </div>
 </template>
 
-<script lang="ts">
-import {
-  defineComponent, onMounted, ref,
-} from '@nuxtjs/composition-api';
+<script setup lang="ts">
 import { getSocket } from '@sogebot/ui-helpers/socket';
 import JsonViewer from 'vue-json-viewer';
 
-export default defineComponent({
-  components: { JsonViewer },
-  props:      { opts: Object },
-  setup (props) {
-    const isDebug = !!(new URL(location.href)).searchParams.get('debug');
-    const threshold = ref(props.opts?.showEmoteInOverlayThreshold ?? 3);
-    const url = ref(null as null | string);
-    const count = ref(0);
-    const inactivity = ref(props.opts?.hideEmoteInOverlayAfter ?? 30);
-    const updatedAt = ref(Date.now());
-    const currentTime = ref(Date.now());
+const props = defineProps({ opts: Object });
+const isDebug = !!(new URL(location.href)).searchParams.get('debug');
+const threshold = ref(props.opts?.showEmoteInOverlayThreshold ?? 3);
+const url = ref(null as null | string);
+const count = ref(0);
+const inactivity = ref(props.opts?.hideEmoteInOverlayAfter ?? 30);
+const updatedAt = ref(Date.now());
+const currentTime = ref(Date.now());
 
-    setInterval(() => {
-      currentTime.value = Date.now();
-    }, 1000);
+setInterval(() => {
+  currentTime.value = Date.now();
+}, 1000);
 
-    onMounted(() => {
-      console.log('====== EMOTES COMBO ======');
-      getSocket('/systems/emotescombo', true).on('combo', (opts: { count: number; url: string }) => {
-        console.groupCollapsed('combo update received');
-        console.log({ ...opts });
-        console.groupEnd();
-        url.value = opts.url;
-        count.value = opts.count;
-        updatedAt.value = Date.now();
-      });
-    });
-    return {
-      threshold, url, count, inactivity, updatedAt, currentTime, isDebug,
-    };
-  },
+onMounted(() => {
+  console.log('====== EMOTES COMBO ======');
+  getSocket('/systems/emotescombo', true).on('combo', (opts: { count: number; url: string }) => {
+    console.groupCollapsed('combo update received');
+    console.log({ ...opts });
+    console.groupEnd();
+    url.value = opts.url;
+    count.value = opts.count;
+    updatedAt.value = Date.now();
+  });
 });
 </script>
 
