@@ -1,3 +1,7 @@
 <template>
-  <div></div>
+  <div />
 </template>
+
+<script lang="ts">
+export default ({ middleware: ['isBotStarted'] });
+</script>

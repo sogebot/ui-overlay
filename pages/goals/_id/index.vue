@@ -1,11 +1,13 @@
 <template>
-  <goal-registry :opts="{ id: $route.params.id }"/>
+  <goal-registry :opts="{ id: route.params.id }"/>
 </template>
 
 <script lang="ts">
-import { defineComponent } from '@nuxtjs/composition-api';
-
-export default defineComponent({
+export default ({
   middleware: ['isBotStarted'],
+  setup () {
+    const route = useRoute();
+    return { route };
+  },
 });
 </script>

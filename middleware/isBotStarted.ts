@@ -2,7 +2,7 @@ import { setLocale } from '@sogebot/ui-helpers/dayjsHelper';
 import { isBotStarted } from '@sogebot/ui-helpers/isBotStarted';
 import { getConfiguration, getTranslations } from '@sogebot/ui-helpers/socket';
 
-export default function ({ store }: { store: any, app: any }) {
+export default function ({ store }: { store: any }) {
   (async function init () {
     await isBotStarted(store);
     await getTranslations();

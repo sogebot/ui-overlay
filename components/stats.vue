@@ -34,42 +34,26 @@
   </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import {
   mdiAccountGroup, mdiClockTimeFive, mdiDiamond, mdiEye, mdiStar,
 } from '@mdi/js';
-import {
-  defineComponent, onMounted, ref,
-} from '@nuxtjs/composition-api';
 import { getSocket } from '@sogebot/ui-helpers/socket';
 
-export default defineComponent({
-  setup () {
-    const stats: any = ref({});
-    const interval: any[] = [];
+const stats: any = ref({});
+const interval: any[] = [];
 
-    onMounted(() => {
-      console.log('====== STATS ======');
-      refresh();
-      interval.push(setInterval(() => refresh(), 1000));
-    });
-
-    const refresh = () => {
-      getSocket('/overlays/stats', true).emit('get', (cb: any) => {
-        stats.value = cb;
-      });
-    };
-
-    return {
-      stats,
-      mdiEye,
-      mdiClockTimeFive,
-      mdiAccountGroup,
-      mdiStar,
-      mdiDiamond,
-    };
-  },
+onMounted(() => {
+  console.log('====== STATS ======');
+  refresh();
+  interval.push(setInterval(() => refresh(), 1000));
 });
+
+const refresh = () => {
+  getSocket('/overlays/stats', true).emit('get', (cb: any) => {
+    stats.value = cb;
+  });
+};
 </script>
 
 <style>
