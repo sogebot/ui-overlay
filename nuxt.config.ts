@@ -35,6 +35,11 @@ export default defineNuxtConfig({
     ],
   },
 
+  plugins: [
+    '~/plugins/graphql-config',
+    '~/plugins/log-version.client',
+  ],
+
   router: { base: '/overlays' },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
