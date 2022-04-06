@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [23.0.8](https://github.com/sogebot/sogebot.dev/compare/v23.0.7...v23.0.8) (2022-04-06)
+
+
+### Bug Fixes
+
+* **countdown:** remove additional .value for route ([f1ad4f8](https://github.com/sogebot/sogebot.dev/commit/f1ad4f848bfad85ac7114176e05953426dbf6e74))
+
 ### [23.0.7](https://github.com/sogebot/sogebot.dev/compare/v23.0.6...v23.0.7) (2022-04-04)
 
 ### [23.0.6](https://github.com/sogebot/sogebot.dev/compare/v23.0.5...v23.0.6) (2022-04-04)
