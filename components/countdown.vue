@@ -32,7 +32,7 @@ const props = defineProps({ opts: Object, id: [String, Object] });
 const enabled = ref(true);
 const route = useRoute();
 const threadId = ref('');
-const id = computed(() => props.id ? props.id : route.value.params.id);
+const id = computed(() => props.id ? props.id : route.params.id);
 
 const options = ref(
   defaultsDeep(props.opts, {
@@ -118,7 +118,7 @@ const update = () => {
   console.debug('Primary');
   getSocket('/overlays/countdown', true)
     .emit('countdown::update', {
-      id:        props.id ? String(props.id) : route.value.params.id,
+      id:        props.id ? String(props.id) : route.params.id,
       isEnabled: enabled.value,
       time:      options.value.currentTime,
     }, (_err: null, data?: { isEnabled: boolean | null, time :string | null }) => {
