@@ -44,7 +44,10 @@
                   {{ goal.name }}
                 </v-col>
                 <v-col cols="4" class="text-no-wrap" style="text-align: center;">
-                  <template v-if="['tips', 'intervalTips'].includes(goal.type)">
+                  <template v-if="['tiltifyCampaign'].includes(goal.type)">
+                    {{ Intl.NumberFormat($store.state.configuration.lang, { style: 'currency', currency: tiltifyCampaigns.find(o => goal.tiltifyCampaign === o.id).causeCurrency || $store.state.configuration.currency }).format(goal.currentAmount) }}
+                  </template>
+                  <template v-else-if="['tips', 'intervalTips'].includes(goal.type)">
                     {{ Intl.NumberFormat($store.state.configuration.lang, { style: 'currency', currency: $store.state.configuration.currency }).format(goal.currentAmount) }}
                   </template>
                   <template v-else>
@@ -52,7 +55,10 @@
                   </template>
                 </v-col>
                 <v-col cols="4" class="text-no-wrap pr-2" style="text-align: right;">
-                  <template v-if="['tips', 'intervalTips'].includes(goal.type)">
+                  <template v-if="['tiltifyCampaign'].includes(goal.type)">
+                    {{ Intl.NumberFormat($store.state.configuration.lang, { style: 'currency', currency: tiltifyCampaigns.find(o => goal.tiltifyCampaign === o.id).causeCurrency || $store.state.configuration.currency }).format(goal.goalAmount) }}
+                  </template>
+                  <template v-else-if="['tips', 'intervalTips'].includes(goal.type)">
                     {{ Intl.NumberFormat($store.state.configuration.lang, { style: 'currency', currency: $store.state.configuration.currency }).format(goal.goalAmount) }}
                   </template>
                   <template v-else>
@@ -107,7 +113,11 @@
                   }"
                 >
                   <v-col v-if="$store.state.configuration" cols="12" class="text-center">
-                    <template v-if="['tips', 'intervalTips'].includes(goal.type)">
+                    <template v-if="['tiltifyCampaign'].includes(goal.type)">
+                      {{ Intl.NumberFormat($store.state.configuration.lang, { style: 'currency', currency: tiltifyCampaigns.find(o => goal.tiltifyCampaign === o.id).causeCurrency || $store.state.configuration.currency }).format(goal.currentAmount) }}
+                      ({{ Intl.NumberFormat($store.state.configuration.lang, { style: 'percent' }).format(goal.currentAmount / goal.goalAmount) }})
+                    </template>
+                    <template v-else-if="['tips', 'intervalTips'].includes(goal.type)">
                       {{ Intl.NumberFormat($store.state.configuration.lang, { style: 'currency', currency: $store.state.configuration.currency }).format(goal.currentAmount) }}
                       ({{ Intl.NumberFormat($store.state.configuration.lang, { style: 'percent' }).format(goal.currentAmount / goal.goalAmount) }})
                     </template>
@@ -130,8 +140,11 @@
               }"
             >
               <v-col class="text-left pl-2">
-                <template v-if="['tips', 'intervalTips'].includes(goal.type)">
-                  {{ Intl.NumberFormat($store.state.configuration.lang, { style: 'currency', currency: $store.state.configuration.currency }).format(0) }}
+                <template v-if="['tiltifyCampaign'].includes(goal.type)">
+                  {{ Intl.NumberFormat($store.state.configuration.lang, { style: 'currency', currency: tiltifyCampaigns.find(o => goal.tiltifyCampaign === o.id).causeCurrency || $store.state.configuration.currency }).format(goal.currentAmount) }}
+                </template>
+                <template v-else-if="['tips', 'intervalTips'].includes(goal.type)">
+                {{ Intl.NumberFormat($store.state.configuration.lang, { style: 'currency', currency: $store.state.configuration.currency }).format(0) }}
                 </template>
                 <template v-else>
                   0
@@ -145,8 +158,11 @@
                 {{ dayjs().to(goal.endAfter) }}
               </v-col>
               <v-col class="text-right pr-2">
-                <template v-if="['tips', 'intervalTips'].includes(goal.type)">
-                  {{ Intl.NumberFormat($store.state.configuration.lang, { style: 'currency', currency: $store.state.configuration.currency }).format(goal.goalAmount) }}
+                <template v-if="['tiltifyCampaign'].includes(goal.type)">
+                  {{ Intl.NumberFormat($store.state.configuration.lang, { style: 'currency', currency: tiltifyCampaigns.find(o => goal.tiltifyCampaign === o.id).causeCurrency || $store.state.configuration.currency }).format(goal.goalAmount) }}
+                </template>
+                <template v-else-if="['tips', 'intervalTips'].includes(goal.type)">
+                {{ Intl.NumberFormat($store.state.configuration.lang, { style: 'currency', currency: $store.state.configuration.currency }).format(goal.goalAmount) }}
                 </template>
                 <template v-else>
                   {{ goal.goalAmount }}
@@ -173,8 +189,10 @@ import { shadowGenerator, textStrokeGenerator } from '@sogebot/ui-helpers/text';
 import gsap from 'gsap';
 import { find } from 'lodash';
 import safeEval from 'safe-eval';
+import type { tiltifyCampaign } from '@sogebot/backend/d.ts/src/helpers/socket';
 
 import GET_ONE from '~/queries/goals/getOne.gql';
+import { getSocket } from '@sogebot/ui-helpers/socket';
 
 const props = defineProps({ opts: Object });
 const { $graphql } = useNuxtApp();
@@ -190,9 +208,14 @@ const lastSwapTime = ref(Date.now());
 const triggerUpdate = ref([] as string[]);
 const cssLoaded = ref([] as string[]);
 
+const tiltifyCampaigns = ref([] as tiltifyCampaign[]);
+
 const cache = ref(null as null | { goals: GoalGroupInterface[], goalsCurrent: typeof current.value });
 
 const refresh = async () => {
+  tiltifyCampaigns.value = await new Promise(resolve => {
+    getSocket('/integrations/tiltify').emit('tiltify::campaigns', data => resolve(data));
+  });
   cache.value = await $graphql.default.request(GET_ONE, { id: props.opts?.id });
   setTimeout(() => refresh(), 5000);
 };
@@ -244,6 +267,26 @@ watch(cache, (value) => {
           triggerUpdate.value.push((goal as Required<GoalInterface>).id);
         }
         goal.currentAmount = current.value.subscribers;
+      }
+    }
+
+    // update values for tiltify campaigns
+
+    for (const goal of group.value.goals) {
+      if (goal.type === 'tiltifyCampaign') {
+        if (goal.tiltifyCampaign) {
+          console.log(tiltifyCampaigns.value)
+          const campaign = tiltifyCampaigns.value.find(o => o.id === goal.tiltifyCampaign)
+          if (campaign) {
+            if (goal.currentAmount !== campaign.amountRaised) {
+              triggerUpdate.value.push((goal as Required<GoalInterface>).id);
+            }
+            goal.currentAmount = campaign.amountRaised;
+            goal.goalAmount = campaign.fundraiserGoalAmount;
+          } else {
+            console.error(`Campaign ${goal.tiltifyCampaign} not found.`);
+          }
+        }
       }
     }
 

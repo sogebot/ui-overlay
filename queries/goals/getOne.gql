@@ -11,6 +11,7 @@ query GoalsGetOne($id: String!) {
       type
       countBitsAsTips
       display
+      tiltifyCampaign
       timestamp
       interval
       goalAmount
