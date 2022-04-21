@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [23.1.0](https://github.com/sogebot/sogebot.dev/compare/v23.0.8...v23.1.0) (2022-04-21)
+
+
+### Features
+
+* **alertsRegistry:** add service support ([65ef5df](https://github.com/sogebot/sogebot.dev/commit/65ef5df1f12082097e09abd97254605da428fe2f))
+
 ### [23.0.8](https://github.com/sogebot/sogebot.dev/compare/v23.0.7...v23.0.8) (2022-04-06)
 
 
