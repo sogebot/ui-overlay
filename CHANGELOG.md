@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [24.0.0](https://github.com/sogebot/sogebot.dev/compare/v23.1.0...v24.0.0) (2022-05-06)
+
+
+### Features
+
+* **alerts:** add rewardId support ([a00cdcd](https://github.com/sogebot/sogebot.dev/commit/a00cdcd14ab0a188f25443b654f672c22b52663d))
+* **goals:** add tiltify support ([546024d](https://github.com/sogebot/sogebot.dev/commit/546024d3d0348c600f846baadfa59cf2679d8f8a))
+
 ## [23.1.0](https://github.com/sogebot/sogebot.dev/compare/v23.0.8...v23.1.0) (2022-04-21)
 
 
