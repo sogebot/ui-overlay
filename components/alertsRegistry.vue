@@ -188,7 +188,7 @@ import { ButtonStates } from '@sogebot/ui-helpers/buttonStates';
 import { itemsToEvalPart } from '@sogebot/ui-helpers/queryFilter';
 import { getSocket } from '@sogebot/ui-helpers/socket';
 import { shadowGenerator, textStrokeGenerator } from '@sogebot/ui-helpers/text';
-import { get, isEqual, isEqualWith } from 'lodash';
+import { get, isEqual } from 'lodash';
 import safeEval from 'safe-eval';
 import urlRegex from 'url-regex';
 import { v4 } from 'uuid';
@@ -225,7 +225,7 @@ const haveAvailableAlert = (emitData: EmitData, data: AlertInterface | null) => 
 
     // select only correct triggered events
     if (emitData.event === 'rewardredeems') {
-      possibleAlerts = (possibleAlerts as AlertRewardRedeemInterface[]).filter(o => o.rewardId === emitData.name);
+      possibleAlerts = (possibleAlerts as AlertRewardRedeemInterface[]).filter(o => o.rewardId === emitData.rewardId);
     }
     if (possibleAlerts.length > 0) {
       // filter variants
@@ -710,7 +710,7 @@ onMounted(() => {
 
         // select only correct triggered events
         if (emitData.event === 'rewardredeems') {
-          possibleAlerts = (possibleAlerts as AlertRewardRedeemInterface[]).filter(o => o.rewardId === emitData.name);
+          possibleAlerts = (possibleAlerts as AlertRewardRedeemInterface[]).filter(o => o.rewardId === emitData.rewardId);
         }
         if (possibleAlerts.length > 0) {
           // filter variants
@@ -926,6 +926,7 @@ onMounted(() => {
             ...emitData,
           };
         } else {
+          console.log('No possible alert found.');
           runningAlert.value = null;
         }
       } else {
