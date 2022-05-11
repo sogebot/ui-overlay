@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [24.1.1](https://github.com/sogebot/sogebot.dev/compare/v24.1.0...v24.1.1) (2022-05-11)
+
+
+### Bug Fixes
+
+* **alerts:** show properly advanced mode ([ae02d26](https://github.com/sogebot/sogebot.dev/commit/ae02d26d1135cc72c9e45de79a91427c11c67153))
+
 ## [24.1.0](https://github.com/sogebot/sogebot.dev/compare/v23.1.0...v24.1.0) (2022-05-11)
 
 
