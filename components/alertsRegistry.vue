@@ -25,90 +25,132 @@
         >
           <source :src="link(runningAlert.alert.soundId)">
         </audio>
-        <div
-          v-if="runningAlert.isShowing"
-          class="center"
-          :class="{
-            ['layout-' + runningAlert.alert.layout]: true,
-          }"
-        >
-          <template v-if="!runningAlert.alert.enableAdvancedMode">
-            <div
-              v-if="runningAlert.alert.imageId && typeOfMedia.get(runningAlert.alert.imageId) === 'video'"
-              :class="{
-                center: runningAlert.alert.layout === '3',
-              }"
-              :style="{
-                'visibility': shouldAnimate ? 'visible' : 'hidden',
-              }"
-              class=" w-100 pb-3"
-            >
-              <div class="animate__animated"  :class="{
-                ['animate__' + runningAlert.animation]: shouldAnimate,
-               }" :style="{'animation-duration': runningAlert.animationSpeed + 'ms'}">
-              <video
-                id="video"
-                :loop="runningAlert.alert.imageOptions.loop"
-                :style="{
-                  /* center */
-                  'display': 'block',
-                  'margin-left': 'auto',
-                  'margin-right': 'auto',
-                  'width': getSizeOfMedia(runningAlert.alert.imageId, runningAlert.alert.imageOptions.scale / 100, 'width'),
-                  'height': getSizeOfMedia(runningAlert.alert.imageId, runningAlert.alert.imageOptions.scale / 100, 'height'),
-                  'transform': 'translate(' + runningAlert.alert.imageOptions.translateX +'px, ' + runningAlert.alert.imageOptions.translateY +'px)',
+        <template v-if="runningAlert.isShowing">
+          <div
+            v-if="!runningAlert.alert.enableAdvancedMode"
+            class="center"
+            :class="{
+              ['layout-' + runningAlert.alert.layout]: true,
+            }"
+          >
+              <div
+                v-if="runningAlert.alert.imageId && typeOfMedia.get(runningAlert.alert.imageId) === 'video'"
+                :class="{
+                  center: runningAlert.alert.layout === '3',
                 }"
+                :style="{
+                  'visibility': shouldAnimate ? 'visible' : 'hidden',
+                }"
+                class=" w-100 pb-3"
               >
-                <source
-                  :src="link(runningAlert.alert.imageId)"
-                  type="video/webm"
+                <div class="animate__animated"  :class="{
+                  ['animate__' + runningAlert.animation]: shouldAnimate,
+                }" :style="{'animation-duration': runningAlert.animationSpeed + 'ms'}">
+                <video
+                  id="video"
+                  :loop="runningAlert.alert.imageOptions.loop"
+                  :style="{
+                    /* center */
+                    'display': 'block',
+                    'margin-left': 'auto',
+                    'margin-right': 'auto',
+                    'width': getSizeOfMedia(runningAlert.alert.imageId, runningAlert.alert.imageOptions.scale / 100, 'width'),
+                    'height': getSizeOfMedia(runningAlert.alert.imageId, runningAlert.alert.imageOptions.scale / 100, 'height'),
+                    'transform': 'translate(' + runningAlert.alert.imageOptions.translateX +'px, ' + runningAlert.alert.imageOptions.translateY +'px)',
+                  }"
                 >
-                Your browser does not support the video tag.
-              </video>
+                  <source
+                    :src="link(runningAlert.alert.imageId)"
+                    type="video/webm"
+                  >
+                  Your browser does not support the video tag.
+                </video>
+                </div>
               </div>
-            </div>
-            <div
-              v-else-if="showImage"
-              :class="{
-                center: runningAlert.alert.layout === '3',
-              }"
-              :style="{
-                'visibility': shouldAnimate ? 'visible' : 'hidden',
-              }"
-              @error="showImage=false"
-            >
-              <div class="animate__animated"  :class="{
-                ['animate__' + runningAlert.animation]: shouldAnimate,
-               }" :style="{'animation-duration': runningAlert.animationSpeed + 'ms'}">
-              <img
-                :src="link(runningAlert.alert.imageId)"
+              <div
+                v-else-if="showImage"
+                :class="{
+                  center: runningAlert.alert.layout === '3',
+                }"
                 :style="{
-                  /* center */
-                  'display': 'block',
-                  'margin-left': 'auto',
-                  'margin-right': 'auto',
-                  'width': getSizeOfMedia(runningAlert.alert.imageId, runningAlert.alert.imageOptions.scale / 100, 'width'),
-                  'height': getSizeOfMedia(runningAlert.alert.imageId, runningAlert.alert.imageOptions.scale / 100, 'height'),
-                  'transform': 'translate(' + runningAlert.alert.imageOptions.translateX +'px, ' + runningAlert.alert.imageOptions.translateY +'px)',
+                  'visibility': shouldAnimate ? 'visible' : 'hidden',
+                }"
+                @error="showImage=false"
+              >
+                <div class="animate__animated"  :class="{
+                  ['animate__' + runningAlert.animation]: shouldAnimate,
+                }" :style="{'animation-duration': runningAlert.animationSpeed + 'ms'}">
+                <img
+                  :src="link(runningAlert.alert.imageId)"
+                  :style="{
+                    /* center */
+                    'display': 'block',
+                    'margin-left': 'auto',
+                    'margin-right': 'auto',
+                    'width': getSizeOfMedia(runningAlert.alert.imageId, runningAlert.alert.imageOptions.scale / 100, 'width'),
+                    'height': getSizeOfMedia(runningAlert.alert.imageId, runningAlert.alert.imageOptions.scale / 100, 'height'),
+                    'transform': 'translate(' + runningAlert.alert.imageOptions.translateX +'px, ' + runningAlert.alert.imageOptions.translateY +'px)',
+                  }"
+                >
+                </div>
+              </div>
+              <div
+                v-if="runningAlert.isShowingText"
+                id="text"
+                :class="{
+                  center: runningAlert.alert.layout === '3',
+                }"
+                :style="{
+                  'visibility': shouldAnimate ? 'visible' : 'hidden',
+                  'text-align': (runningAlert.alert.font ? runningAlert.alert.font.align : data.font.align),
                 }"
               >
+                <div class="animate__animated"  :class="{
+                  ['animate__' + runningAlert.animation]: shouldAnimate,
+                }" :style="{'animation-duration': runningAlert.animationSpeed + 'ms'}">
+                  <v-runtime-template :template="prepareMessageTemplate(runningAlert.alert.messageTemplate)" :template-props="{runningAlert, shouldAnimate, textStrokeGenerator, shadowGenerator, prepareMessageTemplate, withEmotes, showImage, data, link, encodeFont}" />
+                  <div
+                    v-if="runningAlert.alert.message && (runningAlert.alert.message.minAmountToShow || 0) <= runningAlert.amount"
+                    :style="{
+                      'width': '30rem',
+                      'text-align': runningAlert.alert.message.font ? runningAlert.alert.message.font.align : data.fontMessage.align,
+                      'flex': '1 0 0px',
+                      'font-family': encodeFont(runningAlert.alert.message.font ? runningAlert.alert.message.font.family : data.fontMessage.family),
+                      'font-size': (runningAlert.alert.message.font ? runningAlert.alert.message.font.size : data.fontMessage.size) + 'px',
+                      'font-weight': runningAlert.alert.message.font ? runningAlert.alert.message.font.weight : data.fontMessage.weight,
+                      'color': runningAlert.alert.message.font ? runningAlert.alert.message.font.color : data.fontMessage.color,
+                      'text-shadow': textStrokeGenerator(
+                        runningAlert.alert.message.font ? runningAlert.alert.message.font.borderPx : data.fontMessage.borderPx,
+                        runningAlert.alert.message.font ? runningAlert.alert.message.font.borderColor : data.fontMessage.borderColor
+                      )
+                    }"
+                    v-html="withEmotes(runningAlert.message)"
+                  />
+                </div>
               </div>
-            </div>
-            <div
-              v-if="runningAlert.isShowingText"
-              id="text"
-              :class="{
-                center: runningAlert.alert.layout === '3',
-              }"
-              :style="{
-                'visibility': shouldAnimate ? 'visible' : 'hidden',
-                'text-align': (runningAlert.alert.font ? runningAlert.alert.font.align : data.font.align),
-              }"
-            >
-              <div class="animate__animated"  :class="{
-                ['animate__' + runningAlert.animation]: shouldAnimate,
-               }" :style="{'animation-duration': runningAlert.animationSpeed + 'ms'}">
-                <v-runtime-template :template="prepareMessageTemplate(runningAlert.alert.messageTemplate)" :template-props="{runningAlert, shouldAnimate, textStrokeGenerator, shadowGenerator, prepareMessageTemplate, withEmotes, showImage, data, link, encodeFont}" />
+              <!-- we need to have hidden div to have proper width -->
+              <div
+                v-else
+                :style="{
+                  'visibility': 'hidden',
+                }"
+              >
+                <span
+                  :style="{
+                    'font-family': encodeFont(runningAlert.alert.font ? runningAlert.alert.font.family : data.font.family),
+                    'font-size': (runningAlert.alert.font ? runningAlert.alert.font.size : data.font.size) + 'px',
+                    'font-weight': runningAlert.alert.font ? runningAlert.alert.font.weight : data.font.weight,
+                    'color': runningAlert.alert.font ? runningAlert.alert.font.color : data.font.color,
+                    'text-shadow': [
+                      textStrokeGenerator(
+                        runningAlert.alert.font ? runningAlert.alert.font.borderPx : data.font.borderPx,
+                        runningAlert.alert.font ? runningAlert.alert.font.borderColor : data.font.borderColor
+                      ),
+                      shadowGenerator(runningAlert.alert.font ? runningAlert.alert.font.shadow : data.font.shadow)].filter(Boolean).join(', ')
+                  }"
+                >
+                  <v-runtime-template :template="prepareMessageTemplate(runningAlert.alert.messageTemplate)" :template-props="{runningAlert, shouldAnimate, textStrokeGenerator, shadowGenerator, prepareMessageTemplate, withEmotes, showImage, data, link, encodeFont}" />
+                </span>
                 <div
                   v-if="runningAlert.alert.message && (runningAlert.alert.message.minAmountToShow || 0) <= runningAlert.amount"
                   :style="{
@@ -116,7 +158,7 @@
                     'text-align': runningAlert.alert.message.font ? runningAlert.alert.message.font.align : data.fontMessage.align,
                     'flex': '1 0 0px',
                     'font-family': encodeFont(runningAlert.alert.message.font ? runningAlert.alert.message.font.family : data.fontMessage.family),
-                    'font-size': (runningAlert.alert.message.font ? runningAlert.alert.message.font.size : data.fontMessage.size) + 'px',
+                    'font-size': runningAlert.alert.message.font ? runningAlert.alert.message.font.size : data.fontMessage.size + 'px',
                     'font-weight': runningAlert.alert.message.font ? runningAlert.alert.message.font.weight : data.fontMessage.weight,
                     'color': runningAlert.alert.message.font ? runningAlert.alert.message.font.color : data.fontMessage.color,
                     'text-shadow': textStrokeGenerator(
@@ -127,56 +169,23 @@
                   v-html="withEmotes(runningAlert.message)"
                 />
               </div>
-            </div>
-            <!-- we need to have hidden div to have proper width -->
+              <!-- empty div to mitigate text area -->
+          </div>
+          <template v-else>
             <div
-              v-else
               :style="{
-                'visibility': 'hidden',
+                'visibility': shouldAnimate ? 'visible' : 'hidden',
+                position: 'absolute',
               }"
+              class=" w-100 h-100"
             >
-              <span
-                :style="{
-                  'font-family': encodeFont(runningAlert.alert.font ? runningAlert.alert.font.family : data.font.family),
-                  'font-size': (runningAlert.alert.font ? runningAlert.alert.font.size : data.font.size) + 'px',
-                  'font-weight': runningAlert.alert.font ? runningAlert.alert.font.weight : data.font.weight,
-                  'color': runningAlert.alert.font ? runningAlert.alert.font.color : data.font.color,
-                  'text-shadow': [
-                    textStrokeGenerator(
-                      runningAlert.alert.font ? runningAlert.alert.font.borderPx : data.font.borderPx,
-                      runningAlert.alert.font ? runningAlert.alert.font.borderColor : data.font.borderColor
-                    ),
-                    shadowGenerator(runningAlert.alert.font ? runningAlert.alert.font.shadow : data.font.shadow)].filter(Boolean).join(', ')
-                }"
-              >
-                <v-runtime-template :template="prepareMessageTemplate(runningAlert.alert.messageTemplate)" :template-props="{runningAlert, shouldAnimate, textStrokeGenerator, shadowGenerator, prepareMessageTemplate, withEmotes, showImage, data, link, encodeFont}" />
-              </span>
-              <div
-                v-if="runningAlert.alert.message && (runningAlert.alert.message.minAmountToShow || 0) <= runningAlert.amount"
-                :style="{
-                  'width': '30rem',
-                  'text-align': runningAlert.alert.message.font ? runningAlert.alert.message.font.align : data.fontMessage.align,
-                  'flex': '1 0 0px',
-                  'font-family': encodeFont(runningAlert.alert.message.font ? runningAlert.alert.message.font.family : data.fontMessage.family),
-                  'font-size': runningAlert.alert.message.font ? runningAlert.alert.message.font.size : data.fontMessage.size + 'px',
-                  'font-weight': runningAlert.alert.message.font ? runningAlert.alert.message.font.weight : data.fontMessage.weight,
-                  'color': runningAlert.alert.message.font ? runningAlert.alert.message.font.color : data.fontMessage.color,
-                  'text-shadow': textStrokeGenerator(
-                    runningAlert.alert.message.font ? runningAlert.alert.message.font.borderPx : data.fontMessage.borderPx,
-                    runningAlert.alert.message.font ? runningAlert.alert.message.font.borderColor : data.fontMessage.borderColor
-                  )
-                }"
-                v-html="withEmotes(runningAlert.message)"
+              <v-runtime-template
+                :template="preparedAdvancedHTML"
+                :template-props="{runningAlert, shouldAnimate, textStrokeGenerator, shadowGenerator, prepareMessageTemplate, withEmotes, showImage, data, link, encodeFont}"
               />
             </div>
-            <!-- empty div to mitigate text area -->
           </template>
-          <v-runtime-template
-            v-else
-            :template="preparedAdvancedHTML"
-            :template-props="{runningAlert, shouldAnimate, textStrokeGenerator, shadowGenerator, prepareMessageTemplate, withEmotes, showImage, data, link, encodeFont}"
-          />
-        </div>
+        </template>
       </div>
     </template>
   </div>
