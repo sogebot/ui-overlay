@@ -1,23 +1,26 @@
 <template>
-<div>
-  <div ref="chat">
-    <template v-for="message of messages">
-      <v-fade-transition :key="'transition' + message.id">
-        <p v-show="message.show" :key="message.timestamp + message.id" class="nico" :class="{ [`nico-${message.id}`]: true }" :style="{
-          position: 'absolute',
-          top: `${Math.max(1, (posY[message.id] || 0))}%`,
-          right: 0,
-          'color': options.font.color,
-          'font-family': options.font.family,
-          'font-weight': options.font.weight,
-          'font-size': (Math.max(16, options.font.size + (fontSize[message.id] || 0))) + 'px',
-          'text-shadow': [textStrokeGenerator(options.font.borderPx, options.font.borderColor), shadowGenerator(options.font.shadow)].filter(Boolean).join(', ')
-        }">
+  <div>
+    <div ref="chat">
+      <template v-for="message of messages">
+        <p
+          :id="`nico-${message.id}`"
+          :key="message.timestamp + message.id"
+          class="nico"
+          :style="{
+            position: 'absolute',
+            width: 'max-content',
+            top: `${Math.max(1, (posY[message.id] || 0))}%`,
+            'color': options.font.color,
+            'font-family': options.font.family,
+            'font-weight': options.font.weight,
+            'font-size': (Math.max(16, options.font.size + (fontSize[message.id] || 0))) + 'px',
+            'text-shadow': [textStrokeGenerator(options.font.borderPx, options.font.borderColor), shadowGenerator(options.font.shadow)].filter(Boolean).join(', ')
+          }"
+        >
           <span v-html="message.message" />
         </p>
-      </v-fade-transition>
-    </template>
-  </div>
+      </template>
+    </div>
   <!--div
     ref="chat"
     :key="messages[0] ? messages[0].timestamp : Date.now()"
@@ -43,14 +46,14 @@
       </v-slide-x-reverse-transition>
     </template>
   </div-->
-</div>
+  </div>
 </template>
 
 <script setup lang="ts">
 import { getSocket } from '@sogebot/ui-helpers/socket';
-import defaultsDeep from 'lodash/defaultsDeep';
 import { shadowGenerator, textStrokeGenerator } from '@sogebot/ui-helpers/text';
 import gsap from 'gsap';
+import defaultsDeep from 'lodash/defaultsDeep';
 
 const props = defineProps({ opts: Object });
 const posY = ref({} as Record<string, number>);
@@ -118,11 +121,18 @@ onMounted(() => {
     nextTick(() => {
       const message = messages.value.find(o => o.id === data.id);
       if (message) {
-        message.show = true;
-        nextTick(() => {
-          gsap.to(`.nico-${data.id}`, { x: -1000, duration: Math.max(0.5, Math.floor(Math.random() * 5)) });
-          chat.value.scroll(0, Number.MAX_SAFE_INTEGER);
-        });
+        const element = document.getElementById(`nico-${data.id}`);
+        if (element) {
+          message.show = true;
+          nextTick(() => {
+            element.style.left = `${chat.value.offsetWidth + element.offsetWidth}px`;
+            chat.value.scroll(0, Number.MAX_SAFE_INTEGER);
+            const width = (document.getElementById(`nico-${data.id}`)?.offsetWidth ?? 0);
+            gsap.to(`#nico-${data.id}`, {
+              ease: 'none', left: -width, duration: Math.max(3, Math.floor(Math.random() * 15)),
+            });
+          });
+        }
       }
     });
   });
@@ -139,7 +149,7 @@ onMounted(() => {
 
     setTimeout(() => {
       messages.value = messages.value.filter(o => !messagesToDelete.includes(o.id));
-    }, 1000)
+    }, 1000);
     nextTick(() => {
       chat.value.scroll(0, Number.MAX_SAFE_INTEGER);
     });
