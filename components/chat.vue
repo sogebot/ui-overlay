@@ -110,7 +110,7 @@ onMounted(() => {
     }
 
     setTimeout(() => {
-      messages.value = messages.value.filter(o => ~messagesToDelete.includes(o.id));
+      messages.value = messages.value.filter(o => !messagesToDelete.includes(o.id));
     }, 1000)
     nextTick(() => {
       chat.value.scroll(0, Number.MAX_SAFE_INTEGER);
