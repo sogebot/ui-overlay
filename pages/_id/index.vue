@@ -3,7 +3,7 @@
     <v-main style="padding: 0; margin: 0;">
       <component
         :is="type.value"
-        v-if="isLoaded && type"
+        v-if="isLoaded && type && (type.value !== 'group' || (type.value === 'group' && children.length > 0))"
         :opts="type.opts"
         :children="children"
       />
