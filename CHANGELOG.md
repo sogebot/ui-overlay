@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [25.0.0](https://github.com/sogebot/sogebot.dev/compare/v24.1.1...v25.0.0) (2022-05-17)
+
+
+### Features
+
+* **overlay:** add chat overlay ([b237274](https://github.com/sogebot/sogebot.dev/commit/b23727452aa7c9af66703a60414921d79d82ab82))
+
 ### [24.1.1](https://github.com/sogebot/sogebot.dev/compare/v24.1.0...v24.1.1) (2022-05-11)
 
 
