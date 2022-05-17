@@ -22,12 +22,8 @@ import {
 } from '@sogebot/ui-helpers/constants';
 import { getSocket } from '@sogebot/ui-helpers/socket';
 import { shadowGenerator, textStrokeGenerator } from '@sogebot/ui-helpers/text';
-import { defaultsDeep } from 'lodash';
 import { v4 } from 'uuid';
 import * as workerTimers from 'worker-timers';
-
-import TICK from '~/queries/overlays/tick.gql';
-
 const { $graphql } = useNuxtApp();
 
 const props = defineProps({ opts: Object, id: [String, Object] });
@@ -35,23 +31,7 @@ const props = defineProps({ opts: Object, id: [String, Object] });
 const enabled = ref(true);
 const route = useRoute();
 const threadId = ref('');
-const options = ref(
-  defaultsDeep(props.opts, {
-    currentTime:           0,
-    isPersistent:          false,
-    isStartedOnSourceLoad: true,
-    showMilliseconds:      true,
-    stopwatchFont:         {
-      family:      'PT Sans',
-      size:        50,
-      borderPx:    1,
-      borderColor: '#000000',
-      weight:      '500',
-      color:       '#ffffff',
-      shadow:      [],
-    },
-  }),
-);
+const options = ref(props.opts as any);
 const font = computed<CustomizationFontObject<undefined, string, undefined>>(() => {
   return options.value.stopwatchFont;
 });
@@ -143,7 +123,7 @@ function saveState () {
 
     if (options.value.isPersistent && Date.now() - lastSave > 10) {
       lastSave = Date.now();
-      $graphql.default.request(TICK, {
+      getSocket('/registries/overlays', true).emit('overlays::tick', {
         id:     id.value,
         millis: Number(options.value.currentTime),
       });

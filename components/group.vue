@@ -21,11 +21,7 @@
 
 <script setup lang="ts">
 import type { OverlayMappers } from '@entity/overlay';
-import axios from 'axios';
-import { print } from 'graphql';
-import { defaultsDeep } from 'lodash';
-
-import GET from '~/queries/overlays/get.gql';
+import { getSocket } from '@sogebot/ui-helpers/socket';
 
 type Props = {
   children: OverlayMappers[],
@@ -38,14 +34,7 @@ const isDebug = !!url.searchParams.get('groupDebug');
 const items = ref([] as (OverlayMappers & {
   width: number; height: number; alignX: number; alignY: number;
 })[]);
-const options = ref(
-  defaultsDeep(props.opts, {
-    canvas: {
-      width:  1920,
-      height: 1080,
-    },
-    items: [],
-  }));
+const options = ref(props.opts as any);
 
 onMounted(() => {
   console.log('====== GROUP OF OVERLAYS ======');
@@ -63,22 +52,15 @@ const getChildItem = async (child: any) => {
     }
 
     // we have reference and need to find original
-    const result = await axios({
-      url:    '/graphql',
-      method: 'post',
-      data:   { query: print(GET), variables: { id: originalChild.opts?.overlayId } },
-
-    });
-    if (result.status === 200) {
-      const data = result.data.data.overlays;
-      for (const item of Object.values<OverlayMappers[]>(data)) {
-        if (item.length > 0) {
-          const refChild = item[0];
-          items.value = [...items.value, { ...child, ...refChild }];
-          return;
+    await new Promise((resolve) => {
+      getSocket('/registries/overlays', true).emit('generic::getOne', originalChild.opts?.overlayId ?? '', (err, result) => {
+        if (err) {
+          return resolve(null);
         }
-      }
-    }
+        items.value = [...items.value, { ...child, ...result }];
+        resolve(true);
+      });
+    });
   }
 };
 </script>

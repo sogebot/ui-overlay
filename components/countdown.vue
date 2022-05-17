@@ -25,7 +25,6 @@ import { v4 } from 'uuid';
 import * as workerTimers from 'worker-timers';
 
 import { toBoolean } from '~/../backend/src/helpers/toBoolean';
-import TICK from '~/queries/overlays/tick.gql';
 
 const { $graphql } = useNuxtApp();
 const props = defineProps({ opts: Object, id: [String, Object] });
@@ -34,34 +33,7 @@ const route = useRoute();
 const threadId = ref('');
 const id = computed(() => props.id ? props.id : route.params.id);
 
-const options = ref(
-  defaultsDeep(props.opts, {
-    time:                       60000,
-    currentTime:                60000,
-    messageWhenReachedZero:     '',
-    isPersistent:               false,
-    isStartedOnSourceLoad:      true,
-    showMessageWhenReachedZero: false,
-    countdownFont:              {
-      family:      'PT Sans',
-      size:        50,
-      borderPx:    1,
-      borderColor: '#000000',
-      weight:      '500',
-      color:       '#ffffff',
-      shadow:      [],
-    },
-    messageFont: {
-      family:      'PT Sans',
-      size:        35,
-      borderPx:    1,
-      borderColor: '#000000',
-      weight:      '500',
-      color:       '#ffffff',
-      shadow:      [],
-    },
-  }),
-);
+const options = ref(props.opts as any);
 const font = computed(() => {
   return options.value.currentTime > 0 || !options.value.showMessageWhenReachedZero
     ? options.value.countdownFont
@@ -161,7 +133,7 @@ function saveState () {
     localStorage.setItem(`countdown-controller-${id.value}-enabled`, String(enabled.value));
     if (options.value.isPersistent && Date.now() - lastSave > 10) {
       lastSave = Date.now();
-      $graphql.default.request(TICK, {
+      getSocket('/registries/overlays', true).emit('overlays::tick', {
         id:     id.value,
         millis: Number(options.value.currentTime),
       });
