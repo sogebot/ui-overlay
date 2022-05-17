@@ -1,6 +1,24 @@
 <template>
 <div>
-  <div
+  <div ref="chat">
+    <template v-for="message of messages">
+      <v-fade-transition :key="'transition' + message.id">
+        <p v-show="message.show" :key="message.timestamp + message.id" class="nico" :class="{ [`nico-${message.id}`]: true }" :style="{
+          position: 'absolute',
+          top: `${Math.max(1, (posY[message.id] || 0))}%`,
+          right: 0,
+          'color': options.font.color,
+          'font-family': options.font.family,
+          'font-weight': options.font.weight,
+          'font-size': (Math.max(16, options.font.size + (fontSize[message.id] || 0))) + 'px',
+          'text-shadow': [textStrokeGenerator(options.font.borderPx, options.font.borderColor), shadowGenerator(options.font.shadow)].filter(Boolean).join(', ')
+        }">
+          <span v-html="message.message" />
+        </p>
+      </v-fade-transition>
+    </template>
+  </div>
+  <!--div
     ref="chat"
     :key="messages[0] ? messages[0].timestamp : Date.now()"
     class="pa-4"
@@ -19,12 +37,12 @@
   >
     <template v-for="message of messages">
       <v-slide-x-reverse-transition :key="'transition' + message.id">
-        <p v-show="message.show" :key="message.timestamp" class="chat px-2 mb-0" :class="{ inline: options.isHorizontal }">
+        <p v-show="message.show" :key="message.timestamp + message.id" class="chat px-2 mb-0" :class="{ inline: options.isHorizontal }">
           <span v-if="options.showTimestamp">{{ new Date(message.timestamp).toLocaleTimeString('default', { hour: '2-digit', minute: '2-digit' }) }}</span> <strong class="pl-1" :style="{ color: generateColorFromString(message.username) }">{{ message.username }}</strong>: <span class="pl-1" v-html="message.message" />
         </p>
       </v-slide-x-reverse-transition>
     </template>
-  </div>
+  </div-->
 </div>
 </template>
 
@@ -32,8 +50,12 @@
 import { getSocket } from '@sogebot/ui-helpers/socket';
 import defaultsDeep from 'lodash/defaultsDeep';
 import { shadowGenerator, textStrokeGenerator } from '@sogebot/ui-helpers/text';
+import gsap from 'gsap';
 
 const props = defineProps({ opts: Object });
+const posY = ref({} as Record<string, number>);
+const fontSize = ref({} as Record<string, number>);
+const speed = ref({} as Record<string, number>);
 const messages = ref([] as { id: string, timestamp: number, username: string, message: string, show: boolean }[]);
 
 const chat = ref(null as unknown as HTMLElement);
@@ -91,11 +113,14 @@ onMounted(() => {
 
   getSocket('/overlays/chat', true).on('message', (data) => {
     messages.value.push(data);
+    posY.value[data.id] = Math.floor(Math.random() * 90);
+    fontSize.value[data.id] = Math.floor(Math.random() * 30) - 15;
     nextTick(() => {
       const message = messages.value.find(o => o.id === data.id);
       if (message) {
         message.show = true;
         nextTick(() => {
+          gsap.to(`.nico-${data.id}`, { x: -1000, duration: Math.max(0.5, Math.floor(Math.random() * 5)) });
           chat.value.scroll(0, Number.MAX_SAFE_INTEGER);
         });
       }
@@ -106,6 +131,9 @@ onMounted(() => {
     const messagesToDelete: string[] = [];
     for (const message of messages.value.filter(o => o.show === true && o.timestamp + options.value.hideMessageAfter < Date.now())) {
       message.show = false;
+      delete posY.value[message.id];
+      delete fontSize.value[message.id];
+      delete speed.value[message.id];
       messagesToDelete.push(message.id);
     }
 
