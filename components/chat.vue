@@ -116,7 +116,7 @@ onMounted(() => {
             chat.value.scroll(0, Number.MAX_SAFE_INTEGER);
             const width = (document.getElementById(`nico-${data.id}`)?.offsetWidth ?? 0);
             gsap.to(`#nico-${data.id}`, {
-              ease: 'none', left: -width, duration: Math.max(5, Math.floor(Math.random() * 15)),
+              ease: 'none', left: -(width * 2), duration: Math.max(5, Math.floor(Math.random() * 15)),
             });
           });
         }
