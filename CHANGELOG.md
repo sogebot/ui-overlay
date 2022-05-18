@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [25.1.1](https://github.com/sogebot/sogebot.dev/compare/v25.1.0...v25.1.1) (2022-05-18)
+
+
+### Bug Fixes
+
+* **chat:** move chat line further left ([75d1c62](https://github.com/sogebot/sogebot.dev/commit/75d1c62dd4a1929fb916d1b873ee8df27ad6a925))
+
 ## [25.1.0](https://github.com/sogebot/sogebot.dev/compare/v25.0.1...v25.1.0) (2022-05-18)
 
 
