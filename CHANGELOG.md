@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [25.1.0](https://github.com/sogebot/sogebot.dev/compare/v25.0.1...v25.1.0) (2022-05-18)
+
+
+### Features
+
+* **overlay:** add niconico chat ([d8edde6](https://github.com/sogebot/sogebot.dev/commit/d8edde6b497b37ff2ff3f9eb35a281d996307b2e))
+
 ### [25.0.1](https://github.com/sogebot/sogebot.dev/compare/v25.0.0...v25.0.1) (2022-05-17)
 
 
