@@ -40,11 +40,9 @@
       }"
     >
       <template v-for="message of messages">
-        <v-slide-x-reverse-transition :key="'transition' + message.id">
-          <p v-show="message.show" :key="message.timestamp + message.id" class="chat px-2 mb-0" :class="{ inline: options.type === 'horizontal' }">
-            <span v-if="options.showTimestamp">{{ new Date(message.timestamp).toLocaleTimeString('default', { hour: '2-digit', minute: '2-digit' }) }}</span> <strong class="pl-1" :style="{ color: generateColorFromString(message.username) }">{{ message.username }}</strong>: <span class="pl-1" v-html="message.message" />
-          </p>
-        </v-slide-x-reverse-transition>
+        <p v-show="message.show" :key="message.timestamp + message.id" class="chat px-2 mb-0" :class="{ inline: options.type === 'horizontal' }">
+          <span v-if="options.showTimestamp">{{ new Date(message.timestamp).toLocaleTimeString('default', { hour: '2-digit', minute: '2-digit' }) }}</span> <strong class="pl-1" :style="{ color: generateColorFromString(message.username) }">{{ message.username }}</strong>: <span class="pl-1" v-html="message.message" />
+        </p>
       </template>
     </div>
   </div>
