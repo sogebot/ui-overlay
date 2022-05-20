@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [25.1.2](https://github.com/sogebot/sogebot.dev/compare/v25.1.1...v25.1.2) (2022-05-20)
+
+
+### Bug Fixes
+
+* **chat:** remove animation ([702b4ef](https://github.com/sogebot/sogebot.dev/commit/702b4ef1e862f44c371fa7b1fa00c56d6ace354b))
+
 ### [25.1.1](https://github.com/sogebot/sogebot.dev/compare/v25.1.0...v25.1.1) (2022-05-18)
 
 
