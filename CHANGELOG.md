@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [25.1.3](https://github.com/sogebot/sogebot.dev/compare/v25.1.2...v25.1.3) (2022-05-28)
+
+
+### Bug Fixes
+
+* **goals:** remove cast to number ([36260c3](https://github.com/sogebot/sogebot.dev/commit/36260c38c4cd5922ae0d38db228f17bf2d894ac5))
+
 ### [25.1.2](https://github.com/sogebot/sogebot.dev/compare/v25.1.1...v25.1.2) (2022-05-20)
 
 
