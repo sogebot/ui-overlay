@@ -333,7 +333,7 @@ watch(cache, (value) => {
           .replace(/\$goalAmount/g, String(goal.goalAmount))
           .replace(/\$currentAmount/g, String(goal.currentAmount))
           .replace(/\$percentageAmount/g, Number((100 / (goal.goalAmount ?? 0)) * (goal.currentAmount ?? 0)).toFixed())
-          .replace(/\$endAfter/g, new Date(Number(goal.endAfter)).toISOString());
+          .replace(/\$endAfter/g, new Date(goal.endAfter).toISOString());
       }
 
       // trigger onUpdate on nextTick
