@@ -17,7 +17,7 @@
             'text-shadow': [textStrokeGenerator(options.font.borderPx, options.font.borderColor), shadowGenerator(options.font.shadow)].filter(Boolean).join(', ')
           }"
         >
-           <span v-if="options.showTimestamp">{{ new Date(message.timestamp).toLocaleTimeString('default', { hour: '2-digit', minute: '2-digit' }) }}</span> <span v-html="message.message" />
+          <span v-if="options.showTimestamp">{{ new Date(message.timestamp).toLocaleTimeString('default', { hour: '2-digit', minute: '2-digit' }) }}</span> <span v-html="message.message" />
         </p>
       </template>
     </div>
@@ -39,11 +39,17 @@
         'text-shadow': [textStrokeGenerator(options.font.borderPx, options.font.borderColor), shadowGenerator(options.font.shadow)].filter(Boolean).join(', ')
       }"
     >
-      <template v-for="message of messages">
-        <p v-show="message.show" :key="message.timestamp + message.id" class="chat px-2 mb-0" :class="{ inline: options.type === 'horizontal' }">
-          <span v-if="options.showTimestamp">{{ new Date(message.timestamp).toLocaleTimeString('default', { hour: '2-digit', minute: '2-digit' }) }}</span> <strong class="pl-1" :style="{ color: generateColorFromString(message.username) }">{{ message.username }}</strong>: <span class="pl-1" v-html="message.message" />
-        </p>
-      </template>
+      <span v-for="message of messages" :key="message.timestamp + message.id">
+        <div v-show="message.show" class="chat px-2 mb-0" :class="{ inline: options.type === 'horizontal' }">
+          <div style="align-items: center; display: inline-flex; width: fit-content;">
+            <template v-if="options.showBadges">
+              <img style="position: relative; top: 2px;" :src="badge.url" v-for="badge of (message.badges || [])" :key="message.timestamp + message.id + badge"/>
+            </template>
+            <span v-if="options.showTimestamp">{{ new Date(message.timestamp).toLocaleTimeString('default', { hour: '2-digit', minute: '2-digit' }) }}</span> <strong class="pl-1" :style="{ color: generateColorFromString(message.username) }">{{ message.username }}</strong>:
+          </div>
+          <span class="pl-1" v-html="message.message" />
+        </div>
+      </span>
     </div>
   </div>
 </template>
@@ -144,16 +150,14 @@ onMounted(() => {
 </script>
 
 <style>
-p.chat {
+div.chat {
   overflow: visible !important;
   line-height: normal;
-}
-
-p.inline {
-  display: inline-block;
+  width: fit-content;
 }
 
 div.inline {
+  display: inline-flex !important;
   width: max-content !important;
   right: 0;
 }
