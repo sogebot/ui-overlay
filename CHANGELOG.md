@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [27.0.0](https://github.com/sogebot/sogebot.dev/compare/v26.0.0...v27.0.0) (2022-07-04)
+
+
+### Features
+
+* add url iframe overlay ([845552a](https://github.com/sogebot/sogebot.dev/commit/845552ab10234ea8b95393217a185f1ad23ab619))
+
 ## [26.0.0](https://github.com/sogebot/sogebot.dev/compare/v25.1.3...v26.0.0) (2022-06-13)
 
 
