@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [27.0.2](https://github.com/sogebot/sogebot.dev/compare/v27.0.1...v27.0.2) (2022-07-25)
+
+
+### Bug Fixes
+
+* use eval to have document access ([3ee6fbf](https://github.com/sogebot/sogebot.dev/commit/3ee6fbf80a816ed1105645a2e6b0d1fdf6b6b326))
+
 ### [27.0.1](https://github.com/sogebot/sogebot.dev/compare/v27.0.0...v27.0.1) (2022-07-25)
 
 
