@@ -224,6 +224,28 @@ import GET_ONE from '~/queries/alert/getOne.gql';
 
 require('animate.css');
 
+type RunningAlert = EmitData & {
+  id: string;
+  animation: string;
+  animationSpeed: number;
+  animationText: string;
+  isShowingText: boolean;
+  isShowing: boolean;
+  soundPlayed: boolean;
+  hideAt: number;
+  showTextAt: number;
+  showAt: number;
+  waitingForTTS: boolean;
+  alert: (CommonSettingsInterface | AlertTipInterface | AlertResubInterface) & { ttsTemplate?: string };
+  isTTSMuted: boolean;
+  isSoundMuted: boolean;
+  TTSService: number,
+  TTSKey: string,
+  caster: null | UserInterface,
+  user: null | UserInterface,
+  recipientUser: null | UserInterface,
+};
+
 const { $graphql } = useNuxtApp();
 const props = defineProps({ opts: Object });
 
@@ -243,6 +265,20 @@ const alerts: (EmitData & {
   user: null | UserInterface,
   recipientUser: null | UserInterface,
 })[] = [];
+
+/* eslint-disable */
+const triggerFunction = (_____________code: string, _____________fnc: 'onStarted' | 'onEnded', _____________alert: RunningAlert) => {
+  const waitMs = (ms: number) => {
+    return new Promise(resolve => setTimeout(resolve, ms, null));
+  };
+  const caster = _____________alert.caster;
+  const user = _____________alert.user;
+  const recipient = _____________alert.recipientUser;
+  eval(
+    `(async function() { ${_____________code}; if (typeof ${_____________fnc} === 'function') { console.log('executing ${_____________fnc}()'); await ${_____________fnc}() } else { console.log('no ${_____________fnc}() function found'); } })()`,
+  );
+};
+/* eslint-enable */
 
 const haveAvailableAlert = (emitData: EmitData, data: AlertInterface | null) => {
   if (emitData && data) {
@@ -327,30 +363,12 @@ const emotes = ref([] as CacheEmotesInterface[]);
 const showImage = ref(true);
 const shouldAnimate = ref(false);
 
-const runningAlert = ref(null as EmitData & {
-  id: string;
-  animation: string;
-  animationSpeed: number;
-  animationText: string;
-  isShowingText: boolean;
-  isShowing: boolean;
-  soundPlayed: boolean;
-  hideAt: number;
-  showTextAt: number;
-  showAt: number;
-  waitingForTTS: boolean;
-  alert: (CommonSettingsInterface | AlertTipInterface | AlertResubInterface) & { ttsTemplate?: string };
-  isTTSMuted: boolean;
-  isSoundMuted: boolean;
-  TTSService: number,
-  TTSKey: string,
-  caster: null | UserInterface,
-  user: null | UserInterface,
-  recipientUser: null | UserInterface,
-} | null);
+const runningAlert = ref(null as RunningAlert | null);
 
 const cache = ref(null as null | AlertInterface[]);
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const refresh = async () => {
   const refreshedAlerts = (await $graphql.default.request(GET_ONE, { id: id.value })).alerts;
   if (!cache.value || cache.value[0].updatedAt !== refreshedAlerts[0].updatedAt) {
@@ -581,16 +599,7 @@ onMounted(() => {
           // eval onEnded
           nextTick(() => {
             if (runningAlert.value && runningAlert.value.alert.enableAdvancedMode) {
-              safeEval(
-                `(async function() { ${runningAlert.value.alert.advancedMode.js}; if (typeof onEnded === 'function') { console.log('executing onEnded()'); await onEnded() } else { console.log('no onEnded() function found'); } })()`, {
-                  caster:    runningAlert.value.caster,
-                  user:      runningAlert.value.user,
-                  recipient: runningAlert.value.recipientUser,
-                  waitMs:    (ms: number) => {
-                    return new Promise(resolve => setTimeout(resolve, ms, null));
-                  },
-                },
-              );
+              triggerFunction(runningAlert.value.alert.advancedMode.js || '', 'onEnded', runningAlert.value);
             }
           });
 
@@ -657,16 +666,7 @@ onMounted(() => {
                 evaluated = true;
                 console.log('Wrap element found, triggering onStarted.');
 
-                safeEval(
-                  `(async function() { ${runningAlert.value.alert.advancedMode.js}; if (typeof onStarted === 'function') { console.log('executing onStarted()'); await onStarted() } else { console.log('no onStarted() function found'); } })()`, {
-                    caster:    runningAlert.value.caster,
-                    user:      runningAlert.value.user,
-                    recipient: runningAlert.value.recipientUser,
-                    waitMs:    (ms: number) => {
-                      return new Promise(resolve => setTimeout(resolve, ms, null));
-                    },
-                  },
-                );
+                triggerFunction(runningAlert.value.alert.advancedMode.js || '', 'onStarted', runningAlert.value);
               }
             }
           }, 10);
