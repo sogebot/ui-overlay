@@ -63,9 +63,6 @@ import {
   mdiDeviantart, mdiDiscord, mdiFacebook, mdiGithub, mdiGoogle, mdiInstagram, mdiLinkedin, mdiMicrosoftWindows, mdiMicrosoftXbox, mdiPinterest, mdiReddit, mdiSkype, mdiSnapchat, mdiSonyPlaystation, mdiSpotify, mdiSteam, mdiTwitter, mdiYoutube,
 } from '@mdi/js';
 import { getSocket } from '@sogebot/ui-helpers/socket';
-import {
-  computed, nextTick, onMounted, ref, watch,
-} from '@vue/composition-api';
 import gsap from 'gsap';
 import { defaultsDeep, groupBy } from 'lodash';
 

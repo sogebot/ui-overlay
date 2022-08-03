@@ -22,9 +22,6 @@
 
 <script setup lang="ts">
 import { getSocket } from '@sogebot/ui-helpers/socket';
-import {
-  nextTick, onMounted, ref,
-} from '@vue/composition-api';
 import gsap from 'gsap';
 import {
   defaults, every, isNull, omitBy, pick, random,
