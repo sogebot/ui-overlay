@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [28.0.0](https://github.com/sogebot/sogebot.dev/compare/v27.0.2...v28.0.0) (2022-08-03)
+
+
+### Features
+
+* add obswebsocket 5 ([706b798](https://github.com/sogebot/sogebot.dev/commit/706b7982ec894aef6261b5630b4024166de1f701))
+
 ### [27.0.2](https://github.com/sogebot/sogebot.dev/compare/v27.0.1...v27.0.2) (2022-07-25)
 
 
