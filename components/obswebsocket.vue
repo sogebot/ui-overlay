@@ -17,10 +17,6 @@ type Props = {
 
 const props = defineProps<Props>();
 const obs = new OBSWebSocket();
-obs.on('error', (err) => {
-  console.error('socket error:', err);
-  setTimeout(() => { connect(); }, 1000);
-});
 
 let address = '';
 let password = '';
@@ -34,8 +30,6 @@ const connect = async () => {
     }
   } catch (e) {
     console.error(e);
-    // try to reconnect
-    setTimeout(() => { connect(); }, 1000);
   }
 };
 
