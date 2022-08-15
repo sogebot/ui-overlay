@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [29.0.0](https://github.com/sogebot/sogebot.dev/compare/v28.0.3...v29.0.0) (2022-08-15)
+
+
+### Features
+
+* add triggerAlert ([1c096e0](https://github.com/sogebot/sogebot.dev/commit/1c096e0b1cf5a99cd43c1dcfa3c38e79b39c24f1))
+
 ### [28.0.3](https://github.com/sogebot/sogebot.dev/compare/v28.0.2...v28.0.3) (2022-08-06)
 
 ### [28.0.2](https://github.com/sogebot/sogebot.dev/compare/v28.0.1...v28.0.2) (2022-08-05)
