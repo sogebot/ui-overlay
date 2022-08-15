@@ -288,6 +288,12 @@ const haveAvailableAlert = (emitData: EmitData, data: AlertInterface | null) => 
     if (emitData.event === 'rewardredeems') {
       possibleAlerts = (possibleAlerts as AlertRewardRedeemInterface[]).filter(o => o.rewardId === emitData.rewardId);
     }
+
+    let omitFilters = false;
+    if (emitData.event === 'cmdredeems' && emitData.alertId) {
+      possibleAlerts = possibleAlerts.filter(o => o.id === emitData.alertId);
+      omitFilters = true;
+    }
     if (possibleAlerts.length > 0) {
       // filter variants
       possibleAlerts = possibleAlerts.filter((o) => {
@@ -295,7 +301,7 @@ const haveAvailableAlert = (emitData: EmitData, data: AlertInterface | null) => 
           return false;
         }
         const filter = o.filter ? JSON.parse(o.filter) : null;
-        if (filter && filter.items.length > 0) {
+        if (!omitFilters && filter && filter.items.length > 0) {
           const script = itemsToEvalPart(filter.items, filter.operator);
           const tierAsNumber = emitData.tier === 'Prime' ? 0 : Number(emitData.tier);
           return safeEval(
