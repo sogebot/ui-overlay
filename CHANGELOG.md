@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [30.0.0](https://github.com/sogebot/sogebot.dev/compare/v29.0.2...v30.0.0) (2022-08-23)
+
+
+### Features
+
+* **obswebsocket:** add obs input mute state ([01fa33c](https://github.com/sogebot/sogebot.dev/commit/01fa33c155c939505c72b7946551770d2deb8363))
+
 ### [29.0.2](https://github.com/sogebot/sogebot.dev/compare/v29.0.1...v29.0.2) (2022-08-19)
 
 
