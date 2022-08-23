@@ -64,8 +64,9 @@ import {
 } from '@mdi/js';
 import { getSocket } from '@sogebot/ui-helpers/socket';
 import gsap from 'gsap';
-import { defaultsDeep, groupBy } from 'lodash';
+import { groupBy } from 'lodash';
 
+import { setDefaultOpts } from '~/../backend/src/helpers/overlaysDefaultValues';
 import { isVideoSupported } from '~/functions/isVideoSupported';
 
 const props = defineProps({ opts: Object });
@@ -90,45 +91,7 @@ const icons = ref({
   mdiYoutube,
 });
 
-const options = ref(
-  defaultsDeep(props.opts, {
-    speed:       'medium',
-    social:      [],
-    customTexts: [],
-    clips:       {
-      play:        true,
-      period:      'custom',
-      periodValue: 31,
-      numOfClips:  3,
-      volume:      20,
-    },
-    text: {
-      lastMessage:      'Thanks for watching',
-      lastSubMessage:   '~ see you on the next stream ~',
-      streamBy:         'Stream by',
-      follow:           'Followed by',
-      host:             'Hosted by',
-      raid:             'Raided by',
-      cheer:            'Cheered by',
-      sub:              'Subscribed by',
-      resub:            'Resubscribed by',
-      subgift:          'Subgifts by',
-      subcommunitygift: 'Community subgifts by',
-      tip:              'Tips by',
-    },
-    show: {
-      follow:           true,
-      host:             true,
-      raid:             true,
-      sub:              true,
-      subgift:          true,
-      subcommunitygift: true,
-      resub:            true,
-      cheer:            true,
-      clips:            true,
-      tip:              true,
-    },
-  }));
+const options = ref(setDefaultOpts(props.opts, 'credits'));
 
 const url = new URL(location.href);
 const isDebug = ref(!!url.searchParams.get('debug'));
@@ -196,7 +159,7 @@ onMounted(() => {
         class: 'separator',
         index: Math.random(),
       },
-      {
+      options.value.show.gameThumbnail && {
         image: 'https://static-cdn.jtvnw.net/ttv-boxart/' + encodeURIComponent(opts.game) + '-600x840.jpg',
         type:  'image',
         class: 'image',
