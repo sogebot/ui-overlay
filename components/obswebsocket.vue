@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import { switchScenes } from '@sogebot/backend/src/helpers/obswebsocket/listeners';
+import { switchScenes, inputMuted } from '@sogebot/backend/src/helpers/obswebsocket/listeners';
 import { taskRunner } from '@sogebot/backend/src/helpers/obswebsocket/taskrunner';
 import { getCurrentIP } from '@sogebot/ui-helpers/getCurrentIP';
 import { getSocket } from '@sogebot/ui-helpers/socket';
@@ -68,5 +68,6 @@ onMounted(async () => {
 
   // add listeners
   switchScenes(obs, getSocket('/', true) as any);
+  inputMuted(obs, getSocket('/', true) as any);
 });
 </script>
