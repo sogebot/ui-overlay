@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [30.1.0](https://github.com/sogebot/sogebot.dev/compare/v30.0.0...v30.1.0) (2022-08-23)
+
+
+### Features
+
+* **credits:** add support for toggeable game thumbnail ([0750c31](https://github.com/sogebot/sogebot.dev/commit/0750c31a6255f940199d794cf3dda4bfeeb39867))
+
 ## [30.0.0](https://github.com/sogebot/sogebot.dev/compare/v29.0.2...v30.0.0) (2022-08-23)
 
 
