@@ -120,7 +120,9 @@
                 }"
                 :style="{'animation-duration': runningAlert.animationSpeed + 'ms'}"
               >
-                <v-runtime-template :template="prepareMessageTemplate(runningAlert.alert.messageTemplate)" :template-props="{runningAlert, shouldAnimate, textStrokeGenerator, shadowGenerator, prepareMessageTemplate, withEmotes, showImage, data, link, encodeFont}" />
+                <template v-for="(message, idx) in messageTemplatesSplit">
+                  <v-runtime-template v-if="idx === messageTemplatesSplitIdx" :key="message" :template="prepareMessageTemplate(message)" :template-props="{runningAlert, shouldAnimate, textStrokeGenerator, shadowGenerator, prepareMessageTemplate, withEmotes, showImage, data, link, encodeFont}" />
+                </template>
                 <div
                   v-if="runningAlert.alert.message && (runningAlert.alert.message.minAmountToShow || 0) <= runningAlert.amount"
                   :style="{
@@ -161,7 +163,9 @@
                     shadowGenerator(runningAlert.alert.font ? runningAlert.alert.font.shadow : data.font.shadow)].filter(Boolean).join(', ')
                 }"
               >
-                <v-runtime-template :template="prepareMessageTemplate(runningAlert.alert.messageTemplate)" :template-props="{runningAlert, shouldAnimate, textStrokeGenerator, shadowGenerator, prepareMessageTemplate, withEmotes, showImage, data, link, encodeFont}" />
+                <template v-for="(message, idx) in messageTemplatesSplit">
+                  <v-runtime-template v-if="idx === messageTemplatesSplitIdx" :key="message" :template="prepareMessageTemplate(message)" :template-props="{runningAlert, shouldAnimate, textStrokeGenerator, shadowGenerator, prepareMessageTemplate, withEmotes, showImage, data, link, encodeFont}" />
+                </template>
               </span>
               <div
                 v-if="runningAlert.alert.message && (runningAlert.alert.message.minAmountToShow || 0) <= runningAlert.amount"
@@ -363,10 +367,46 @@ const emotes = ref([] as CacheEmotesInterface[]);
 const showImage = ref(true);
 const shouldAnimate = ref(false);
 
-const runningAlert = ref(null as RunningAlert | null);
+const messageTemplatesSplit = computed(() => {
+  if (runningAlert.value) {
+    return runningAlert.value.alert.messageTemplate.split('|').map(o => o.trim());
+  } else {
+    return [];
+  }
+});
+const messageTemplatesSplitIdx = ref(-1);
 
+watch(shouldAnimate, (val) => {
+  if (!val) {
+    messageTemplatesSplitIdx.value = -1;
+  } else {
+    messageTemplatesSplitIdx.value = 0; // this starts splitting
+  }
+});
+
+watch(messageTemplatesSplitIdx, (val) => {
+  if (!runningAlert.value) {
+    return;
+  }
+  if (val > -1) {
+    // get num of rows
+    const rows = messageTemplatesSplit.value.length;
+    const alertDuration = runningAlert.value.hideAt - runningAlert.value.showTextAt;
+    const timePerRow = alertDuration / rows;
+    if (runningAlert.value.hideAt > Date.now()) {
+      setTimeout(() => {
+        if (messageTemplatesSplitIdx.value > -1 && messageTemplatesSplitIdx.value < rows - 1) {
+          console.log('Showing next row');
+          // change only if bigger then -1
+          messageTemplatesSplitIdx.value += 1;
+        }
+      }, timePerRow);
+    }
+  }
+});
+
+const runningAlert = ref(null as RunningAlert | null);
 const cache = ref(null as null | AlertInterface[]);
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const refresh = async () => {
