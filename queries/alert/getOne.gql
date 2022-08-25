@@ -153,6 +153,7 @@ query AlertGetOne($id: String!) {
       shadow { shiftRight shiftDown blur opacity color }
     }
     customProfanityList
+    promo { ...resubFields }
     follows { ...commonFields }
     subs { ...commonFields }
     subgifts { ...commonFields }

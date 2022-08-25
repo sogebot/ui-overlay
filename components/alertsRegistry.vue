@@ -34,7 +34,46 @@
             }"
           >
             <div
-              v-if="runningAlert.alert.imageId && typeOfMedia.get(runningAlert.alert.imageId) === 'video'"
+              v-if="runningAlert.event === 'promo' && runningAlert.user?.profileImageUrl"
+              :class="{
+                center: runningAlert.alert.layout === '3',
+              }"
+              :style="{
+                'visibility': shouldAnimate ? 'visible' : 'hidden',
+              }"
+              class=" w-100 pb-3"
+            >
+              <div
+                class="animate__animated"
+                :class="{
+                  ['animate__' + runningAlert.animation]: shouldAnimate,
+                }"
+                :style="{'animation-duration': runningAlert.animationSpeed + 'ms'}"
+              >
+                <div
+                  class="animate__animated"
+                  :class="{
+                    ['animate__' + runningAlert.animation]: shouldAnimate,
+                  }"
+                  :style="{'animation-duration': runningAlert.animationSpeed + 'ms'}"
+                >
+                  <img
+                    :src="runningAlert.user?.profileImageUrl"
+                    :style="{
+                      /* center */
+                      'display': 'block',
+                      'margin-left': 'auto',
+                      'margin-right': 'auto',
+                      'width': getSizeOfMedia(runningAlert.user?.profileImageUrl, runningAlert.alert.imageOptions.scale / 100, 'width'),
+                      'height': getSizeOfMedia(runningAlert.user?.profileImageUrl, runningAlert.alert.imageOptions.scale / 100, 'height'),
+                      'transform': 'translate(' + runningAlert.alert.imageOptions.translateX +'px, ' + runningAlert.alert.imageOptions.translateY +'px)',
+                    }"
+                  >
+                </div>
+              </div>
+            </div>
+            <div
+              v-else-if="runningAlert.alert.imageId && typeOfMedia.get(runningAlert.alert.imageId) === 'video'"
               :class="{
                 center: runningAlert.alert.layout === '3',
               }"
@@ -248,6 +287,7 @@ type RunningAlert = EmitData & {
   caster: null | UserInterface,
   user: null | UserInterface,
   recipientUser: null | UserInterface,
+  game?: string,
 };
 
 const { $graphql } = useNuxtApp();
@@ -268,6 +308,7 @@ const alerts: (EmitData & {
   caster: null | UserInterface,
   user: null | UserInterface,
   recipientUser: null | UserInterface,
+  game?: string,
 })[] = [];
 
 /* eslint-disable */
@@ -306,6 +347,7 @@ const haveAvailableAlert = (emitData: EmitData, data: AlertInterface | null) => 
             script, {
               username:  emitData.name,
               name:      emitData.name,
+              game:      emitData.game || '',
               amount:    emitData.amount,
               message:   emitData.message,
               service:   emitData.service,
@@ -353,7 +395,7 @@ const loadedFonts = ref([] as string[]);
 const loadedCSS = ref([] as string[]);
 
 const preparedAdvancedHTML = ref('');
-const typeOfMedia: Map<string, 'audio' | 'image' | 'video' | null> = new Map();
+const typeOfMedia: Map<string, 'audio' | 'image' | 'video' | 'thumbnail' | null> = new Map();
 const sizeOfMedia: Map<string, [width: number, height: number]> = new Map();
 
 const state = ref({ loaded: ButtonStates.progress as number });
@@ -406,7 +448,33 @@ watch(messageTemplatesSplitIdx, (val) => {
 });
 
 const runningAlert = ref(null as RunningAlert | null);
+
 const cache = ref(null as null | AlertInterface[]);
+
+const getMeta = (mediaId: string, type: 'Video' | 'Image' | 'Thumbnail') => {
+  if (type === 'Video') {
+    const vid = document.createElement('video');
+    vid.addEventListener('loadedmetadata', (ev) => {
+      const el = ev.target as HTMLVideoElement;
+      sizeOfMedia.set(mediaId, [el.videoWidth, el.videoHeight]);
+    });
+    vid.src = link(mediaId);
+  } else if (type === 'Image') {
+    const img = new Image();
+    img.addEventListener('load', (ev) => {
+      const el = ev.target as HTMLImageElement;
+      sizeOfMedia.set(mediaId, [el.naturalWidth, el.naturalHeight]);
+    });
+    img.src = link(mediaId);
+  } else {
+    const img = new Image();
+    img.addEventListener('load', (ev) => {
+      const el = ev.target as HTMLImageElement;
+      sizeOfMedia.set(mediaId, [el.naturalWidth, el.naturalHeight]);
+    });
+    img.src = mediaId;
+  }
+};
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const refresh = async () => {
@@ -442,6 +510,7 @@ watch(cache, async (value) => {
         ...data.value.subgifts,
         ...data.value.cmdredeems,
         ...data.value.rewardredeems,
+        ...data.value.promo,
       ]) {
         event.soundId = event.soundId === '_default_' ? '_default_audio' : event.soundId;
         event.imageId = event.imageId === '_default_' ? '_default_image' : event.imageId;
@@ -476,23 +545,6 @@ watch(cache, async (value) => {
               console.log(`${myBlob.type.startsWith('video') ? 'Video' : 'Image'} ${event.imageId} was found on server.`);
               typeOfMedia.set(event.imageId, myBlob.type.startsWith('video') ? 'video' : 'image');
 
-              const getMeta = (mediaId: string, type: 'Video' | 'Image') => {
-                if (type === 'Video') {
-                  const vid = document.createElement('video');
-                  vid.addEventListener('loadedmetadata', (ev) => {
-                    const el = ev.target as HTMLVideoElement;
-                    sizeOfMedia.set(mediaId, [el.videoWidth, el.videoHeight]);
-                  });
-                  vid.src = link(mediaId);
-                } else {
-                  const img = new Image();
-                  img.addEventListener('load', (ev) => {
-                    const el = ev.target as HTMLImageElement;
-                    sizeOfMedia.set(mediaId, [el.naturalWidth, el.naturalHeight]);
-                  });
-                  img.src = link(mediaId);
-                }
-              };
               if (event.imageId) {
                 getMeta(event.imageId, myBlob.type.startsWith('video') ? 'Video' : 'Image');
               }
@@ -550,6 +602,7 @@ watch(cache, async (value) => {
         ...value[0].tips,
         ...value[0].cmdredeems,
         ...value[0].rewardredeems,
+        ...value[0].promo,
       ]) {
         const fontFamily = event.font ? event.font.family : data.value.font.family;
         if (!loadedFonts.value.includes(fontFamily)) {
@@ -726,6 +779,7 @@ onMounted(() => {
           if (runningAlert.value.alert.ttsTemplate) {
             ttsTemplate = runningAlert.value.alert.ttsTemplate
               .replace(/\{name\}/g, runningAlert.value.name)
+              .replace(/\{game\}/g, runningAlert.value.game || '')
               .replace(/\{recipient\}/g, runningAlert.value.recipient || '')
               .replace(/\{amount\}/g, String(runningAlert.value.amount))
               .replace(/\{monthsName\}/g, runningAlert.value.monthsName)
@@ -787,7 +841,7 @@ onMounted(() => {
 
         let omitFilters = false;
         if (emitData.event === 'cmdredeems' && emitData.alertId) {
-          console.log('Alert is command redeem and triggers', emitData.alertId, 'by force')
+          console.log('Alert is command redeem and triggers', emitData.alertId, 'by force');
           possibleAlerts = possibleAlerts.filter(o => o.id === emitData.alertId);
           omitFilters = true;
         }
@@ -806,6 +860,7 @@ onMounted(() => {
                 {
                   username:  emitData.name,
                   name:      emitData.name,
+                  game:      emitData.game || '',
                   amount:    emitData.amount,
                   service:   emitData.service,
                   message:   emitData.message,
@@ -908,6 +963,7 @@ onMounted(() => {
 
             const messageTemplate = get(alert, 'messageTemplate', '')
               .replace(/\{name\}/g, '{name:highlight}')
+              .replace(/\{game\}/g, '{game:highlight}')
               .replace(/\{recipient\}/g, '{recipient:highlight}')
               .replace(/\{amount\}/g, '{amount:highlight}')
               .replace(/\{monthsName\}/g, '{monthsName:highlight}')
@@ -932,16 +988,18 @@ onMounted(() => {
                     }"
                     v-html="withEmotes(runningAlert.message)"></span>`)
                 .replace(/\{messageTemplate\}/g, messageTemplate)
+                .replace(/\{game\}/g, emitData.game || '')
                 .replace(/\{name\}/g, emitData.name)
                 .replace(/\{recipient\}/g, emitData.recipient || '')
                 .replace(/\{amount\}/g, String(emitData.amount))
                 .replace(/\{monthsName\}/g, emitData.monthsName)
                 .replace(/\{currency\}/g, emitData.currency)
-                .replace(/\{name:highlight\}/g, `<v-runtime-template :template="prepareMessageTemplate('{name:highlight}')" :template-props="{runningAlert, shouldAnimate, textStrokeGenerator, shadowGenerator, prepareMessageTemplate, withEmotes, showImage, data, link, encodeFont}"></v-runtime-template>`)
-                .replace(/\{recipient:highlight\}/g, `<v-runtime-template :template="prepareMessageTemplate('{recipient:highlight}')" :template-props="{runningAlert, shouldAnimate, textStrokeGenerator, shadowGenerator, prepareMessageTemplate, withEmotes, showImage, data, link, encodeFont}"></v-runtime-template>`)
-                .replace(/\{amount:highlight\}/g, `<v-runtime-template :template="prepareMessageTemplate('{amount:highlight}')" :template-props="{runningAlert, shouldAnimate, textStrokeGenerator, shadowGenerator, prepareMessageTemplate, withEmotes, showImage, data, link, encodeFont}"></v-runtime-template>`)
-                .replace(/\{monthsName:highlight\}/g, `<v-runtime-template :template="prepareMessageTemplate('{monthsName:highlight}')" :template-props="{runningAlert, shouldAnimate, textStrokeGenerator, shadowGenerator, prepareMessageTemplate, withEmotes, showImage, data, link, encodeFont}"></v-runtime-template>`)
-                .replace(/\{currency:highlight\}/g, `<v-runtime-template :template="prepareMessageTemplate('{currency:highlight}')" :template-props="{runningAlert, shouldAnimate, textStrokeGenerator, shadowGenerator, prepareMessageTemplate, withEmotes, showImage, data, link, encodeFont}"></v-runtime-template>`)
+                .replace(/\{game:highlight\}/g, '<span v-html="prepareMessageTemplate(\'{game:highlight}\')"/>')
+                .replace(/\{name:highlight\}/g, '<span v-html="prepareMessageTemplate(\'{name:highlight}\')"/>')
+                .replace(/\{recipient:highlight\}/g, '<span v-html="prepareMessageTemplate(\'{recipient:highlight}\')"/>')
+                .replace(/\{amount:highlight\}/g, '<span v-html="prepareMessageTemplate(\'{amount:highlight}\')"/>')
+                .replace(/\{monthsName:highlight\}/g, '<span v-html="prepareMessageTemplate(\'{monthsName:highlight}\')"/>')
+                .replace(/\{currency:highlight\}/g, '<span v-html="prepareMessageTemplate(\'{currency:highlight}\')"/>')
                 .replace('"wrap"', '"wrap-' + alert.id + '"')
                 .replace(/<div.*class="(.*?)".*ref="text">|<div.*ref="text".*class="(.*?)">/gm, '<div ref="text">') // we need to replace id with class with proper id
                 .replace('ref="text"', `
@@ -964,7 +1022,7 @@ onMounted(() => {
                       'animation-duration': runningAlert.animationSpeed + 'ms'
                     }"
                     class="animate__animated ${refImageClass}"
-                    :src="link(runningAlert.alert.imageId)"
+                    :src="runningAlert.event === 'promo' ? runningAlert.user?.profileImageUrl : link(runningAlert.alert.imageId)"
                   `);
 
             // load CSS
@@ -982,6 +1040,7 @@ onMounted(() => {
           } else {
             // we need to add :highlight to name, amount, monthName, currency by default
             alert.messageTemplate = alert.messageTemplate
+              .replace(/\{game\}/g, '{game:highlight}')
               .replace(/\{name\}/g, '{name:highlight}')
               .replace(/\{recipient\}/g, '{recipient:highlight}')
               .replace(/\{amount\}/g, '{amount:highlight}')
@@ -1058,6 +1117,11 @@ onMounted(() => {
         }
       }
     }
+
+    if (data2.event === 'promo' && data2.user && data2.user.profileImageUrl) {
+      getMeta(data2.user.profileImageUrl, 'Thumbnail');
+    }
+
     if (data.value && ['tips', 'cheers', 'resubs', 'subs'].includes(data2.event) && runningAlert.value && data.value.parry.enabled && haveAvailableAlert(data2, data.value)) {
       alerts.push(data2);
       console.log('Skipping playing alert - parrying enabled');
@@ -1208,44 +1272,23 @@ const refreshAlert = () => {
 
 const prepareMessageTemplate = (msg: string) => {
   if (runningAlert.value !== null) {
-    let name: string | string[] = runningAlert.value.name.split('').map((char, index) => {
+    const prepareChar = (char: string, index: number) => {
       if (runningAlert.value !== null) {
+        if (char.trim().length === 0) {
+          return `<span style="padding-left: ${(runningAlert.value.alert.font?.size ?? 10) * 2}px" />`;
+        }
         return `<div class="animate__animated animate__infinite animate__${runningAlert.value.alert.animationText} animate__${runningAlert.value.alert.animationTextOptions.speed}" style="animation-delay: ${index * 50}ms; color: ${runningAlert.value.alert.font ? runningAlert.value.alert.font.highlightcolor : data.value?.font.highlightcolor}; display: inline-block;">${char}</div>`;
       } else {
         return char;
       }
-    });
-    let recipient: string | string[] = (runningAlert.value.recipient || '').split('').map((char, index) => {
-      if (runningAlert.value !== null) {
-        return `<div class="animate__animated animate__infinite animate__${runningAlert.value.alert.animationText} animate__${runningAlert.value.alert.animationTextOptions.speed}" style="animation-delay: ${index * 50}ms; color: ${runningAlert.value.alert.font ? runningAlert.value.alert.font.highlightcolor : data.value?.font.highlightcolor}; display: inline-block;">${char}</div>`;
-      } else {
-        return char;
-      }
-    });
+    };
 
-    let amount: string | string[] = String(runningAlert.value.amount).split('').map((char, index) => {
-      if (runningAlert.value !== null) {
-        return `<div class="animate__animated animate__infinite animate__${runningAlert.value.alert.animationText} animate__${runningAlert.value.alert.animationTextOptions.speed}" style="animation-delay: ${index * 50}ms; color: ${runningAlert.value.alert.font ? runningAlert.value.alert.font.highlightcolor : data.value?.font.highlightcolor}; display: inline-block;">${char}</div>`;
-      } else {
-        return char;
-      }
-    });
-
-    let currency: string | string[] = String(runningAlert.value.currency).split('').map((char, index) => {
-      if (runningAlert.value !== null) {
-        return `<div class="animate__animated animate__infinite animate__${runningAlert.value.alert.animationText} animate__${runningAlert.value.alert.animationTextOptions.speed}" style="animation-delay: ${index * 50}ms; color: ${runningAlert.value.alert.font ? runningAlert.value.alert.font.highlightcolor : data.value?.font.highlightcolor}; display: inline-block;">${char}</div>`;
-      } else {
-        return char;
-      }
-    });
-
-    let monthsName: string | string[] = String(runningAlert.value.monthsName).split('').map((char, index) => {
-      if (runningAlert.value !== null) {
-        return `<div class="animate__animated animate__infinite animate__${runningAlert.value.alert.animationText} animate__${runningAlert.value.alert.animationTextOptions.speed}" style="animation-delay: ${index * 50}ms; color: ${runningAlert.value.alert.font ? runningAlert.value.alert.font.highlightcolor : data.value?.font.highlightcolor}; display: inline-block;">${char}</div>`;
-      } else {
-        return char;
-      }
-    });
+    let game: string | string[] = (runningAlert.value.game || '').split('').map(prepareChar);
+    let name: string | string[] = runningAlert.value.name.split('').map(prepareChar);
+    let recipient: string | string[] = (runningAlert.value.recipient || '').split('').map(prepareChar);
+    let amount: string | string[] = String(runningAlert.value.amount).split('').map(prepareChar);
+    let currency: string | string[] = String(runningAlert.value.currency).split('').map(prepareChar);
+    let monthsName: string | string[] = String(runningAlert.value.monthsName).split('').map(prepareChar);
 
     const isFadingOut = runningAlert.value.hideAt - Date.now() <= 0
           && !isTTSPlaying
@@ -1257,18 +1300,21 @@ const prepareMessageTemplate = (msg: string) => {
       if (isFadingOut) {
         maxTimeToDecrypt = 0;
       }
+      game = `<text-animation-baffle :key="'game-' + runningAlert.game" :text="runningAlert.game || ''" :options="{...runningAlert.alert.animationTextOptions, maxTimeToDecrypt: ${maxTimeToDecrypt}}" style="color: ${runningAlert.value.alert.font ? runningAlert.value.alert.font.highlightcolor : data.value?.font.highlightcolor}"/>`;
       name = `<text-animation-baffle :key="'name-' + runningAlert.name" :text="runningAlert.name" :options="{...runningAlert.alert.animationTextOptions, maxTimeToDecrypt: ${maxTimeToDecrypt}}" style="color: ${runningAlert.value.alert.font ? runningAlert.value.alert.font.highlightcolor : data.value?.font.highlightcolor}"/>`;
       recipient = `<text-animation-baffle :key="'recipient-' + runningAlert.recipient" :text="runningAlert.recipient" :options="{...runningAlert.alert.animationTextOptions, maxTimeToDecrypt: ${maxTimeToDecrypt}}" style="color: ${runningAlert.value.alert.font ? runningAlert.value.alert.font.highlightcolor : data.value?.font.highlightcolor}"/>`;
       amount = `<text-animation-baffle :key="'amount-' + runningAlert.amount" :text="String(runningAlert.amount)" :options="{...runningAlert.alert.animationTextOptions, maxTimeToDecrypt: ${maxTimeToDecrypt}}" style="color: ${runningAlert.value.alert.font ? runningAlert.value.alert.font.highlightcolor : data.value?.font.highlightcolor}"/>`;
       currency = `<text-animation-baffle :key="'currency-' + runningAlert.currency" :text="runningAlert.currency" :options="{...runningAlert.alert.animationTextOptions, maxTimeToDecrypt: ${maxTimeToDecrypt}}" style="color: ${runningAlert.value.alert.font ? runningAlert.value.alert.font.highlightcolor : data.value?.font.highlightcolor}"/>`;
       monthsName = `<text-animation-baffle :key="'monthsName-' + runningAlert.monthsName" :text="runningAlert.monthsName" :options="{...runningAlert.alert.animationTextOptions, maxTimeToDecrypt: ${maxTimeToDecrypt}}" style="color: ${runningAlert.value.alert.font ? runningAlert.value.alert.font.highlightcolor : data.value?.font.highlightcolor}"/>`;
     } else if (!isFadingOut && runningAlert.value.alert.animationText === 'typewriter') {
+      game = `<text-animation-typewriter :key="'game-' + runningAlert.game" :text="runningAlert.game || ''" :options="{...runningAlert.alert.animationTextOptions}" style="color: ${runningAlert.value.alert.font ? runningAlert.value.alert.font.highlightcolor : data.value?.font.highlightcolor}"/>`;
       name = `<text-animation-typewriter :key="'name-' + runningAlert.name" :text="runningAlert.name" :options="{...runningAlert.alert.animationTextOptions}" style="color: ${runningAlert.value.alert.font ? runningAlert.value.alert.font.highlightcolor : data.value?.font.highlightcolor}"/>`;
       recipient = `<text-animation-typewriter :key="'recipient-' + runningAlert.recipient" :text="runningAlert.recipient" :options="{...runningAlert.alert.animationTextOptions}" style="color: ${runningAlert.value.alert.font ? runningAlert.value.alert.font.highlightcolor : data.value?.font.highlightcolor}"/>`;
       amount = `<text-animation-typewriter :key="'amount-' + runningAlert.amount" :text="String(runningAlert.amount)" :options="{...runningAlert.alert.animationTextOptions}" style="color: ${runningAlert.value.alert.font ? runningAlert.value.alert.font.highlightcolor : data.value?.font.highlightcolor}"/>`;
       currency = `<text-animation-typewriter :key="'currency-' + runningAlert.currency" :text="runningAlert.currency" :options="{...runningAlert.alert.animationTextOptions}" style="color: ${runningAlert.value.alert.font ? runningAlert.value.alert.font.highlightcolor : data.value?.font.highlightcolor}"/>`;
       monthsName = `<text-animation-typewriter :key="'monthsName-' + runningAlert.monthsName" :text="runningAlert.monthsName" :options="{...runningAlert.alert.animationTextOptions}" style="color: ${runningAlert.value.alert.font ? runningAlert.value.alert.font.highlightcolor : data.value?.font.highlightcolor}"/>`;
     } else {
+      game = game.join('');
       name = name.join('');
       recipient = recipient.join('');
       amount = amount.join('');
@@ -1276,16 +1322,19 @@ const prepareMessageTemplate = (msg: string) => {
       monthsName = monthsName.join('');
     }
     msg = msg
+      .replace(/\{game:highlight\}/g, game)
       .replace(/\{name:highlight\}/g, name)
       .replace(/\{recipient:highlight\}/g, recipient)
       .replace(/\{amount:highlight\}/g, amount)
       .replace(/\{currency:highlight\}/g, currency)
       .replace(/\{monthsName:highlight\}/g, monthsName)
+      .replace(/\{game\}/g, runningAlert.value.game || '')
       .replace(/\{name\}/g, runningAlert.value.name)
       .replace(/\{amount\}/g, String(runningAlert.value.amount))
       .replace(/\{currency\}/g, runningAlert.value.currency)
       .replace(/\{monthsName\}/g, runningAlert.value.monthsName);
   }
+
   return `<span
         :style="{
           'font-family': encodeFont(runningAlert.alert.font ? runningAlert.alert.font.family : data.font.family),
