@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [31.0.0](https://github.com/sogebot/sogebot.dev/compare/v30.1.0...v31.0.0) (2022-08-25)
+
+
+### Features
+
+* **alerts:** add promo support ([b540bd5](https://github.com/sogebot/sogebot.dev/commit/b540bd57cc6576ba9a84c059dad4e06351ad967f))
+* **alerts:** add support for multiple rows ([c59e786](https://github.com/sogebot/sogebot.dev/commit/c59e78622731c69de8fa7a0f07461a2221477930))
+
 ## [30.1.0](https://github.com/sogebot/sogebot.dev/compare/v30.0.0...v30.1.0) (2022-08-23)
 
 
