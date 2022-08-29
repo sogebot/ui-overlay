@@ -1,5 +1,8 @@
 <template>
   <div>
+    <Head>
+      <script v-if="responsiveAPIKey" :src="'https://code.responsivevoice.org/responsivevoice.js?key=' + responsiveAPIKey" hid="responsivevoice"></script>
+    </Head>
     <div
       v-if="isDebug"
       class="debug"
@@ -292,8 +295,6 @@ type RunningAlert = EmitData & {
 
 const { $graphql } = useNuxtApp();
 const props = defineProps({ opts: Object });
-
-let _key = '';
 
 let isTTSPlaying = false;
 let cleanupAlert = false;
@@ -644,32 +645,19 @@ watch(cache, async (value) => {
   }
 }, { deep: true, immediate: true });
 
-useMeta(() => {
-  if (responsiveAPIKey.value && _key !== responsiveAPIKey.value) {
-    _key = responsiveAPIKey.value;
-    setTimeout(() => {
-      initResponsiveVoice();
-    }, 1000);
-    return {
-      script: [
-        {
-          hid: 'responsivevoice',
-          src: 'https://code.responsivevoice.org/responsivevoice.js?key=' + responsiveAPIKey.value,
-        },
-      ],
+const isResponsiveVoiceEnabled = () => {
+  return new Promise<void>((resolve) => {
+    const check = () => {
+      if (typeof (window as any).responsiveVoice === 'undefined') {
+        setTimeout(() => check(), 200);
+      } else {
+        console.debug('= ResponsiveVoice init OK');
+        (window as any).responsiveVoice.init();
+        resolve();
+      }
     };
-  } else {
-    return {};
-  }
-});
-
-const initResponsiveVoice = () => {
-  if (typeof (window as any).responsiveVoice === 'undefined') {
-    setTimeout(() => initResponsiveVoice(), 200);
-    return;
-  }
-  (window as any).responsiveVoice.init();
-  console.debug('= ResponsiveVoice init OK');
+    check();
+  });
 };
 
 onMounted(() => {
@@ -1088,11 +1076,12 @@ onMounted(() => {
     }
   });
 
-  getSocket('/registries/alerts', true).on('alert', (data2) => {
+  getSocket('/registries/alerts', true).on('alert', async (data2) => {
     console.debug('Incoming alert', data2);
 
     if (data2.TTSService === 0) {
       responsiveAPIKey.value = data2.TTSKey;
+      await isResponsiveVoiceEnabled();
     }
 
     // checking for vulgarities

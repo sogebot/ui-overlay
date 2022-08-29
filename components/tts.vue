@@ -1,12 +1,15 @@
 <template>
-  <div />
+  <div>
+    <Head>
+      <script v-if="responsiveAPIKey" :src="'https://code.responsivevoice.org/responsivevoice.js?key=' + responsiveAPIKey" hid="responsivevoice"></script>
+    </Head>
+  </div>
 </template>
 
 <script setup lang="ts">
 import { getSocket } from '@sogebot/ui-helpers/socket';
 import { defaults } from 'lodash';
 
-let _key = '';
 const props = defineProps({ opts: Object });
 const options = ref(
   defaults(props.opts, {
@@ -19,25 +22,6 @@ const options = ref(
 const enabled = ref(false);
 const responsiveAPIKey = ref(null as string | null);
 const isSpeaking = ref(false);
-
-useMeta(() => {
-  if (responsiveAPIKey.value && _key !== responsiveAPIKey.value) {
-    _key = responsiveAPIKey.value;
-    setTimeout(() => {
-      initResponsiveVoice();
-    }, 1000);
-    return {
-      script: [
-        {
-          hid: 'responsivevoice',
-          src: 'https://code.responsivevoice.org/responsivevoice.js?key=' + responsiveAPIKey.value,
-        },
-      ],
-    };
-  } else {
-    return {};
-  }
-});
 
 const isTTSPlaying = {
   0: () => typeof (window as any).responsiveVoice !== 'undefined' && (window as any).responsiveVoice.isPlaying(),
@@ -81,22 +65,29 @@ const speak = (data: { text: string; highlight: boolean, key: string, service: 0
   }
 };
 
-const initResponsiveVoice = () => {
-  if (typeof (window as any).responsiveVoice === 'undefined') {
-    setTimeout(() => initResponsiveVoice(), 200);
-    return;
-  }
-  (window as any).responsiveVoice.init();
-  console.debug('= ResponsiveVoice init OK');
-  enabled.value = true;
+const isResponsiveVoiceEnabled = () => {
+  return new Promise<void>((resolve) => {
+    const check = () => {
+      if (typeof (window as any).responsiveVoice === 'undefined') {
+        setTimeout(() => check(), 200);
+      } else {
+        console.debug('= ResponsiveVoice init OK');
+        (window as any).responsiveVoice.init();
+        enabled.value = true;
+        resolve();
+      }
+    };
+    check();
+  });
 };
 
 onMounted(() => {
   console.log('====== TTS ======');
-  getSocket('/overlays/texttospeech', true).on('speak', (data) => {
+  getSocket('/overlays/texttospeech', true).on('speak', async (data) => {
     console.debug('Incoming speak', data);
     if (data.service === 0) {
       responsiveAPIKey.value = data.key;
+      await isResponsiveVoiceEnabled();
     } else {
       responsiveAPIKey.value = null;
       enabled.value = true;
