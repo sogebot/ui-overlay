@@ -169,6 +169,7 @@
                   v-if="runningAlert.alert.message && (runningAlert.alert.message.minAmountToShow || 0) <= runningAlert.amount"
                   :style="{
                     'width': '30rem',
+                    'margin': (runningAlert.alert.message.font ? runningAlert.alert.message.font.align : data.fontMessage.align) === 'center' ? 'auto' : 'inherit',
                     'text-align': runningAlert.alert.message.font ? runningAlert.alert.message.font.align : data.fontMessage.align,
                     'flex': '1 0 0px',
                     'font-family': encodeFont(runningAlert.alert.message.font ? runningAlert.alert.message.font.family : data.fontMessage.family),
@@ -213,6 +214,7 @@
                 v-if="runningAlert.alert.message && (runningAlert.alert.message.minAmountToShow || 0) <= runningAlert.amount"
                 :style="{
                   'width': '30rem',
+                  'margin': (runningAlert.alert.message.font ? runningAlert.alert.message.font.align : data.fontMessage.align) === 'center' ? 'auto' : 'inherit',
                   'text-align': runningAlert.alert.message.font ? runningAlert.alert.message.font.align : data.fontMessage.align,
                   'flex': '1 0 0px',
                   'font-family': encodeFont(runningAlert.alert.message.font ? runningAlert.alert.message.font.family : data.fontMessage.family),
