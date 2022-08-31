@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [31.0.2](https://github.com/sogebot/sogebot.dev/compare/v31.0.1...v31.0.2) (2022-08-31)
+
+
+### Bug Fixes
+
+* **alerts:** align of message should be centered ([6c4de55](https://github.com/sogebot/sogebot.dev/commit/6c4de555fa79c2918466e43cabb0dbcd751216c5))
+
 ### [31.0.1](https://github.com/sogebot/sogebot.dev/compare/v31.0.0...v31.0.1) (2022-08-29)
 
 
