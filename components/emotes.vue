@@ -1,23 +1,25 @@
 <template>
-  <div id="emotes">
-    <transition
-      v-for="e of emotes"
-      :key="e.id"
-      :name="e.animation.type"
-      :duration="e.animation.time"
-      :css="false"
-      @leave="doAnimation"
-    >
-      <img
-        v-if="!e.animation.finished"
-        v-show="e.show && !e.animation.running"
-        :id="e.id"
-        :src="e.url"
-        style="position: absolute;"
-        :style="{ 'left': e.position.left + 'px', 'top': e.position.top + 'px' }"
+  <div style="width: 100%; height: 100%;">
+    <div :id="'emotes-window-' + containerId" style="width: 100%; height: 100%;">
+      <transition
+        v-for="e of emotes"
+        :key="e.id"
+        :name="e.animation.type"
+        :duration="e.animation.time"
+        :css="false"
+        @leave="doAnimation"
       >
-    </transition>
-  </div>
+        <img
+          v-if="!e.animation.finished"
+          v-show="e.show && !e.animation.running"
+          :id="e.id"
+          :src="e.url"
+          style="position: absolute;"
+          :style="{ 'left': e.position.left + 'px', 'top': e.position.top + 'px' }"
+        >
+      </transition>
+    </div>
+</div>
 </template>
 
 <script setup lang="ts">
@@ -26,6 +28,7 @@ import gsap from 'gsap';
 import {
   defaults, every, isNull, omitBy, pick, random,
 } from 'lodash';
+import { v4 } from 'uuid';
 
 const maxEmoteGuard = new Map<string, number>();
 const props = defineProps({ opts: Object });
@@ -47,9 +50,26 @@ const options = ref(
 );
 const emotes = ref([] as any[]);
 
+const containerId = ref('');
+const width = ref(0);
+const height = ref(0);
+
+const getContainerDimensions = () => {
+  const container = document.getElementById('emotes-window-' + containerId.value)
+  if (container) {
+    height.value = container.getBoundingClientRect().height;
+    width.value = container.getBoundingClientRect().width;
+  } else {
+    setTimeout(() => getContainerDimensions(), 100);
+  }
+}
+
 onMounted(() => {
-  console.log('====== EMOTES ======');
+  containerId.value = v4();
+  console.log(`====== EMOTES (${containerId.value}) ======`);
   getSocket('/services/twitch', true).on('emote', (opts: any) => addEmote(opts));
+
+  getContainerDimensions();
 
   setInterval(() => {
     triggerAnimation();
@@ -75,8 +95,8 @@ const doAnimation = (el: HTMLElement, done: () => void) => {
     });
   } else if (emote.animation.type === 'facebook') {
     gsap.to(el, {
-      top:      emote.position.top - random(window.innerHeight / 4, window.innerHeight / 1.2),
-      left:     random(emote.position.left - 100, Math.min(emote.position.left + 100, window.innerWidth - 100)),
+      top:      emote.position.top - random(height.value / 4, height.value / 1.2),
+      left:     random(emote.position.left - 100, Math.min(emote.position.left + 100, width.value - 100)),
       opacity:  0,
       duration: emotes.value.find(o => o.id === id).animation.time / 1000,
     });
@@ -90,7 +110,7 @@ const doAnimation = (el: HTMLElement, done: () => void) => {
     el.style.opacity = '0';
     const rotate = Math.random() * options.value.maxRotation;
     gsap.to(el, {
-      top:      window.innerHeight - (el.offsetHeight / 1.4), // we are dipping emote little bit as they are not always 100% height
+      top:      height.value - (el.offsetHeight / 1.4), // we are dipping emote little bit as they are not always 100% height
       ease:     'bounce',
       duration: emotes.value.find(o => o.id === id).animation.time / 1000,
     });
@@ -139,23 +159,23 @@ const triggerAnimation = () => {
 
 const setLeft = (type: string) => {
   if (type === 'fadeup' || type === 'fadezoom' || type === 'fall') {
-    return random(window.innerWidth - 200) + 100;
+    return random(width.value - 200) + 100;
   } else if (type === 'facebook') {
-    return random(200) + window.innerWidth - 350;
+    return random(200) + width.value - 350;
   } else {
-    return window.innerWidth / 2;
+    return width.value / 2;
   }
 };
 
 const setTop = (type: string) => {
   if (type === 'fadeup' || type === 'fadezoom') {
-    return random(window.innerHeight - 200) + 100;
+    return random(height.value - 200) + 100;
   } else if (type === 'facebook') {
-    return window.innerHeight - 20;
+    return height.value - 20;
   } else if (type === 'fall') {
     return 0;
   } else {
-    return window.innerHeight / 2;
+    return height.value / 2;
   }
 };
 
