@@ -26,7 +26,10 @@
       ref="chat"
       :key="messages[0] ? messages[0].timestamp : Date.now()"
       class="pa-4"
-      :class="{ inline: options.type === 'horizontal' }"
+      :class="{
+        inline: options.type === 'horizontal',
+        showAtLeft: options.type === 'horizontal' && options.showFromTopOrLeft,
+        showAtTop: options.type === 'vertical' && options.showFromTopOrLeft }"
       :style="{
         position: 'absolute',
         bottom: 0,
@@ -39,7 +42,7 @@
         'text-shadow': [textStrokeGenerator(options.font.borderPx, options.font.borderColor), shadowGenerator(options.font.shadow)].filter(Boolean).join(', ')
       }"
     >
-      <span v-for="message of messages" :key="message.timestamp + message.id">
+      <span v-for="message of orderBy(messages, 'timestamp', options.reverseOrder ? 'desc' : 'asc')" :key="message.timestamp + message.id">
         <div v-show="message.show" class="chat px-2 mb-0" :class="{ inline: options.type === 'horizontal' }">
           <div style="align-items: center; display: inline-flex; width: fit-content;">
             <template v-if="options.showBadges">
@@ -59,12 +62,13 @@ import { OverlayMapperChat } from '@sogebot/backend/src/database/entity/overlay'
 import { getSocket } from '@sogebot/ui-helpers/socket';
 import { shadowGenerator, textStrokeGenerator } from '@sogebot/ui-helpers/text';
 import gsap from 'gsap';
+import orderBy from 'lodash/orderBy';
 
 const props = defineProps({ opts: Object });
 const posY = ref({} as Record<string, number>);
 const fontSize = ref({} as Record<string, number>);
 const speed = ref({} as Record<string, number>);
-const messages = ref([] as { id: string, timestamp: number, username: string, message: string, show: boolean }[]);
+const messages = ref([] as { id: string, timestamp: number, username: string, message: string, show: boolean, badges: any }[]);
 
 const chat = ref(null as unknown as HTMLElement);
 const options = ref(props.opts as OverlayMapperChat['opts']);
@@ -160,6 +164,16 @@ div.inline {
   display: inline-flex !important;
   width: max-content !important;
   right: 0;
+}
+
+div.inline.showAtLeft {
+  left: 0 !important;
+  right: inherit !important;
+}
+
+div.showAtTop {
+  top: 0 !important;
+  bottom: inherit !important;
 }
 
 .simpleChatImage {
