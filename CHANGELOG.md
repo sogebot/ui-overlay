@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [32.0.1](https://github.com/sogebot/sogebot.dev/compare/v32.0.0...v32.0.1) (2022-09-06)
+
+
+### Bug Fixes
+
+* **emotes:** fix incorrect positioning in group ([e02a859](https://github.com/sogebot/sogebot.dev/commit/e02a859d11b183b929d306fa4f52e2b7a357fe71))
+
 ## [32.0.0](https://github.com/sogebot/sogebot.dev/compare/v31.0.2...v32.0.0) (2022-09-06)
 
 
