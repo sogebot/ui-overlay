@@ -503,7 +503,6 @@ watch(cache, async (value) => {
       // determinate if image is image or video
       for (const event of [
         ...data.value.subcommunitygifts,
-        ...data.value.hosts,
         ...data.value.raids,
         ...data.value.tips,
         ...data.value.cheers,
@@ -597,7 +596,6 @@ watch(cache, async (value) => {
       for (const event of [
         ...value[0].cheers,
         ...value[0].follows,
-        ...value[0].hosts,
         ...value[0].raids,
         ...value[0].resubs,
         ...value[0].subgifts,

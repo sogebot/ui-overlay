@@ -158,7 +158,6 @@ query AlertGetOne($id: String!) {
     subs { ...commonFields }
     subgifts { ...commonFields }
     subcommunitygifts { ...commonFields }
-    hosts { ...commonFields }
     raids { ...commonFields }
     tips { ...tipFields }
     cheers { ...tipFields }

@@ -215,7 +215,7 @@ onMounted(() => {
         let html = username;
         if (key === 'cheer') {
           html = `<strong style="font-size:65%">${o.reduce((a, b) => a + Number(b.values.bits), 0)} bits</strong> <br> ${username}`;
-        } else if (['raid', 'host'].includes(key)) {
+        } else if (['raid'].includes(key)) {
           html = `<strong style="font-size:65%">${o.reduce((a, b) => a + Number(b.values.viewers), 0)} viewers</strong> <br> ${username}`;
         } else if (['resub'].includes(key)) {
           html = `<strong style="font-size:65%">${o[0].values.subCumulativeMonths} months</strong> <br> ${username}`;
