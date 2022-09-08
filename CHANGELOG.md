@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [33.0.0](https://github.com/sogebot/sogebot.dev/compare/v32.0.1...v33.0.0) (2022-09-08)
+
+
+### Features
+
+* remove deprecated hosts ([0c9ad01](https://github.com/sogebot/sogebot.dev/commit/0c9ad01ced26001ff6281eae7f843aeec5b5bf02))
+
 ### [32.0.1](https://github.com/sogebot/sogebot.dev/compare/v32.0.0...v32.0.1) (2022-09-06)
 
 
