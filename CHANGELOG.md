@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [33.0.2](https://github.com/sogebot/sogebot.dev/compare/v33.0.1...v33.0.2) (2022-09-15)
+
+
+### Bug Fixes
+
+* **alerts:** remove test loop ([ada724d](https://github.com/sogebot/sogebot.dev/commit/ada724d548ef82d06ee2b9fc430eb23f36b16896))
+
 ### [33.0.1](https://github.com/sogebot/sogebot.dev/compare/v33.0.0...v33.0.1) (2022-09-15)
 
 
