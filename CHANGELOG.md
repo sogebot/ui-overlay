@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [33.0.3](https://github.com/sogebot/sogebot.dev/compare/v33.0.2...v33.0.3) (2022-09-15)
+
+
+### Bug Fixes
+
+* **alerts:** fix layout3 positioning ([29de6cb](https://github.com/sogebot/sogebot.dev/commit/29de6cb4f85e10785e3a45755f23ba05feb881bb))
+
 ### [33.0.2](https://github.com/sogebot/sogebot.dev/compare/v33.0.1...v33.0.2) (2022-09-15)
 
 
