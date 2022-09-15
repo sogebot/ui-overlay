@@ -1,7 +1,7 @@
 <template>
   <div>
     <Head>
-      <script v-if="responsiveAPIKey" :src="'https://code.responsivevoice.org/responsivevoice.js?key=' + responsiveAPIKey" hid="responsivevoice"></script>
+      <script v-if="responsiveAPIKey" :src="`https://code.responsivevoice.org/responsivevoice.js?key=${responsiveAPIKey}`" hid="responsivevoice" />
     </Head>
     <div
       v-if="isDebug"
@@ -32,65 +32,47 @@
           <div
             v-if="!runningAlert.alert.enableAdvancedMode"
             class="center"
-            :class="{
-              ['layout-' + runningAlert.alert.layout]: true,
-            }"
           >
             <div
-              v-if="runningAlert.event === 'promo' && runningAlert.user?.profileImageUrl"
+              class="animate__animated"
               :class="{
-                center: runningAlert.alert.layout === '3',
+                ['layout-' + runningAlert.alert.layout]: true,
+                ['animate__' + runningAlert.animation]: shouldAnimate,
               }"
-              :style="{
-                'visibility': shouldAnimate ? 'visible' : 'hidden',
-              }"
-              class=" w-100 pb-3"
+              :style="{'animation-duration': runningAlert.animationSpeed + 'ms'}"
             >
               <div
-                class="animate__animated"
+                v-if="runningAlert.event === 'promo' && runningAlert.user?.profileImageUrl"
                 :class="{
-                  ['animate__' + runningAlert.animation]: shouldAnimate,
+                  center: runningAlert.alert.layout === '3',
                 }"
-                :style="{'animation-duration': runningAlert.animationSpeed + 'ms'}"
+                :style="{
+                  'visibility': shouldAnimate ? 'visible' : 'hidden',
+                }"
+                class=" w-100 pb-3"
               >
-                <div
-                  class="animate__animated"
-                  :class="{
-                    ['animate__' + runningAlert.animation]: shouldAnimate,
+                <img
+                  :src="runningAlert.user?.profileImageUrl"
+                  :style="{
+                    /* center */
+                    'display': 'block',
+                    'margin-left': 'auto',
+                    'margin-right': 'auto',
+                    'width': getSizeOfMedia(runningAlert.user?.profileImageUrl, runningAlert.alert.imageOptions.scale / 100, 'width'),
+                    'height': getSizeOfMedia(runningAlert.user?.profileImageUrl, runningAlert.alert.imageOptions.scale / 100, 'height'),
+                    'transform': 'translate(' + runningAlert.alert.imageOptions.translateX +'px, ' + runningAlert.alert.imageOptions.translateY +'px)',
                   }"
-                  :style="{'animation-duration': runningAlert.animationSpeed + 'ms'}"
                 >
-                  <img
-                    :src="runningAlert.user?.profileImageUrl"
-                    :style="{
-                      /* center */
-                      'display': 'block',
-                      'margin-left': 'auto',
-                      'margin-right': 'auto',
-                      'width': getSizeOfMedia(runningAlert.user?.profileImageUrl, runningAlert.alert.imageOptions.scale / 100, 'width'),
-                      'height': getSizeOfMedia(runningAlert.user?.profileImageUrl, runningAlert.alert.imageOptions.scale / 100, 'height'),
-                      'transform': 'translate(' + runningAlert.alert.imageOptions.translateX +'px, ' + runningAlert.alert.imageOptions.translateY +'px)',
-                    }"
-                  >
-                </div>
               </div>
-            </div>
-            <div
-              v-else-if="runningAlert.alert.imageId && typeOfMedia.get(runningAlert.alert.imageId) === 'video'"
-              :class="{
-                center: runningAlert.alert.layout === '3',
-              }"
-              :style="{
-                'visibility': shouldAnimate ? 'visible' : 'hidden',
-              }"
-              class=" w-100 pb-3"
-            >
               <div
-                class="animate__animated"
+                v-else-if="runningAlert.alert.imageId && typeOfMedia.get(runningAlert.alert.imageId) === 'video'"
                 :class="{
-                  ['animate__' + runningAlert.animation]: shouldAnimate,
+                  center: runningAlert.alert.layout === '3',
                 }"
-                :style="{'animation-duration': runningAlert.animationSpeed + 'ms'}"
+                :style="{
+                  'visibility': shouldAnimate ? 'visible' : 'hidden',
+                }"
+                class=" w-100 pb-3"
               >
                 <video
                   id="video"
@@ -112,23 +94,15 @@
                   Your browser does not support the video tag.
                 </video>
               </div>
-            </div>
-            <div
-              v-else-if="showImage"
-              :class="{
-                center: runningAlert.alert.layout === '3',
-              }"
-              :style="{
-                'visibility': shouldAnimate ? 'visible' : 'hidden',
-              }"
-              @error="showImage=false"
-            >
               <div
-                class="animate__animated"
+                v-else-if="showImage"
                 :class="{
-                  ['animate__' + runningAlert.animation]: shouldAnimate,
+                  center: runningAlert.alert.layout === '3',
                 }"
-                :style="{'animation-duration': runningAlert.animationSpeed + 'ms'}"
+                :style="{
+                  'visibility': shouldAnimate ? 'visible' : 'hidden',
+                }"
+                @error="showImage=false"
               >
                 <img
                   :src="link(runningAlert.alert.imageId)"
@@ -143,24 +117,17 @@
                   }"
                 >
               </div>
-            </div>
-            <div
-              v-if="runningAlert.isShowingText"
-              id="text"
-              :class="{
-                center: runningAlert.alert.layout === '3',
-              }"
-              :style="{
-                'visibility': shouldAnimate ? 'visible' : 'hidden',
-                'text-align': (runningAlert.alert.font ? runningAlert.alert.font.align : data.font.align),
-              }"
-            >
               <div
-                class="animate__animated"
+                id="text"
+                :key="String(runningAlert.isShowingText)"
                 :class="{
-                  ['animate__' + runningAlert.animation]: shouldAnimate,
+                  center: runningAlert.alert.layout === '3',
                 }"
-                :style="{'animation-duration': runningAlert.animationSpeed + 'ms'}"
+                :style="{
+                  'visibility': runningAlert.isShowingText ? 'visible' : 'hidden',
+                  'width': fontWidth,
+                  'text-align': (runningAlert.alert.font ? runningAlert.alert.font.align : data.font.align),
+                }"
               >
                 <template v-for="(message, idx) in messageTemplatesSplit">
                   <v-runtime-template v-if="idx === messageTemplatesSplitIdx" :key="message" :template="prepareMessageTemplate(message)" :template-props="{runningAlert, shouldAnimate, textStrokeGenerator, shadowGenerator, prepareMessageTemplate, withEmotes, showImage, data, link, encodeFont}" />
@@ -185,51 +152,6 @@
                 />
               </div>
             </div>
-            <!-- we need to have hidden div to have proper width -->
-            <div
-              v-else
-              :style="{
-                'visibility': 'hidden',
-              }"
-            >
-              <span
-                :style="{
-                  'font-family': encodeFont(runningAlert.alert.font ? runningAlert.alert.font.family : data.font.family),
-                  'font-size': (runningAlert.alert.font ? runningAlert.alert.font.size : data.font.size) + 'px',
-                  'font-weight': runningAlert.alert.font ? runningAlert.alert.font.weight : data.font.weight,
-                  'color': runningAlert.alert.font ? runningAlert.alert.font.color : data.font.color,
-                  'text-shadow': [
-                    textStrokeGenerator(
-                      runningAlert.alert.font ? runningAlert.alert.font.borderPx : data.font.borderPx,
-                      runningAlert.alert.font ? runningAlert.alert.font.borderColor : data.font.borderColor
-                    ),
-                    shadowGenerator(runningAlert.alert.font ? runningAlert.alert.font.shadow : data.font.shadow)].filter(Boolean).join(', ')
-                }"
-              >
-                <template v-for="(message, idx) in messageTemplatesSplit">
-                  <v-runtime-template v-if="idx === messageTemplatesSplitIdx" :key="message" :template="prepareMessageTemplate(message)" :template-props="{runningAlert, shouldAnimate, textStrokeGenerator, shadowGenerator, prepareMessageTemplate, withEmotes, showImage, data, link, encodeFont}" />
-                </template>
-              </span>
-              <div
-                v-if="runningAlert.alert.message && (runningAlert.alert.message.minAmountToShow || 0) <= runningAlert.amount"
-                :style="{
-                  'width': '30rem',
-                  'margin': (runningAlert.alert.message.font ? runningAlert.alert.message.font.align : data.fontMessage.align) === 'center' ? 'auto' : 'inherit',
-                  'text-align': runningAlert.alert.message.font ? runningAlert.alert.message.font.align : data.fontMessage.align,
-                  'flex': '1 0 0px',
-                  'font-family': encodeFont(runningAlert.alert.message.font ? runningAlert.alert.message.font.family : data.fontMessage.family),
-                  'font-size': runningAlert.alert.message.font ? runningAlert.alert.message.font.size : data.fontMessage.size + 'px',
-                  'font-weight': runningAlert.alert.message.font ? runningAlert.alert.message.font.weight : data.fontMessage.weight,
-                  'color': runningAlert.alert.message.font ? runningAlert.alert.message.font.color : data.fontMessage.color,
-                  'text-shadow': textStrokeGenerator(
-                    runningAlert.alert.message.font ? runningAlert.alert.message.font.borderPx : data.fontMessage.borderPx,
-                    runningAlert.alert.message.font ? runningAlert.alert.message.font.borderColor : data.fontMessage.borderColor
-                  )
-                }"
-                v-html="withEmotes(runningAlert.message)"
-              />
-            </div>
-            <!-- empty div to mitigate text area -->
           </div>
           <template v-else>
             <div
@@ -284,7 +206,7 @@ type RunningAlert = EmitData & {
   showTextAt: number;
   showAt: number;
   waitingForTTS: boolean;
-  alert: (CommonSettingsInterface | AlertTipInterface | AlertResubInterface) & { ttsTemplate?: string };
+  alert: (CommonSettingsInterface & AlertTipInterface & AlertResubInterface) & { ttsTemplate?: string };
   isTTSMuted: boolean;
   isSoundMuted: boolean;
   TTSService: number,
@@ -386,7 +308,7 @@ const haveAvailableAlert = (emitData: EmitData, data: AlertInterface | null) => 
   return false;
 };
 
-const link = (val: string) => {
+const link = (val: string | null) => {
   return location.origin + '/gallery/' + val;
 };
 const url = new URL(location.href);
@@ -399,7 +321,7 @@ const loadedCSS = ref([] as string[]);
 
 const preparedAdvancedHTML = ref('');
 const typeOfMedia: Map<string, 'audio' | 'image' | 'video' | 'thumbnail' | null> = new Map();
-const sizeOfMedia: Map<string, [width: number, height: number]> = new Map();
+const sizeOfMedia: Map<string | null, [width: number, height: number]> = new Map();
 
 const state = ref({ loaded: ButtonStates.progress as number });
 
@@ -421,11 +343,31 @@ const messageTemplatesSplit = computed(() => {
 });
 const messageTemplatesSplitIdx = ref(-1);
 
+const fontWidth = ref('inherit');
+
 watch(shouldAnimate, (val) => {
+  fontWidth.value = 'inherit';
+
   if (!val) {
     messageTemplatesSplitIdx.value = -1;
   } else {
     messageTemplatesSplitIdx.value = 0; // this starts splitting
+
+    (function setTextWidth () {
+      if (runningAlert.value && !runningAlert.value.alert.enableAdvancedMode && runningAlert.value.alert.animationText === 'baffle') {
+        const el = document.getElementById('text');
+        if (!el) {
+          setTimeout(() => setTextWidth());
+        } else {
+          fontWidth.value = 'inherit';
+          nextTick(() => {
+            const width = `${el.clientWidth + (runningAlert.value!.alert.font?.size || 0) * 4}`;
+            console.log('Used baffle animation, forcing width to ' + width);
+            fontWidth.value = `${width}px`;
+          })
+        }
+      }
+    })();
   }
 });
 
@@ -699,6 +641,7 @@ onMounted(() => {
       if (runningAlert.value.showAt <= Date.now() && !runningAlert.value.isShowing) {
         console.debug('showing image');
         runningAlert.value.isShowing = true;
+        shouldAnimate.value = true;
 
         nextTick(() => {
           const video = document.getElementById('video') as null | HTMLMediaElement;
@@ -717,20 +660,6 @@ onMounted(() => {
       if (runningAlert.value.showTextAt <= Date.now() && !runningAlert.value.isShowingText) {
         console.debug('showing text');
         runningAlert.value.isShowingText = true;
-
-        (function setTextWidth () {
-          if (!runningAlert.value.alert.enableAdvancedMode && runningAlert.value.alert.animationText === 'baffle') {
-            const el = document.getElementById('text');
-            if (!el) {
-              setTimeout(() => setTextWidth());
-            } else {
-              el.style.width = `${el.clientWidth + 50}px`;
-              shouldAnimate.value = true;
-            }
-          } else {
-            shouldAnimate.value = true;
-          }
-        })();
 
         if (runningAlert.value.alert.enableAdvancedMode) {
           let evaluated = false;
@@ -988,7 +917,13 @@ onMounted(() => {
                 .replace(/\{amount:highlight\}/g, '<span v-html="prepareMessageTemplate(\'{amount:highlight}\')"/>')
                 .replace(/\{monthsName:highlight\}/g, '<span v-html="prepareMessageTemplate(\'{monthsName:highlight}\')"/>')
                 .replace(/\{currency:highlight\}/g, '<span v-html="prepareMessageTemplate(\'{currency:highlight}\')"/>')
-                .replace('"wrap"', '"wrap-' + alert.id + '"')
+                .replace('id="wrap"', `
+                    id="wrap-${alert.id}"
+                    :style="{
+                      'animation-duration': runningAlert.animationSpeed + 'ms'
+                    }"
+                    class="animate__animated ${refImageClass}"
+                `)
                 .replace(/<div.*class="(.*?)".*ref="text">|<div.*ref="text".*class="(.*?)">/gm, '<div ref="text">') // we need to replace id with class with proper id
                 .replace('ref="text"', `
                     v-if="runningAlert.isShowingText"
@@ -1006,10 +941,6 @@ onMounted(() => {
                 .replace('ref="image"', `
                     v-if="runningAlert.isShowingText && showImage"
                     @error="showImage=false"
-                    :style="{
-                      'animation-duration': runningAlert.animationSpeed + 'ms'
-                    }"
-                    class="animate__animated ${refImageClass}"
                     :src="runningAlert.event === 'promo' ? runningAlert.user?.profileImageUrl : link(runningAlert.alert.imageId)"
                   `);
 
@@ -1048,7 +979,7 @@ onMounted(() => {
             hideAt:         data.value.alertDelayInMs + Date.now() + alert.alertDurationInMs + alert.animationInDuration,
             showTextAt:     data.value.alertDelayInMs + Date.now() + alert.alertTextDelayInMs,
             waitingForTTS:  alert.tts.enabled && isAmountForTTSInRange,
-            alert,
+            alert:          alert as any,
             ...emitData,
           };
         } else {
@@ -1076,59 +1007,133 @@ onMounted(() => {
     }
   });
 
-  getSocket('/registries/alerts', true).on('alert', async (data2) => {
-    console.debug('Incoming alert', data2);
+  setInterval(() => {
+    console.log('Test alert');
+    const incomingAlert = {
+      amount:       73,
+      rewardId:     null,
+      name:         'AgitatedFast',
+      tier:         'Prime',
+      service:      'qiwi',
+      recipient:    'MuddySogeBot',
+      currency:     'EUR',
+      message:      'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Etiam dictum tincidunt diam. Aliquam erat volutpat. Mauris tincidunt sem sed arcu. Etiam sapien elit, consequat eget, tristique non, venenatis quis, ante. Praesent id justo in neque elementum ultrices. Integer pellentesque quam vel velit. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Etiam commodo dui eget wisi. Cras pede libero, dapibus nec, pretium sit amet, tempor quis. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.',
+      event:        'follows',
+      monthsName:   'měsíců',
+      isTTSMuted:   false,
+      isSoundMuted: false,
+      TTSService:   1,
+      TTSKey:       '75a917dc-d0a0-48a7-a4b5-62f430146a57',
+      user:         null,
+      caster:       {
+        userId:                    '96965261',
+        userName:                  'soge',
+        displayname:               'soge',
+        profileImageUrl:           'https://static-cdn.jtvnw.net/jtv_user_pictures/b963858f-f04d-4da9-ac10-56aa7308cec3-profile_image-300x300.png',
+        isOnline:                  true,
+        isVIP:                     false,
+        isModerator:               false,
+        isSubscriber:              true,
+        haveSubscriberLock:        false,
+        haveSubscribedAtLock:      false,
+        rank:                      '',
+        haveCustomRank:            false,
+        subscribedAt:              null,
+        seenAt:                    '2022-09-13T19:37:47.549Z',
+        createdAt:                 '2015-07-23T13:14:02.919Z',
+        watchedTime:               15949360748,
+        chatTimeOnline:            7453320000,
+        chatTimeOffline:           68690460000,
+        points:                    1355,
+        pointsOnlineGivenAt:       7453800000,
+        pointsOfflineGivenAt:      68690700000,
+        pointsByMessageGivenAt:    4769,
+        subscribeTier:             '3',
+        subscribeCumulativeMonths: 47,
+        subscribeStreak:           0,
+        giftedSubscribes:          0,
+        messages:                  4784,
+        extra:                     {
+          levels: {
+            xp:                '{"dataType":"BigInt","value":"38356"}',
+            xpOfflineGivenAt:  7453320000,
+            xpOfflineMessages: 0,
+            xpOnlineGivenAt:   7452810000,
+            xpOnlineMessages:  1,
+          },
+          theme: 'dark',
+        },
+      },
+      recipientUser: null,
+    };
+    processIncomingAlert(incomingAlert as any);
+  }, 5000);
 
-    if (data2.TTSService === 0) {
-      responsiveAPIKey.value = data2.TTSKey;
-      await isResponsiveVoiceEnabled();
-    }
+  getSocket('/registries/alerts', true).on('alert', (data2) => {
+    processIncomingAlert(data2);
+  });
+});
 
-    // checking for vulgarities
-    if (data2.message && data2.message.length > 0) {
-      for (const vulgar of defaultProfanityList.value) {
-        if (data.value) {
-          if (data.value.profanityFilterType === 'replace-with-asterisk') {
-            data2.message = data2.message.replace(new RegExp(vulgar, 'gmi'), '***');
-          } else if (data.value.profanityFilterType === 'replace-with-happy-words') {
-            data2.message = data2.message.replace(new RegExp(vulgar, 'gmi'), listHappyWords.value[Math.floor(Math.random() * listHappyWords.value.length)]);
-          } else if (data.value.profanityFilterType === 'hide-messages') {
-            if (data2.message.search(new RegExp(vulgar, 'gmi')) >= 0) {
-              console.debug('Message contain vulgarity "' + vulgar + '" and is hidden.');
-              data2.message = '';
-            }
-          } else if (data.value.profanityFilterType === 'disable-alerts') {
-            if (data2.message.search(new RegExp(vulgar, 'gmi')) >= 0) {
-              console.debug('Message contain vulgarity "' + vulgar + '" and is alert disabled.');
-              return;
-            }
+const processIncomingAlert = async (data2: EmitData & {
+  isTTSMuted: boolean;
+  isSoundMuted: boolean;
+  TTSService: number;
+  TTSKey: string;
+  caster: UserInterface | null;
+  user: UserInterface | null;
+  recipientUser: UserInterface | null;
+}) => {
+  console.debug('Incoming alert', data2);
+
+  if (data2.TTSService === 0) {
+    responsiveAPIKey.value = data2.TTSKey;
+    await isResponsiveVoiceEnabled();
+  }
+
+  // checking for vulgarities
+  if (data2.message && data2.message.length > 0) {
+    for (const vulgar of defaultProfanityList.value) {
+      if (data.value) {
+        if (data.value.profanityFilterType === 'replace-with-asterisk') {
+          data2.message = data2.message.replace(new RegExp(vulgar, 'gmi'), '***');
+        } else if (data.value.profanityFilterType === 'replace-with-happy-words') {
+          data2.message = data2.message.replace(new RegExp(vulgar, 'gmi'), listHappyWords.value[Math.floor(Math.random() * listHappyWords.value.length)]);
+        } else if (data.value.profanityFilterType === 'hide-messages') {
+          if (data2.message.search(new RegExp(vulgar, 'gmi')) >= 0) {
+            console.debug('Message contain vulgarity "' + vulgar + '" and is hidden.');
+            data2.message = '';
+          }
+        } else if (data.value.profanityFilterType === 'disable-alerts') {
+          if (data2.message.search(new RegExp(vulgar, 'gmi')) >= 0) {
+            console.debug('Message contain vulgarity "' + vulgar + '" and is alert disabled.');
+            return;
           }
         }
       }
     }
+  }
 
-    if (data2.event === 'promo' && data2.user && data2.user.profileImageUrl) {
-      getMeta(data2.user.profileImageUrl, 'Thumbnail');
-    }
+  if (data2.event === 'promo' && data2.user && data2.user.profileImageUrl) {
+    getMeta(data2.user.profileImageUrl, 'Thumbnail');
+  }
 
-    if (data.value && ['tips', 'cheers', 'resubs', 'subs'].includes(data2.event) && runningAlert.value && data.value.parry.enabled && haveAvailableAlert(data2, data.value)) {
-      alerts.push(data2);
-      console.log('Skipping playing alert - parrying enabled');
-      setTimeout(() => {
-        runningAlert.value = null;
-        if (typeof (window as any).responsiveVoice !== 'undefined') {
-          (window as any).responsiveVoice.cancel();
-        }
-        if (snd) {
-          snd.pause();
-          isTTSPlaying = false;
-        }
-      }, data.value.parry.delay);
-    } else {
-      alerts.push(data2);
-    }
-  });
-});
+  if (data.value && ['tips', 'cheers', 'resubs', 'subs'].includes(data2.event) && runningAlert.value && data.value.parry.enabled && haveAvailableAlert(data2, data.value)) {
+    alerts.push(data2);
+    console.log('Skipping playing alert - parrying enabled');
+    setTimeout(() => {
+      runningAlert.value = null;
+      if (typeof (window as any).responsiveVoice !== 'undefined') {
+        (window as any).responsiveVoice.cancel();
+      }
+      if (snd) {
+        snd.pause();
+        isTTSPlaying = false;
+      }
+    }, data.value.parry.delay);
+  } else {
+    alerts.push(data2);
+  }
+};
 
 const withEmotes = (text: string | undefined) => {
   if (typeof text === 'undefined' || text.length === 0) {
@@ -1149,7 +1154,7 @@ const withEmotes = (text: string | undefined) => {
   return text;
 };
 
-const getSizeOfMedia = (mediaId: string, scale: number, type: 'height' | 'width') => {
+const getSizeOfMedia = (mediaId: string | null, scale: number, type: 'height' | 'width') => {
   const [width, height] = sizeOfMedia.get(mediaId) ?? [0, 0];
 
   if (height === 0 || width === 0) {
