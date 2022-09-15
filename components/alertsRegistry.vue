@@ -1007,68 +1007,6 @@ onMounted(() => {
     }
   });
 
-  setInterval(() => {
-    console.log('Test alert');
-    const incomingAlert = {
-      amount:       73,
-      rewardId:     null,
-      name:         'AgitatedFast',
-      tier:         'Prime',
-      service:      'qiwi',
-      recipient:    'MuddySogeBot',
-      currency:     'EUR',
-      message:      'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Etiam dictum tincidunt diam. Aliquam erat volutpat. Mauris tincidunt sem sed arcu. Etiam sapien elit, consequat eget, tristique non, venenatis quis, ante. Praesent id justo in neque elementum ultrices. Integer pellentesque quam vel velit. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Etiam commodo dui eget wisi. Cras pede libero, dapibus nec, pretium sit amet, tempor quis. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.',
-      event:        'follows',
-      monthsName:   'měsíců',
-      isTTSMuted:   false,
-      isSoundMuted: false,
-      TTSService:   1,
-      TTSKey:       '75a917dc-d0a0-48a7-a4b5-62f430146a57',
-      user:         null,
-      caster:       {
-        userId:                    '96965261',
-        userName:                  'soge',
-        displayname:               'soge',
-        profileImageUrl:           'https://static-cdn.jtvnw.net/jtv_user_pictures/b963858f-f04d-4da9-ac10-56aa7308cec3-profile_image-300x300.png',
-        isOnline:                  true,
-        isVIP:                     false,
-        isModerator:               false,
-        isSubscriber:              true,
-        haveSubscriberLock:        false,
-        haveSubscribedAtLock:      false,
-        rank:                      '',
-        haveCustomRank:            false,
-        subscribedAt:              null,
-        seenAt:                    '2022-09-13T19:37:47.549Z',
-        createdAt:                 '2015-07-23T13:14:02.919Z',
-        watchedTime:               15949360748,
-        chatTimeOnline:            7453320000,
-        chatTimeOffline:           68690460000,
-        points:                    1355,
-        pointsOnlineGivenAt:       7453800000,
-        pointsOfflineGivenAt:      68690700000,
-        pointsByMessageGivenAt:    4769,
-        subscribeTier:             '3',
-        subscribeCumulativeMonths: 47,
-        subscribeStreak:           0,
-        giftedSubscribes:          0,
-        messages:                  4784,
-        extra:                     {
-          levels: {
-            xp:                '{"dataType":"BigInt","value":"38356"}',
-            xpOfflineGivenAt:  7453320000,
-            xpOfflineMessages: 0,
-            xpOnlineGivenAt:   7452810000,
-            xpOnlineMessages:  1,
-          },
-          theme: 'dark',
-        },
-      },
-      recipientUser: null,
-    };
-    processIncomingAlert(incomingAlert as any);
-  }, 5000);
-
   getSocket('/registries/alerts', true).on('alert', (data2) => {
     processIncomingAlert(data2);
   });
