@@ -78,12 +78,9 @@ const refresh = () => {
 onMounted(async () => {
   console.log('====== TEXT REGISTRY ======');
   await refresh();
-  getSocket('/registries/text', true).on('variable-changed', (variableName: string) => {
-    if (nonParsedText.value.includes(variableName)) {
-      console.log(`Variable ${variableName} changed. Refreshing.`);
-      refresh();
-    }
-  });
+  setInterval(() => {
+    refresh();
+  }, 2000);
 });
 
 watch(css, (val: string) => {
