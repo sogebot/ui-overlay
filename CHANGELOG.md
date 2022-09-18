@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [33.0.4](https://github.com/sogebot/sogebot.dev/compare/v33.0.3...v33.0.4) (2022-09-18)
+
+
+### Bug Fixes
+
+* refresh text overlay once in a while ([466ef7c](https://github.com/sogebot/sogebot.dev/commit/466ef7c3a3c0eed4f673afe667b126d59ce195d8))
+
 ### [33.0.3](https://github.com/sogebot/sogebot.dev/compare/v33.0.2...v33.0.3) (2022-09-15)
 
 
