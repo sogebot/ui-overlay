@@ -66,7 +66,7 @@
     "stylelint-config-recommended-vue": "^1.4.0",
     "stylelint-config-standard-scss": "^3.0.0",
     "tiny-typed-emitter": "^2.1.0",
-    "typeorm": "^0.2.45",
+    "typeorm": "^0.3.10",
     "url-regex": "^5.0.0",
     "uuid": "^8.3.2",
     "v-runtime-template": "^1.10.0",
