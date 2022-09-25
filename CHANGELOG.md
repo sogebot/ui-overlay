@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [33.0.6](https://github.com/sogebot/sogebot.dev/compare/v33.0.5...v33.0.6) (2022-09-25)
+
+
+### Bug Fixes
+
+* **chat:** remove messages from timeouted/banned user ([9f9254e](https://github.com/sogebot/sogebot.dev/commit/9f9254e2e81b99615587c3c988bfc516aa813ee4))
+
 ### [33.0.5](https://github.com/sogebot/sogebot.dev/compare/v33.0.4...v33.0.5) (2022-09-25)
 
 
