@@ -110,6 +110,12 @@ onMounted(() => {
   style.appendChild(document.createTextNode(css));
   head.appendChild(style);
 
+  getSocket('/overlays/chat', true).on('timeout', (userName) => {
+    for (const message of messages.value.filter(o => o.username === userName)) {
+      message.show = false;
+    }
+  });
+
   getSocket('/overlays/chat', true).on('message', (data) => {
     messages.value.push(data);
     posY.value[data.id] = Math.floor(Math.random() * 90);
