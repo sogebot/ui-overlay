@@ -43,14 +43,14 @@
       }"
     >
       <span v-for="message of orderBy(messages, 'timestamp', options.reverseOrder ? 'desc' : 'asc')" :key="message.timestamp + message.id">
-        <div v-show="message.show" class="chat px-2 mb-0" :class="{ inline: options.type === 'horizontal' }">
-          <div style="align-items: center; display: inline-flex; width: fit-content;">
-            <template v-if="options.showBadges">
-              <img style="position: relative; top: 2px;" :src="badge.url" v-for="badge of (message.badges || [])" :key="message.timestamp + message.id + badge"/>
-            </template>
-            <span v-if="options.showTimestamp">{{ new Date(message.timestamp).toLocaleTimeString('default', { hour: '2-digit', minute: '2-digit' }) }}</span> <strong class="pl-1" :style="{ color: generateColorFromString(message.username) }">{{ message.username }}</strong>:
+        <div v-show="message.show" class="chat px-2 mb-0"  :class="{ inline: options.type === 'horizontal' }">
+          <div style="align-items: baseline; display: inline-flex; width: fit-content;">
+            <div v-if="options.showBadges && (message.badges || []).length > 0" class="pr-1 d-flex">
+              <img :width="options.font.size * 1.3" :height="options.font.size * 1.3" style="position: relative; top: 2px;" :src="badge.url" v-for="badge of (message.badges || [])" :key="message.timestamp + message.id + badge"/>
+            </div>
+            <span v-if="options.showTimestamp" class="pr-1">{{ new Date(message.timestamp).toLocaleTimeString('default', { hour: '2-digit', minute: '2-digit' }) }}</span> <strong :style="{ color: generateColorFromString(message.username) }">{{ message.username }}</strong>:
+            <div class="pl-1" v-html="message.message" style="overflow-wrap: anywhere;"/>
           </div>
-          <span class="pl-1" v-html="message.message" />
         </div>
       </span>
     </div>
@@ -82,6 +82,7 @@ const generateColorFromString = (stringInput: string) => {
 
 onMounted(() => {
   console.log(`====== CHAT ======`);
+  console.log(options.value);
 
   // add fonts import
   const head = document.getElementsByTagName('head')[0];
