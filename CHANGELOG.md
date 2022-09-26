@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [33.0.8](https://github.com/sogebot/sogebot.dev/compare/v33.0.7...v33.0.8) (2022-09-26)
+
+
+### Bug Fixes
+
+* **chat:** add chat customization ([9db7771](https://github.com/sogebot/sogebot.dev/commit/9db77717f52a3f97e22803c72408220668788889))
+
 ### [33.0.7](https://github.com/sogebot/sogebot.dev/compare/v33.0.6...v33.0.7) (2022-09-26)
 
 ### [33.0.6](https://github.com/sogebot/sogebot.dev/compare/v33.0.5...v33.0.6) (2022-09-25)
