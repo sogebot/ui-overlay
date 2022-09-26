@@ -46,7 +46,19 @@
         <div v-show="message.show" class="chat px-2 mb-0"  :class="{ inline: options.type === 'horizontal' }">
           <div style="align-items: baseline; display: inline-flex; width: fit-content;">
             <div v-if="options.showBadges && (message.badges || []).length > 0" class="pr-1 d-flex">
-              <img :width="options.font.size * 1.3" :height="options.font.size * 1.3" style="position: relative; top: 2px;" :src="badge.url" v-for="badge of (message.badges || [])" :key="message.timestamp + message.id + badge"/>
+              <span style="position: relative;"
+                v-for="badge of (message.badges || [])"
+                :key="message.timestamp + message.id + badge"
+                :style="{
+                  width: `${options.useCustomBadgeSize ? options.customBadgeSize : options.font.size * 1.3}px`,
+                  height: `${options.useCustomBadgeSize ? options.customBadgeSize : options.font.size * 1.3}px`,
+                }">
+                <img
+                  :width="options.useCustomBadgeSize ? options.customBadgeSize : options.font.size * 1.3"
+                  :height="options.useCustomBadgeSize ? options.customBadgeSize : options.font.size * 1.3"
+                  class="badge"
+                  :src="badge.url"/>
+              </span>
             </div>
             <span v-if="options.showTimestamp" class="pr-1">{{ new Date(message.timestamp).toLocaleTimeString('default', { hour: '2-digit', minute: '2-digit' }) }}</span> <strong :style="{ color: generateColorFromString(message.username) }">{{ message.username }}</strong>:
             <div class="pl-1" v-html="message.message" style="overflow-wrap: anywhere;"/>
@@ -94,17 +106,21 @@ onMounted(() => {
   const css = `
   @import url('https://fonts.googleapis.com/css?family=${fontFamily}');
 
+  div.chat {
+    line-height: ${options.value.useCustomLineHeight ? options.value.customLineHeight + 'px' : 'normal'};
+  }
+
   .emote {
-    height: ${options.value.font.size + 10}px;
+    height: ${options.value.useCustomEmoteSize ? options.value.customEmoteSize : options.value.font.size * 1.3}px;
   }
 
   .emote[title^=":"] {
-    height: ${options.value.font.size}px;
+    height: ${options.value.useCustomEmoteSize ? options.value.customEmoteSize : options.value.font.size * 1.3}px;
   }
 
   .simpleChatImage {
-    min-width: ${options.value.font.size + 10}px;
-    min-height: ${(options.value.font.size + 10) / 2}px;
+    min-width: ${options.value.useCustomEmoteSize ? options.value.customEmoteSize : options.value.font.size * 1.3}px;
+    height: 1px;
   }
   `;
   style.appendChild(document.createTextNode(css));
@@ -163,7 +179,6 @@ onMounted(() => {
 <style>
 div.chat {
   overflow: visible !important;
-  line-height: normal;
   width: fit-content;
 }
 
@@ -184,15 +199,19 @@ div.showAtTop {
 }
 
 .simpleChatImage {
-  min-width: 32px;
-  min-height: 17px;
   display: inline-block;
   position: relative;
 }
 
 .simpleChatImage .emote {
+  vertical-align: middle;
+  object-fit: contain;
+  overflow: visible;
+}
+
+.badge {
   position: absolute;
   margin-top: 50%;
-  transform: translateY(-68%);
+  transform: translateY(-30%);
 }
 </style>
