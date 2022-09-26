@@ -28,8 +28,8 @@
       class="pa-4"
       :class="{
         inline: options.type === 'horizontal',
-        showAtLeft: options.type === 'horizontal' && options.showFromTopOrLeft,
-        showAtTop: options.type === 'vertical' && options.showFromTopOrLeft }"
+        showAtLeft: options.type === 'horizontal' && options.reverseOrder,
+        showAtTop: options.type === 'vertical' && options.reverseOrder }"
       :style="{
         position: 'absolute',
         bottom: 0,
