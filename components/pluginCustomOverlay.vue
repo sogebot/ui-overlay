@@ -3,12 +3,13 @@
     v-if="$store.state.isUILoaded"
     style="width: 100%; height: 100%;"
   >
-    <v-main v-if="item" v-html="item.body || ''"/>
+    <v-main v-if="item" v-html="item.body || ''" />
   </v-app>
 </template>
 
 <script setup lang="ts">
 import { getSocket } from '@sogebot/ui-helpers/socket';
+import safeEval from 'safe-eval';
 
 const props = defineProps({ opts: Object });
 const item = ref<null | { body: string, javascript: string }>(null);
@@ -32,6 +33,12 @@ onMounted(() => {
           eval(item.value?.javascript || '');
 
           console.log(`==== NODE ${nodeId} FOUND ====`);
+
+          (getSocket('/core/plugins') as any).on(`plugins::${nodeId}::runScript`, ({ script, sandbox } : { script: string, sandbox: string }) => {
+            safeEval(
+              script, sandbox,
+            );
+          });
           break;
         }
       }
