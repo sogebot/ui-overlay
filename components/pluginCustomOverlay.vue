@@ -15,7 +15,7 @@ const props = defineProps({ opts: Object });
 const item = ref<null | { body: string, javascript: string }>(null);
 
 onMounted(() => {
-  getSocket('/core/plugins').emit('generic::getOne', props.opts?.pluginId, (err, plugin) => {
+  getSocket('/core/plugins', true).emit('generic::getOne', props.opts?.pluginId, (err, plugin) => {
     if (err || !plugin) {
       return console.error(err || 'Plugin not found');
     }
@@ -29,12 +29,17 @@ onMounted(() => {
         if (nodeId === props.opts?.nodeId) {
           item.value = JSON.parse(node.data.data);
 
-          // eslint-disable-next-line no-eval
-          eval(item.value?.javascript || '');
-
           console.log(`==== NODE ${nodeId} FOUND ====`);
 
-          (getSocket('/core/plugins') as any).on(`plugins::${nodeId}::runScript`, ({ script, sandbox } : { script: string, sandbox: string }) => {
+          if ((item.value?.javascript || '').length > 0) {
+            (getSocket('/core/plugins', true) as any).emit(`plugins::getSandbox`, { nodeId, pluginId: plugin.id }, (sandbox: string) => {
+              safeEval(
+                item.value?.javascript || '', sandbox,
+              );
+            });
+          }
+
+          (getSocket('/core/plugins', true) as any).on(`plugins::${nodeId}::runScript`, ({ script, sandbox } : { script: string, sandbox: string }) => {
             safeEval(
               script, sandbox,
             );
