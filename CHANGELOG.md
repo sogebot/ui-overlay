@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [34.0.0](https://github.com/sogebot/sogebot.dev/compare/v33.0.8...v34.0.0) (2022-10-11)
+
+
+### Features
+
+* **plugins:** add css support ([df5541b](https://github.com/sogebot/sogebot.dev/commit/df5541b0e0919ceb0ddbe217bb1f792ee1a2bb37))
+* **plugins:** add plugins overlay ([#312](https://github.com/sogebot/sogebot.dev/issues/312)) ([ae67672](https://github.com/sogebot/sogebot.dev/commit/ae67672dc0dd7a830e9ac2e27cfc77505bcfc34f))
+
 ### [33.0.8](https://github.com/sogebot/sogebot.dev/compare/v33.0.7...v33.0.8) (2022-09-26)
 
 
