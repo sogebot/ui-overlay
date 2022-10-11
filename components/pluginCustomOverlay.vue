@@ -12,7 +12,7 @@ import { getSocket } from '@sogebot/ui-helpers/socket';
 import safeEval from 'safe-eval';
 
 const props = defineProps({ opts: Object });
-const item = ref<null | { body: string, javascript: string }>(null);
+const item = ref<null | { body: string, javascript: string, css: string }>(null);
 
 onMounted(() => {
   getSocket('/core/plugins', true).emit('generic::getOne', props.opts?.pluginId, (err, plugin) => {
@@ -30,6 +30,15 @@ onMounted(() => {
           item.value = JSON.parse(node.data.data);
 
           console.log(`==== NODE ${nodeId} FOUND ====`);
+
+          if ((item.value?.css || '').length > 0) {
+            const head = document.getElementsByTagName('head')[0];
+            const style = document.createElement('style');
+            style.type = 'text/css';
+            style.appendChild(document.createTextNode(item.value!.css));
+            head.appendChild(style);
+          }
+
 
           if ((item.value?.javascript || '').length > 0) {
             (getSocket('/core/plugins', true) as any).emit(`plugins::getSandbox`, { nodeId, pluginId: plugin.id }, (sandbox: string) => {
