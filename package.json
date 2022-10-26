@@ -64,7 +64,7 @@
     "stylelint": "^14.9.1",
     "stylelint-config-html": "^1.1.0",
     "stylelint-config-recommended-vue": "^1.4.0",
-    "stylelint-config-standard-scss": "^3.0.0",
+    "stylelint-config-standard-scss": "^6.0.0",
     "tiny-typed-emitter": "^2.1.0",
     "typeorm": "^0.2.45",
     "url-regex": "^5.0.0",
