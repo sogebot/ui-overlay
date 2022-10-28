@@ -48,7 +48,7 @@
             <div v-if="options.showBadges && (message.badges || []).length > 0" class="pr-1 d-flex">
               <span style="position: relative;"
                 v-for="badge of (message.badges || [])"
-                :key="message.timestamp + message.id + badge"
+                :key="message.timestamp + message.id + badge.url"
                 :style="{
                   width: `${options.useCustomBadgeSize ? options.customBadgeSize : options.font.size * 1.3}px`,
                   height: `${options.useCustomBadgeSize ? options.customBadgeSize : options.font.size * 1.3}px`,
@@ -60,7 +60,7 @@
                   :src="badge.url"/>
               </span>
             </div>
-            <span v-if="options.showTimestamp" class="pr-1">{{ new Date(message.timestamp).toLocaleTimeString('default', { hour: '2-digit', minute: '2-digit' }) }}</span> <strong :style="{ color: generateColorFromString(message.username) }">{{ message.username }}</strong>:
+            <span v-if="options.showTimestamp" class="pr-1">{{ new Date(message.timestamp).toLocaleTimeString('default', { hour: '2-digit', minute: '2-digit' }) }}</span> <strong :style="{ color: generateColorFromString(message.displayName) }">{{ message.displayName }}</strong>:
             <div class="pl-1" v-html="message.message" style="overflow-wrap: anywhere;"/>
           </div>
         </div>
@@ -80,7 +80,7 @@ const props = defineProps({ opts: Object });
 const posY = ref({} as Record<string, number>);
 const fontSize = ref({} as Record<string, number>);
 const speed = ref({} as Record<string, number>);
-const messages = ref([] as { id: string, timestamp: number, username: string, message: string, show: boolean, badges: any }[]);
+const messages = ref([] as { id: string, timestamp: number, userName: string, displayName: string, message: string, show: boolean, badges: any }[]);
 
 const chat = ref(null as unknown as HTMLElement);
 const options = ref(props.opts as OverlayMapperChat['opts']);
@@ -127,9 +127,18 @@ onMounted(() => {
   head.appendChild(style);
 
   getSocket('/overlays/chat', true).on('timeout', (userName) => {
-    for (const message of messages.value.filter(o => o.username === userName)) {
+    const messagesToDelete: string[] = [];
+    for (const message of messages.value.filter(o => o.userName === userName)) {
+      delete posY.value[message.id];
+      delete fontSize.value[message.id];
+      delete speed.value[message.id];
       message.show = false;
+      messagesToDelete.push(message.id);
     }
+
+    setTimeout(() => {
+      messages.value = messages.value.filter(o => !messagesToDelete.includes(o.id));
+    }, 1000);
   });
 
   getSocket('/overlays/chat', true).on('message', (data) => {
