@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [34.0.1](https://github.com/sogebot/sogebot.dev/compare/v34.0.0...v34.0.1) (2022-10-28)
+
+
+### Bug Fixes
+
+* fix badge url key and update for userName ([49f6558](https://github.com/sogebot/sogebot.dev/commit/49f65580b0c0128c492710c986e5ce77b3afc21e))
+
 ## [34.0.0](https://github.com/sogebot/sogebot.dev/compare/v33.0.8...v34.0.0) (2022-10-11)
 
 
