@@ -11,27 +11,14 @@ import OBSWebSocket from 'obs-websocket-js';
 
 type Props = {
   opts: {
-    allowedIPs: string[],
+    allowedIPs: string[];
+    password: string;
+    address: string;
   }
 };
 
 const props = defineProps<Props>();
 const obs = new OBSWebSocket();
-
-let address = '';
-let password = '';
-
-const connect = async () => {
-  try {
-    if (password === '') {
-      await obs.connect(address);
-    } else {
-      await obs.connect(address, password);
-    }
-  } catch (e) {
-    console.error(e);
-  }
-};
 
 onMounted(async () => {
   console.log('====== OBS WEBSOCKET ======');
@@ -47,14 +34,15 @@ onMounted(async () => {
     console.log(`There is no IP restrictions set.`);
   }
 
-  await new Promise<void>((resolve) => {
-    getSocket('/', true).emit('integration::obswebsocket::values', (data) => {
-      address = data.address;
-      password = data.password;
-      resolve();
-    });
-  });
-  connect();
+  try {
+    if (props.opts.password === '') {
+      await obs.connect(props.opts.address);
+    } else {
+      await obs.connect(props.opts.address, props.opts.password);
+    }
+  } catch (e) {
+    console.error(e);
+  }
 
   getSocket('/', true).on('integration::obswebsocket::trigger', async (opts, cb) => {
     console.log('integration::obswebsocket::trigger', opts);
