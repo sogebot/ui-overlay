@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [34.1.0](https://github.com/sogebot/sogebot.dev/compare/v34.0.1...v34.1.0) (2022-11-28)
+
+
+### Features
+
+* add address/password ([2379d69](https://github.com/sogebot/sogebot.dev/commit/2379d6960671c90c8acd38a949d421a2303f169f))
+
 ### [34.0.1](https://github.com/sogebot/sogebot.dev/compare/v34.0.0...v34.0.1) (2022-10-28)
 
 
