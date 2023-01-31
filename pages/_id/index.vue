@@ -1,18 +1,16 @@
 <template>
   <v-app style="padding: 0; margin: 0;">
     <v-main style="padding: 0; margin: 0;">
-      <component
-        :is="type.value"
-        v-if="isLoaded && type && (type.value !== 'group' || (type.value === 'group' && children.length > 0))"
-        :opts="type.opts"
-        :children="children"
+      <group
+        v-if="isLoaded"
+        :overlay="overlay"
       />
     </v-main>
   </v-app>
 </template>
 
 <script setup lang="ts">
-import type { OverlayMapperInterface } from '@entity/overlay';
+import { Overlay } from '@entity/overlay';
 import { getSocket } from '@sogebot/ui-helpers/socket';
 
 import isBotStarted from '~/middleware/isBotStarted';
@@ -24,8 +22,7 @@ const { $store } = useNuxtApp();
 
 const isLoaded = ref(false);
 
-const type = ref(null as null | OverlayMapperInterface);
-const children = ref([] as any);
+const overlay = ref(null as null | Overlay);
 
 const loading = ref(true);
 
@@ -42,14 +39,11 @@ const process = () => {
 onMounted(() => {
   isBotStarted({ store: $store });
 
-  getSocket('/registries/overlays', true).emit('generic::getAll', (err, result) => {
+  getSocket('/registries/overlays', true).emit('generic::getOne', route.params.id, (err, result) => {
     if (err) {
       return console.error(err);
     }
-
-    children.value = result.filter(o => o.groupId === route.params.id);
-    type.value = (result.find(o => o.id === route.params.id) as any) ?? null;
-
+    overlay.value = result;
     loading.value = false;
   });
 
