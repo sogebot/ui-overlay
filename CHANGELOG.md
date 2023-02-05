@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [35.1.0](https://github.com/sogebot/sogebot.dev/compare/v35.0.0...v35.1.0) (2023-02-05)
+
+
+### Features
+
+* add group ([e334671](https://github.com/sogebot/sogebot.dev/commit/e3346713766a499e3419d1051b266b4a136e0ecc))
+
+
+### Bug Fixes
+
+* expose axios ([022d592](https://github.com/sogebot/sogebot.dev/commit/022d59272b543f9bcdf47b3a6e966afed0275c92))
+* expose window and document to safeeval ([432530a](https://github.com/sogebot/sogebot.dev/commit/432530ad57939b14b06a2468fb8aa40cc7329b0e))
+
 ## [35.0.0](https://github.com/sogebot/sogebot.dev/compare/v34.1.0...v35.0.0) (2023-01-31)
 
 ## [34.1.0](https://github.com/sogebot/sogebot.dev/compare/v34.0.1...v34.1.0) (2022-11-28)
