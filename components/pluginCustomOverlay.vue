@@ -39,7 +39,6 @@ onMounted(() => {
             head.appendChild(style);
           }
 
-
           if ((item.value?.javascript || '').length > 0) {
             (getSocket('/core/plugins', true) as any).emit(`plugins::getSandbox`, { nodeId, pluginId: plugin.id }, (sandbox: string) => {
               safeEval(
@@ -48,9 +47,11 @@ onMounted(() => {
             });
           }
 
-          (getSocket('/core/plugins', true) as any).on(`plugins::${nodeId}::runScript`, ({ script, sandbox } : { script: string, sandbox: string }) => {
+          (getSocket('/core/plugins', true) as any).on(`plugins::${nodeId}::runScript`, ({ script, sandbox } : { script: string, sandbox: Record<string, any> }) => {
             safeEval(
-              script, sandbox,
+              script, {
+                ...sandbox, window, document,
+              },
             );
           });
           break;
