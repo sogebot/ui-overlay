@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div ref="chat" v-if="options.type === 'niconico'">
+    <div v-if="options.type === 'niconico'" ref="chat">
       <template v-for="message of messages">
         <p
           :id="`nico-${message.id}`"
@@ -42,26 +42,49 @@
         'text-shadow': [textStrokeGenerator(options.font.borderPx, options.font.borderColor), shadowGenerator(options.font.shadow)].filter(Boolean).join(', ')
       }"
     >
-      <span v-for="message of orderBy(messages, 'timestamp', options.reverseOrder ? 'desc' : 'asc')" :key="message.timestamp + message.id">
-        <div v-show="message.show" class="chat px-2 mb-0"  :class="{ inline: options.type === 'horizontal' }">
+      <span v-for="message of orderBy(messages, 'timestamp', options.reverseOrder ? 'desc' : 'asc')" :key="message.timestamp + message.id" style="display: inline-flex;">
+        <div v-show="message.show" class="chat px-2 mb-0" :class="{ inline: options.type === 'horizontal' }">
           <div style="align-items: baseline; display: inline-flex; width: fit-content;">
             <div v-if="options.showBadges && (message.badges || []).length > 0" class="pr-1 d-flex">
-              <span style="position: relative;"
+              <span
                 v-for="badge of (message.badges || [])"
                 :key="message.timestamp + message.id + badge.url"
+                style="position: relative;"
                 :style="{
                   width: `${options.useCustomBadgeSize ? options.customBadgeSize : options.font.size * 1.3}px`,
-                  height: `${options.useCustomBadgeSize ? options.customBadgeSize : options.font.size * 1.3}px`,
-                }">
+                  height: `1px`,
+                }"
+              >
                 <img
                   :width="options.useCustomBadgeSize ? options.customBadgeSize : options.font.size * 1.3"
                   :height="options.useCustomBadgeSize ? options.customBadgeSize : options.font.size * 1.3"
                   class="badge"
-                  :src="badge.url"/>
+                  :src="badge.url"
+                >
+              </span>
+            </div>
+            <div
+              v-else
+              class="pr-1 d-flex"
+            >
+              <span
+                style="position: relative;"
+                :style="{
+                  width: `1px`,
+                  height: `1px`,
+                }"
+              >
+                <div
+                  :style="{
+                    width: `1px`,
+                    height: `${options.useCustomBadgeSize ? options.customBadgeSize : options.font.size * 1.3}px`,
+                  }"
+                  class="badge"
+                />
               </span>
             </div>
             <span v-if="options.showTimestamp" class="pr-1">{{ new Date(message.timestamp).toLocaleTimeString('default', { hour: '2-digit', minute: '2-digit' }) }}</span> <strong :style="{ color: generateColorFromString(message.displayName) }">{{ message.displayName }}</strong>:
-            <div class="pl-1" v-html="message.message" style="overflow-wrap: anywhere;"/>
+            <div class="pl-1" style="overflow-wrap: anywhere;" v-html="message.message" />
           </div>
         </div>
       </span>
@@ -219,8 +242,8 @@ div.showAtTop {
 }
 
 .badge {
-  position: absolute;
-  margin-top: 50%;
-  transform: translateY(-30%);
+  object-fit: contain;
+  overflow: visible;
+  vertical-align: middle;
 }
 </style>
