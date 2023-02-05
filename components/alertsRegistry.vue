@@ -356,7 +356,7 @@ watch(shouldAnimate, (val) => {
             const width = `${el.clientWidth + (runningAlert.value!.alert.font?.size || 0) * 4}`;
             console.log('Used baffle animation, forcing width to ' + width);
             fontWidth.value = `${width}px`;
-          })
+          });
         }
       }
     })();
@@ -676,8 +676,8 @@ onMounted(() => {
       }
 
       const audio = document.getElementById('audio') as null | HTMLMediaElement;
-      if (runningAlert.value.message && runningAlert.value.waitingForTTS && (runningAlert.value.alert.soundId === null || (audio && audio.ended))) {
-        let message = runningAlert.value.message;
+      if (runningAlert.value.waitingForTTS && (runningAlert.value.alert.soundId === null || (audio && audio.ended))) {
+        let message = runningAlert.value.message ?? '';
         if (runningAlert.value.alert.tts.skipUrls) {
           for (const match of message.match(urlRegex({ strict: false })) ?? []) {
             message = message.replace(match, '');
@@ -697,18 +697,18 @@ onMounted(() => {
           }
           console.log({ template: runningAlert.value.alert.ttsTemplate, ttsTemplate });
 
-          if (data.value?.tts === null) {
+          if (ttsTemplate.trim().length > 0) {
+            if (data.value?.tts === null) {
             // use default values
-            console.log('TTS running with default values.');
-            speak(ttsTemplate, runningAlert.value.TTSService === 0 ? 'UK English Female' : 'en-US-Wavenet-A', 1, 1, 1);
-          } else {
-            speak(ttsTemplate, data.value.tts.voice, data.value.tts.rate, data.value.tts.pitch, data.value.tts.volume);
+              console.log('TTS running with default values.');
+              speak(ttsTemplate, runningAlert.value.TTSService === 0 ? 'UK English Female' : 'en-US-Wavenet-A', 1, 1, 1);
+            } else {
+              speak(ttsTemplate, data.value.tts.voice, data.value.tts.rate, data.value.tts.pitch, data.value.tts.volume);
+            }
           }
         } else {
           console.log('TTS is muted.');
         }
-        runningAlert.value.waitingForTTS = false;
-      } else if (!runningAlert.value.message || String(runningAlert.value.message).length === 0) {
         runningAlert.value.waitingForTTS = false;
       }
 
