@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [35.1.2](https://github.com/sogebot/sogebot.dev/compare/v35.1.1...v35.1.2) (2023-02-05)
+
+
+### Bug Fixes
+
+* remove message need in tts ([1eec262](https://github.com/sogebot/sogebot.dev/commit/1eec2621e504259d32a596be25b2c05ab9148cd2))
+
 ### [35.1.1](https://github.com/sogebot/sogebot.dev/compare/v35.1.0...v35.1.1) (2023-02-05)
 
 
