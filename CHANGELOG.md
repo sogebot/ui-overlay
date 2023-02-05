@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [35.1.1](https://github.com/sogebot/sogebot.dev/compare/v35.1.0...v35.1.1) (2023-02-05)
+
+
+### Bug Fixes
+
+* fix chat positioning ([8ececd6](https://github.com/sogebot/sogebot.dev/commit/8ececd6260561e166d3cee9d7cb34e4b7f3fb7a9))
+
 ## [35.1.0](https://github.com/sogebot/sogebot.dev/compare/v35.0.0...v35.1.0) (2023-02-05)
 
 
