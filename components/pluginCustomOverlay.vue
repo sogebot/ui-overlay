@@ -9,6 +9,7 @@
 
 <script setup lang="ts">
 import { getSocket } from '@sogebot/ui-helpers/socket';
+import axios from 'axios';
 import safeEval from 'safe-eval';
 
 const props = defineProps({ opts: Object });
@@ -50,7 +51,7 @@ onMounted(() => {
           (getSocket('/core/plugins', true) as any).on(`plugins::${nodeId}::runScript`, ({ script, sandbox } : { script: string, sandbox: Record<string, any> }) => {
             safeEval(
               script, {
-                ...sandbox, window, document,
+                ...sandbox, window, document, axios,
               },
             );
           });
