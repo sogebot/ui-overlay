@@ -9,8 +9,6 @@
 
 <script setup lang="ts">
 import { getSocket } from '@sogebot/ui-helpers/socket';
-import axios from 'axios';
-import safeEval from 'safe-eval';
 
 const props = defineProps({ opts: Object });
 const item = ref<null | { body: string, javascript: string, css: string }>(null);
@@ -41,19 +39,19 @@ onMounted(() => {
           }
 
           if ((item.value?.javascript || '').length > 0) {
-            (getSocket('/core/plugins', true) as any).emit(`plugins::getSandbox`, { nodeId, pluginId: plugin.id }, (sandbox: string) => {
-              safeEval(
-                item.value?.javascript || '', sandbox,
-              );
+            (getSocket('/core/plugins', true) as any).emit(`plugins::getSandbox`, { nodeId, pluginId: plugin.id }, (sandbox: Record<string, any>) => {
+              // eslint-disable-next-line @typescript-eslint/no-unused-vars
+              const { variables, settings } = sandbox;
+              // eslint-disable-next-line no-eval
+              eval(item.value?.javascript || '');
             });
           }
 
           (getSocket('/core/plugins', true) as any).on(`plugins::${nodeId}::runScript`, ({ script, sandbox } : { script: string, sandbox: Record<string, any> }) => {
-            safeEval(
-              script, {
-                ...sandbox, window, document, axios,
-              },
-            );
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const { sender, parameters, ...variables } = sandbox;
+            // eslint-disable-next-line no-eval
+            eval(script);
           });
           break;
         }
