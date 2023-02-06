@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [35.1.3](https://github.com/sogebot/sogebot.dev/compare/v35.1.2...v35.1.3) (2023-02-06)
+
+
+### Bug Fixes
+
+* run eval instead of safeEval to have access to document, window ([442a095](https://github.com/sogebot/sogebot.dev/commit/442a09552df8e07ab263df8f0d6a1823a7666b8d))
+
 ### [35.1.2](https://github.com/sogebot/sogebot.dev/compare/v35.1.1...v35.1.2) (2023-02-05)
 
 
