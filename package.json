@@ -30,7 +30,7 @@
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.17.0",
-    "@commitlint/cli": "^16.2.3",
+    "@commitlint/cli": "^17.4.3",
     "@commitlint/config-conventional": "^16.2.1",
     "@mdi/js": "^6.6.96",
     "@nuxt/bridge": "npm:@nuxt/bridge-edge@3.0.0-27657000.c87fdbe",
