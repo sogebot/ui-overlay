@@ -52,7 +52,7 @@
     "eslint-plugin-vue": "^8.5.0",
     "graphql-tag": "^2.12.6",
     "gsap": "^3.10.4",
-    "lint-staged": "^12.3.7",
+    "lint-staged": "^13.1.2",
     "npm-check-updates": "^12.5.9",
     "nuxt-edge": "latest",
     "nuxt-graphql-request": "^5.1.0",
