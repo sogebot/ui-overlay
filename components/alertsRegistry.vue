@@ -166,23 +166,20 @@
 </template>
 
 <script setup lang="ts">
-import type {
-  AlertInterface, AlertResubInterface, AlertRewardRedeemInterface, AlertTipInterface, CommonSettingsInterface, EmitData,
-} from '@entity/alert';
+import type { Alert, EmitData } from '@entity/alert';
 import { CacheEmotesInterface } from '@entity/cacheEmotes';
 import type { UserInterface } from '@entity/user';
 import { ButtonStates } from '@sogebot/ui-helpers/buttonStates';
 import { itemsToEvalPart } from '@sogebot/ui-helpers/queryFilter';
 import { getSocket } from '@sogebot/ui-helpers/socket';
 import { shadowGenerator, textStrokeGenerator } from '@sogebot/ui-helpers/text';
+import axios from 'axios';
 import { get, isEqual } from 'lodash';
 import safeEval from 'safe-eval';
 import urlRegex from 'url-regex';
 import { v4 } from 'uuid';
 import VRuntimeTemplate from 'v-runtime-template';
 import JsonViewer from 'vue-json-viewer';
-
-import GET_ONE from '~/queries/alert/getOne.gql';
 
 require('animate.css');
 
@@ -198,7 +195,7 @@ type RunningAlert = EmitData & {
   showTextAt: number;
   showAt: number;
   waitingForTTS: boolean;
-  alert: (CommonSettingsInterface & AlertTipInterface & AlertResubInterface) & { ttsTemplate?: string };
+  alert: (Alert['items'][number]) & { ttsTemplate?: string };
   isTTSMuted: boolean;
   isSoundMuted: boolean;
   TTSService: number,
@@ -209,7 +206,6 @@ type RunningAlert = EmitData & {
   game?: string,
 };
 
-const { $graphql } = useNuxtApp();
 const props = defineProps({ opts: Object });
 
 let isTTSPlaying = false;
@@ -242,13 +238,13 @@ const triggerFunction = (_____________code: string, _____________fnc: 'onStarted
 };
 /* eslint-enable */
 
-const haveAvailableAlert = (emitData: EmitData, data: AlertInterface | null) => {
+const haveAvailableAlert = (emitData: EmitData, data: Alert | null) => {
   if (emitData && data) {
-    let possibleAlerts = data[emitData.event];
+    let possibleAlerts = data.items.filter(o => o.type === emitData.event);
 
     // select only correct triggered events
-    if (emitData.event === 'rewardredeems') {
-      possibleAlerts = (possibleAlerts as AlertRewardRedeemInterface[]).filter(o => o.rewardId === emitData.rewardId);
+    if (emitData.event === 'rewardredeem') {
+      possibleAlerts = (possibleAlerts as any).filter((o: any) => o.rewardId === emitData.rewardId);
     }
     if (possibleAlerts.length > 0) {
       // filter variants
@@ -278,7 +274,7 @@ const haveAvailableAlert = (emitData: EmitData, data: AlertInterface | null) => 
       });
 
       // after we have possible alerts -> generate random
-      const possibleAlertsWithRandomCount: (CommonSettingsInterface | AlertTipInterface | AlertResubInterface)[] = [];
+      const possibleAlertsWithRandomCount: Alert['items'] = [];
       // check if exclusive alert is there then run only it (+ other exclusive)
       if (possibleAlerts.find(o => o.variantAmount === 5)) {
         for (const alert of possibleAlerts.filter(o => o.variantAmount === 5)) {
@@ -293,7 +289,7 @@ const haveAvailableAlert = (emitData: EmitData, data: AlertInterface | null) => 
         }
       }
 
-      const alert: CommonSettingsInterface | AlertTipInterface | AlertResubInterface | undefined = possibleAlertsWithRandomCount[Math.floor(Math.random() * possibleAlertsWithRandomCount.length)];
+      const alert: Alert['items'][number] | undefined = possibleAlertsWithRandomCount[Math.floor(Math.random() * possibleAlertsWithRandomCount.length)];
       return !!alert;
     }
   }
@@ -319,7 +315,7 @@ const state = ref({ loaded: ButtonStates.progress as number });
 
 const id = ref(props.opts?.id as null | string);
 const updatedAt = ref(-1); // force initial load
-const data = ref(null as null | AlertInterface);
+const data = ref(null as null | Alert);
 const defaultProfanityList = ref([] as string[]);
 const listHappyWords = ref([] as string[]);
 const emotes = ref([] as CacheEmotesInterface[]);
@@ -386,7 +382,7 @@ watch(messageTemplatesSplitIdx, (val) => {
 
 const runningAlert = ref(null as RunningAlert | null);
 
-const cache = ref(null as null | AlertInterface[]);
+const cache = ref(null as null | Alert[]);
 
 const getMeta = (mediaId: string, type: 'Video' | 'Image' | 'Thumbnail') => {
   if (type === 'Video') {
@@ -415,7 +411,8 @@ const getMeta = (mediaId: string, type: 'Video' | 'Image' | 'Thumbnail') => {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const refresh = async () => {
-  const refreshedAlerts = (await $graphql.default.request(GET_ONE, { id: id.value })).alerts;
+  const res = await axios.get(`/api/registries/alerts/${id.value}`, { headers: { authorization: `Bearer ${localStorage.accessToken}` } });
+  const refreshedAlerts = res.data;
   if (!cache.value || cache.value[0].updatedAt !== refreshedAlerts[0].updatedAt) {
     cache.value = refreshedAlerts;
   }
@@ -435,19 +432,7 @@ watch(cache, async (value) => {
       data.value = value[0];
 
       // determinate if image is image or video
-      for (const event of [
-        ...data.value.subcommunitygifts,
-        ...data.value.raids,
-        ...data.value.tips,
-        ...data.value.cheers,
-        ...data.value.resubs,
-        ...data.value.subs,
-        ...data.value.follows,
-        ...data.value.subgifts,
-        ...data.value.cmdredeems,
-        ...data.value.rewardredeems,
-        ...data.value.promo,
-      ]) {
+      for (const event of data.value.items) {
         event.soundId = event.soundId === '_default_' ? '_default_audio' : event.soundId;
         event.imageId = event.imageId === '_default_' ? '_default_image' : event.imageId;
 
@@ -527,18 +512,7 @@ watch(cache, async (value) => {
       const head = document.getElementsByTagName('head')[0];
       const style = document.createElement('style');
       style.type = 'text/css';
-      for (const event of [
-        ...value[0].cheers,
-        ...value[0].follows,
-        ...value[0].raids,
-        ...value[0].resubs,
-        ...value[0].subgifts,
-        ...value[0].subs,
-        ...value[0].tips,
-        ...value[0].cmdredeems,
-        ...value[0].rewardredeems,
-        ...value[0].promo,
-      ]) {
+      for (const event of value[0].items) {
         const fontFamily = event.font ? event.font.family : data.value.font.family;
         if (!loadedFonts.value.includes(fontFamily)) {
           console.debug('Loading font', fontFamily);
@@ -547,11 +521,11 @@ watch(cache, async (value) => {
           const css = '@import url(\'https://fonts.googleapis.com/css?family=' + font + '\');';
           style.appendChild(document.createTextNode(css));
         }
-        const messageFontFamily = (event as AlertTipInterface).message?.font?.family || data.value.fontMessage.family;
-        if (typeof (event as AlertTipInterface).message !== 'undefined' && !loadedFonts.value.includes(messageFontFamily)) {
+        const messageFontFamily = (event as any).message?.font?.family || data.value.fontMessage.family;
+        if (typeof (event as any).message !== 'undefined' && !loadedFonts.value.includes(messageFontFamily)) {
           console.debug('Loading font', messageFontFamily);
           loadedFonts.value.push(messageFontFamily);
-          const font = ((event as AlertTipInterface).message.font ? (event as any).message.font.family : data.value.fontMessage.family).replace(/ /g, '+');
+          const font = ((event as any).message.font ? (event as any).message.font.family : data.value.fontMessage.family).replace(/ /g, '+');
           const css = '@import url(\'https://fonts.googleapis.com/css?family=' + font + '\');';
           style.appendChild(document.createTextNode(css));
         }
@@ -741,15 +715,15 @@ onMounted(() => {
 
       const emitData = alerts.shift();
       if (emitData && data.value) {
-        let possibleAlerts = data.value[emitData.event];
+        let possibleAlerts = data.value.items.filter(o => o.type === emitData.event);
 
         // select only correct triggered events
-        if (emitData.event === 'rewardredeems') {
-          possibleAlerts = (possibleAlerts as AlertRewardRedeemInterface[]).filter(o => o.rewardId === emitData.rewardId);
+        if (emitData.event === 'rewardredeem') {
+          possibleAlerts = (possibleAlerts as any[]).filter(o => o.rewardId === emitData.rewardId);
         }
 
         let omitFilters = false;
-        if (emitData.event === 'cmdredeems' && emitData.alertId) {
+        if (emitData.event === 'custom' && emitData.alertId) {
           console.log('Alert is command redeem and triggers', emitData.alertId, 'by force');
           possibleAlerts = possibleAlerts.filter(o => o.id === emitData.alertId);
           omitFilters = true;
@@ -783,7 +757,7 @@ onMounted(() => {
           });
 
           // after we have possible alerts -> generate random
-          const possibleAlertsWithRandomCount: (CommonSettingsInterface | AlertTipInterface | AlertResubInterface)[] = [];
+          const possibleAlertsWithRandomCount: Alert['items'] = [];
           // check if exclusive alert is there then run only it (+ other exclusive)
           if (possibleAlerts.find(o => o.variantAmount === 5)) {
             for (const alert of possibleAlerts.filter(o => o.variantAmount === 5)) {
@@ -802,7 +776,7 @@ onMounted(() => {
             emitData, possibleAlerts, possibleAlertsWithRandomCount,
           });
 
-          const alert: CommonSettingsInterface | AlertTipInterface | AlertResubInterface | undefined = possibleAlertsWithRandomCount[Math.floor(Math.random() * possibleAlertsWithRandomCount.length)];
+          const alert: Alert['items'][number] | undefined = possibleAlertsWithRandomCount[Math.floor(Math.random() * possibleAlertsWithRandomCount.length)];
           if (!alert || !alert.id) {
             console.log('No alert found or all are disabled');
             return;
