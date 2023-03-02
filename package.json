@@ -71,7 +71,7 @@
     "uuid": "^8.3.2",
     "v-runtime-template": "^1.10.0",
     "vue-json-viewer": "^2.2.22",
-    "vuetify": "^2.6.8",
+    "vuetify": "^3.1.7",
     "vuetify-loader": "^1.9.2",
     "vuewordcloud": "^18.7.12",
     "worker-timers": "^7.0.51"
