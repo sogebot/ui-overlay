@@ -382,7 +382,7 @@ watch(messageTemplatesSplitIdx, (val) => {
 
 const runningAlert = ref(null as RunningAlert | null);
 
-const cache = ref(null as null | Alert[]);
+const cache = ref(null as null | Alert);
 
 const getMeta = (mediaId: string, type: 'Video' | 'Image' | 'Thumbnail') => {
   if (type === 'Video') {
@@ -411,16 +411,16 @@ const getMeta = (mediaId: string, type: 'Video' | 'Image' | 'Thumbnail') => {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const refresh = async () => {
-  const res = await axios.get(`/api/registries/alerts/${id.value}`, { headers: { authorization: `Bearer ${localStorage.accessToken}` } });
+  const res = await axios.get(`/api/registries/alerts/${id.value}`);
   const refreshedAlerts = res.data;
-  if (!cache.value || cache.value[0].updatedAt !== refreshedAlerts[0].updatedAt) {
+  if (!cache.value || cache.value.updatedAt !== refreshedAlerts.updatedAt) {
     cache.value = refreshedAlerts;
   }
   setTimeout(() => refresh(), 5000);
 };
 
 watch(cache, async (value) => {
-  if (!value || value.length === 0) {
+  if (!value) {
     return;
   }
 
@@ -428,8 +428,8 @@ watch(cache, async (value) => {
     if (runningAlert.value !== null) {
       return; // skip any changes if alert in progress
     }
-    if (!isEqual(value[0], data.value)) {
-      data.value = value[0];
+    if (!isEqual(value, data.value)) {
+      data.value = value;
 
       // determinate if image is image or video
       for (const event of data.value.items) {
@@ -504,7 +504,7 @@ watch(cache, async (value) => {
 
       defaultProfanityList.value = [
         ...defaultProfanityList.value,
-        ...value[0].customProfanityList.split(',').map(o => o.trim()),
+        ...value.customProfanityList.split(',').map(o => o.trim()),
       ].filter(o => o.trim().length > 0);
 
       state.value.loaded = ButtonStates.success;
@@ -512,7 +512,7 @@ watch(cache, async (value) => {
       const head = document.getElementsByTagName('head')[0];
       const style = document.createElement('style');
       style.type = 'text/css';
-      for (const event of value[0].items) {
+      for (const event of value.items) {
         const fontFamily = event.font ? event.font.family : data.value.font.family;
         if (!loadedFonts.value.includes(fontFamily)) {
           console.debug('Loading font', fontFamily);
