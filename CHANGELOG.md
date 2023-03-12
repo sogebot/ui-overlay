@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [36.1.0](https://github.com/sogebot/sogebot.dev/compare/v36.0.0...v36.1.0) (2023-03-12)
+
+
+### Features
+
+* update without gql ([4a54fe5](https://github.com/sogebot/sogebot.dev/commit/4a54fe5781d1f2c224cf45242cc295c0b522bb86))
+
+
+### Bug Fixes
+
+* fix incorrect alert registry ([c4d5c75](https://github.com/sogebot/sogebot.dev/commit/c4d5c752c8f64a4e58b268d42a2c4f9e290043e8))
+
 ## [36.0.0](https://github.com/sogebot/sogebot.dev/compare/v35.1.3...v36.0.0) (2023-03-02)
 
 ### [35.1.3](https://github.com/sogebot/sogebot.dev/compare/v35.1.2...v35.1.3) (2023-02-06)
